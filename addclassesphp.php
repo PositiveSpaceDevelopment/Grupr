@@ -5,6 +5,15 @@
 <body>
 <?php
 session_start();
+echo "user id = ";
+echo $_SESSION['user_id'];
+echo "<br>";
+echo "session_id = ";
+echo $_SESSION['session_id'];
+echo "<br>";
+echo "email = ";
+echo $_SESSION['email'];
+echo "<br>";
 if(isset($_POST['submit'])){
 
     $data_missing = array();
@@ -45,9 +54,9 @@ if(isset($_POST['submit'])){
         mysqli_select_db($dbc, $dbname);
         echo "Connected! <br>";
 
-        $stmt = mysqli_prepare($dbc, "INSERT INTO classes (class_subject, class_number)
-        VALUES (?,?)");
-        mysqli_stmt_bind_param($stmt, 'ss', $class_subject, $class_number);
+        $stmt = mysqli_prepare($dbc, "INSERT INTO classes (class_subject, class_number, user_id)
+        VALUES (?,?,?)");
+        mysqli_stmt_bind_param($stmt, 'sss', $class_subject, $class_number, $_SESSION['user_id']);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
 
@@ -88,7 +97,7 @@ mysqli_close($dbc);
 
     </form>
 
-    <form action="randompage.php" method="post">
+    <form action="profile.php" method="post">
 
     <p>
     <input type="submit" name="submit" value="Go to profile!" />

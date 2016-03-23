@@ -79,9 +79,16 @@ if(isset($_POST['submit']))
             mysqli_stmt_bind_param($stmt, 'ss', $_SESSION['session_id'], $_SESSION['email']);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
+            $stmt = mysqli_prepare($dbc, "SELECT user_id FROM user_info WHERE session_id = ? AND email = ?");
+            mysqli_stmt_bind_param($stmt, 'ss', $_SESSION['session_id'], $_SESSION['email']);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_bind_result($stmt, $user_id);
+            mysqli_stmt_fetch($stmt);
+            mysqli_stmt_close($stmt);
+            $_SESSION['user_id'] = $user_id;
             ?>
             <script>
-                window.location = 'http://zero-to-slim.dev/randompage.php';
+                window.location = 'http://zero-to-slim.dev/profile.php';
             </script>
             <?php
         } else {
