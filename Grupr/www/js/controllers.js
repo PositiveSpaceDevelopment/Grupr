@@ -96,6 +96,11 @@ angular.module('starter.controllers', [])
   }
 })
 
+.controller('SelectClassCtrl', function($scope, $state) {
+  
+
+})
+
 
 
 

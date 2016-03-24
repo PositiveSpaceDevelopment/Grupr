@@ -46,7 +46,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       url: '/selectClass',
       views: {
         'menuContent': {
-          templateUrl: 'templates/selectClass.html'
+          templateUrl: 'templates/selectClass.html',
+          controller: 'SelectClassCtrl'
         }
       }
     })
