@@ -22,7 +22,27 @@ angular.module('starter.controllers', [])
   ];
 })
 
-.controller('RegisterCtrl', function($scope) {
-  
+.controller('LoginCtrl', function($scope, $state) {
+  $scope.form = {};
+
+  $scope.login = function() {
+    var data = {};
+
+    
+    data.email = $scope.form.email;
+    console.log(data.email);
+  }
+
+
+  $scope.register = function() {
+    $state.go('app.register');
+  }
+
+})
+
+.controller('RegisterCtrl', function($scope, $state) {
+  $scope.next = function() {
+    $state.go('app.selectClass');
+  }
 })
 

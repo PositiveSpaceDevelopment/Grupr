@@ -36,16 +36,17 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     url: '/login',
     views: {
       'menuContent': {
-        templateUrl: 'templates/login.html'
+        templateUrl: 'templates/login.html',
+        controller: 'LoginCtrl'
       }
     }
   })
 
-  .state('app.browse', {
-      url: '/browse',
+  .state('app.selectClass', {
+      url: '/selectClass',
       views: {
         'menuContent': {
-          templateUrl: 'templates/browse.html'
+          templateUrl: 'templates/selectClass.html'
         }
       }
     })

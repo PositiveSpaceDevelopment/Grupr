@@ -3,19 +3,15 @@
     <h1 class="title">Login</h1>
   </ion-header-bar>
   <ion-content>
-    <form ng-submit="doLogin()">
+    <form ng-submit="login()">
       <div class="list">
         <label class="item item-input">
-          <span class="input-label">Username</span>
-          <input type="text" ng-model="login.username">
-        </label>
-        <label class="item item-input">
           <span class="input-label">Email</span>
-          <input type="text" ng-model="login.email">
+          <input type="text" ng-model="email">
         </label>
         <label class="item item-input">
           <span class="input-label">Password</span>
-          <input type="password" ng-model="login.password">
+          <input type="password" ng-model="password">
         </label>
         <label class="item">
           <button class="button button-block button-positive" type="submit">Log in</button>
@@ -25,7 +21,7 @@
     <form>
       <div class="padding" id="login_register">
         <h4>Not a member? Sign up and start Grüping!</h4>
-        <button class="button button-block button-outline button-positive">
+        <button class="button button-block button-outline button-positive" ng-click="register()">
           Register!
         </button>
       </div>
