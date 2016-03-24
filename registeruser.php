@@ -103,5 +103,5 @@ if(isset($_POST['submit'])){
 mysqli_close($dbc);
 ?>
 <script>
-    window.location = 'http://zero-to-slim.dev/addclasses.php';
+    window.location = 'http://grupr.dev/addclasses.php';
 </script>

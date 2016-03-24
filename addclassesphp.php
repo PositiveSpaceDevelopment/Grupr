@@ -1,10 +1,12 @@
+<?php
+session_start();
+?>
 <html>
 <head>
 <title>Add Classes</title>
 </head>
 <body>
 <?php
-session_start();
 echo "user id = ";
 echo $_SESSION['user_id'];
 echo "<br>";

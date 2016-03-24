@@ -21,7 +21,7 @@
 
     </form>
 
-    <form action="randompage.php" method="post">
+    <form action="profile.php" method="post">
 
     <p>
     <input type="submit" name="submit" value="Go to profile!" />

@@ -88,13 +88,14 @@ if(isset($_POST['submit']))
             $_SESSION['user_id'] = $user_id;
             ?>
             <script>
-                window.location = 'http://zero-to-slim.dev/profile.php';
+                window.location = 'http://grupr.dev/profile.php';
             </script>
             <?php
         } else {
             ?>
             <script>
-                window.location = 'http://zero-to-slim.dev/login.php';
+                // window.location = 'http://zero-to-slim.dev/login.php';
+                window.location = 'http://grupr.dev/login.php';
             </script>
             <?php
         }

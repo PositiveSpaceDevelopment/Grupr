@@ -21,16 +21,6 @@ $query = "SELECT class_subject, class_number FROM classes WHERE user_id = $profi
 $result = mysqli_query($dbc, $query);
 
 
-// if ($result) {
-//     while($row = mysqli_fetch_array($result)) {
-//         //username field, balance, account field
-//         $name = $row['class_subject'];
-//         echo "$name";
-//         $name = $row['class_number'];
-//         echo "$name";
-//     }
-// }
-
 // If the query executed properly proceed
 if($result){
 
@@ -61,6 +51,16 @@ echo '</table>';
 
 
  ?>
+
+</form>
+<form action="editprofile.php" method="post">
+
+<p>
+<input type="submit" name="submit" value="Edit profile" />
+</p>
+
+</form>
+
 </form>
 <form action="logout.php" method="post">
 
