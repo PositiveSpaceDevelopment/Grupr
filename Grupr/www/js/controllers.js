@@ -28,9 +28,31 @@ angular.module('starter.controllers', [])
   $scope.login = function() {
     var data = {};
 
+    if ($scope.form.email) {
+      data.email = $scope.form.email;
+    };
+    if ($scope.form.password) {
+      data.password = $scope.form.password;
+    };
     
-    data.email = $scope.form.email;
-    console.log(data.email);
+    console.log(data);
+
+    // $http({
+    //   method: 'POST',
+    //   url: '',
+    //   headers: {
+    //     'Content-Type': JSON
+    //     },
+    //   data: data
+    // }).then(function(){
+
+    // });
+    post('', data);
+
+
+
+
+
   }
 
 
@@ -41,8 +63,27 @@ angular.module('starter.controllers', [])
 })
 
 .controller('RegisterCtrl', function($scope, $state) {
+  $scope.form = {};
+
   $scope.next = function() {
+    var data = {};
+
+    if ($scope.form.name) {
+      data.name = $scope.form.name;
+    };
+    if ($scope.form.email) {
+      data.email = $scope.form.email;
+    };
+    if ($scope.form.password) {
+      data.password = $scope.form.password;
+    };
+    
+    console.log(data);
+
     $state.go('app.selectClass');
   }
 })
+
+
+
 
