@@ -22,9 +22,13 @@ angular.module('starter.controllers', [])
   ];
 })
 
+//Controller for the Login Screen
 .controller('LoginCtrl', function($scope, $state) {
   $scope.form = {};
 
+  //calls the login function, which puts the data entered in the login 
+  //page and stores it into the 'data' object
+  //This 'data' object is then passed to the POST request
   $scope.login = function() {
     var data = {};
 
@@ -37,6 +41,9 @@ angular.module('starter.controllers', [])
     
     console.log(data);
 
+
+    // //My attempt at getting http POST to work. Not sure how to test this.
+    // // Ill re-visit this when I learn more about how to test it
     // $http({
     //   method: 'POST',
     //   url: '',
@@ -47,24 +54,29 @@ angular.module('starter.controllers', [])
     // }).then(function(){
 
     // });
-    post('', data);
 
-
-
-
+    // post('', data);
 
   }
 
-
+  //Calls the 'register()' function, which is called when the 'Register' button
+  // is clicked on the login page.
+  //It takes the user to the Register page
   $scope.register = function() {
     $state.go('app.register');
   }
 
 })
 
+// Controller for the Register Screen
 .controller('RegisterCtrl', function($scope, $state) {
   $scope.form = {};
 
+  //This function is called when the 'next >>' button is clicked at the 
+  // bottom of the Register screen. It performs two functions:
+  // 1) stores the data entered on the screen into the 'data' object
+  // 2) advances the user to the Select Classes screen. This ensures that 
+  //    the user is not able to complete registration without selecting classes
   $scope.next = function() {
     var data = {};
 
