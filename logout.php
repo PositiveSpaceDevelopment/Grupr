@@ -11,5 +11,6 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 ?>
 <script>
-    window.location = 'http://grupr.dev/login.php';
+    // window.location = 'http://grupr.dev/login.php';
+    window.location = 'http://zero-to-slim.dev/login.php';
 </script>
