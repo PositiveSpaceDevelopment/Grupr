@@ -15,19 +15,21 @@ if(!function_exists('hash_equals')) {
 
 function login($login_email, $login_password, $login_dbc) {
     // Using prepared statements means that SQL injection is not possible.
-    $salt = "grupristhebestappever!@#%!^#!$^";
+    $stmt = mysqli_prepare($login_dbc, "SELECT salt FROM user_info WHERE email = ? LIMIT 1");
+    mysqli_stmt_bind_param($stmt, 's', $login_email);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $salt);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
     $stmt = mysqli_prepare($login_dbc, "SELECT password
                                         FROM user_info
                                         WHERE email = ?
                                         LIMIT 1");
     mysqli_stmt_bind_param($stmt, 's', $login_email);  // Bind "$username" to parameter.
     mysqli_stmt_execute($stmt);
-    // Execute the prepared query.
-    // get variables from result.
     mysqli_stmt_bind_result($stmt, $db_password);
     mysqli_stmt_fetch($stmt);
     $hashed_login_password = crypt($login_password, $salt);
-    echo "$hashed_login_password<br>";
     if (hash_equals($db_password, $hashed_login_password)) {
        mysqli_stmt_close($stmt);
        echo "Password verified!<br>";
@@ -61,9 +63,9 @@ if(isset($_POST['submit']))
 
     if(empty($data_missing)){
         $hostname = "localhost";
-        $username = "root";
+        $username = "grupr";
         $dbname = "grupr";
-        $password = "password";
+        $password = "hunter2";
         $dbc = mysqli_connect($hostname, $username, $password) OR DIE ("Unable to
         connect to database! Please try again later.");
         mysqli_select_db($dbc, $dbname);

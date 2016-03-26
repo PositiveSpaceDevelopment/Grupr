@@ -7,15 +7,6 @@ session_start();
 </head>
 <body>
 <?php
-echo "user id = ";
-echo $_SESSION['user_id'];
-echo "<br>";
-echo "session_id = ";
-echo $_SESSION['session_id'];
-echo "<br>";
-echo "email = ";
-echo $_SESSION['email'];
-echo "<br>";
 if(isset($_POST['submit'])){
 
     $data_missing = array();
@@ -48,13 +39,12 @@ if(isset($_POST['submit'])){
     if(empty($data_missing)){
 
         $hostname = "localhost";
-        $username = "root";
+        $username = "grupr";
         $dbname = "grupr";
-        $password = "password";
+        $password = "hunter2";
         $dbc = mysqli_connect($hostname, $username, $password) OR DIE ("Unable to
         connect to database! Please try again later.");
         mysqli_select_db($dbc, $dbname);
-        echo "Connected! <br>";
 
         $stmt = mysqli_prepare($dbc, "INSERT INTO classes (class_subject, class_number, user_id)
         VALUES (?,?,?)");
