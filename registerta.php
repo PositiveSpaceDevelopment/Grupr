@@ -100,7 +100,7 @@ if(isset($_POST['submit'])){
             mysqli_stmt_fetch($stmt);
             mysqli_stmt_close($stmt);
             $_SESSION['user_id'] = $user_id;
-            $stmt = mysqli_prepare($dbc, "INSERT INTO students (user_id) VALUES (?)");
+            $stmt = mysqli_prepare($dbc, "INSERT INTO tas (user_id) VALUES (?)");
             mysqli_stmt_bind_param($stmt, 's', $_SESSION['user_id']);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);

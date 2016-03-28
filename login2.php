@@ -81,6 +81,11 @@ if(isset($_POST['submit']))
             mysqli_stmt_bind_param($stmt, 'ss', $_SESSION['session_id'], $_SESSION['email']);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
+            // how do I set the timezone to my timezone
+            $stmt = mysqli_prepare($dbc, "UPDATE user_info SET last_login = now() WHERE email = ?");
+            mysqli_stmt_bind_param($stmt, 's', $_SESSION['email']);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
             $stmt = mysqli_prepare($dbc, "SELECT user_id FROM user_info WHERE session_id = ? AND email = ?");
             mysqli_stmt_bind_param($stmt, 'ss', $_SESSION['session_id'], $_SESSION['email']);
             mysqli_stmt_execute($stmt);
