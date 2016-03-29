@@ -1,125 +1,85 @@
 <?php
+
 //Questions:
 //What is the difference between doing it /test, and /login?
-//Can you look at our ER diagram and come up wiht some critiques?
 //How can I set up the database connection in dependencies?
 //How can I use sessions in routes?
 //How would I put functions into routes file?
 //Should I switch to using PDO?
+//Can you look at our ER diagram and come up wiht some critiques?
 
-
-//found at http://stackoverflow.com/questions/4356289/php-random-string-generator
-function endsWith($haystack, $needle) {
-    // search forward starting from end minus needle length characters
-    return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
-}
-
-//found at http://stackoverflow.com/questions/4356289/php-random-string-generator
-function generateRandomString($length = 10) {
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $charactersLength = strlen($characters);
-    $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[rand(0, $charactersLength - 1)];
-    }
-    return $randomString;
-}
 
 // Routes
 
-$app->get('/test', function ($request, $response, $args){
-    $hostname = "localhost";
-    $username = "grupr";
-    $dbname = "grupr";
-    $password = "hunter2";
-    $dbc = mysqli_connect($hostname, $username, $password) OR DIE ("Unable to
-    connect to database! Please try again later.");
-    mysqli_select_db($dbc, $dbname);
-
-    $stringToReturn = "";
-    $query = "SELECT class_subject, class_number, user_id FROM classes";
-    $json_classes_array = array();
-    $result = mysqli_query($dbc, $query);
-    if($result)
-    {
-        while($row = mysqli_fetch_array($result))
-        {
-            $class_subject = $row['class_subject'];
-            $class_number = $row['class_number'];
-            $user_id = $row['user_id'];
-            $json_class_row = array('class_subject' => $class_subject, 'class_number' => $class_number, 'user_id' => $user_id);
-            array_push($json_classes_array, $json_class_row);
-        }
+$app->get('/allclasses', function ($request, $response, $args){
+    $dbc = $this->dbc;
+    $strToReturn = '';
+    $classes = '';
+    $sql = 'SELECT * FROM classes';
+    try {
+      $stmt = $dbc->query($sql);
+      $classes = $stmt->fetchAll(PDO::FETCH_OBJ);
     }
-    $stringToReturn = json_encode($json_classes_array);
+    catch(PDOException $e) {
+      echo json_encode($e->getMessage());
+    }
+    $strToReturn = json_encode($classes);
+    return $response->write('' . $strToReturn);
+  }
+);
 
-    return $response->write("" . $stringToReturn);
-});
 
 $app->get('/profile', function ($request, $response, $args)
 {
     session_start();
-    $hostname = "localhost";
-    $username = "grupr";
-    $dbname = "grupr";
-    $password = "hunter2";
-    $dbc = mysqli_connect($hostname, $username, $password) OR DIE ("Unable to
-    connect to database! Please try again later.");
-    mysqli_select_db($dbc, $dbname);
-
-    $stringToReturn = "";
-
+    $dbc = $this->dbc;
+    $stringToReturn = array();
+    $profile = "";
     $json_user_id = $_SESSION['user_id'];
     $json_email = $_SESSION['email'];
-    $json_user_info_array = array('user_id' => $json_user_id, 'email' => $json_email);
-    echo json_encode($json_user_info_array);
-    echo "<br>";
-    echo "<br>";
     // Create a query for the database
     $profile_user_id = $_SESSION['user_id'];
-    $quote = "'";
-    $profile_user_id = $quote . $profile_user_id . $quote;
-    $query = "SELECT class_subject, class_number FROM classes WHERE user_id = $profile_user_id";
-    $result = mysqli_query($dbc, $query);
-
-
-    // If the query executed properly proceed
-    if($result){
-    // $json_classes_array = array();
-
-    // mysqli_fetch_array will return a row of data from the query
-    // until no further data is available
-    while($row = mysqli_fetch_array($result)) {
-
-    $class_subject = $row['class_subject'];
-    $class_number = $row['class_number'];
-    $json_classes_array = array('class_subject' => $class_subject, 'class_number' => $class_number);
-    echo json_encode($json_classes_array);
-    echo "<br>";
-
+    $query = 'SELECT email, user_id FROM user_info WHERE user_id = :user_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $profile_user_id);
+    try{
+        $stmt->execute();
+        $profile = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
     }
-
+    array_push($stringToReturn, json_encode($profile));
+    // $strToReturn = json_encode($profile);
+    // return $response->write('' . $strToReturn);
+    $classes = "";
+    $query = "SELECT class_subject, class_number FROM classes WHERE user_id = :user_id";
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $profile_user_id);
+    try{
+        $stmt->execute();
+        $classes = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
     }
-    echo "<br>";
+    // $strToReturn = json_encode($profile);
+    array_push($stringToReturn, json_encode($classes));
 
-    $query = "SELECT first_name, last_name FROM user_info WHERE user_id = $profile_user_id";
-    $result = mysqli_query($dbc, $query);
-    if($result)
-    {
-        $row = mysqli_fetch_array($result);
-        $first_name = $row['first_name'];
-        $last_name = $row['last_name'];
-        $json_name_array = array('first_name' => $first_name, 'last_name' => $last_name);
-        echo json_encode($json_name_array);
+    $names = "";
+    $query = "SELECT first_name, last_name FROM user_info WHERE user_id = :user_id";
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $profile_user_id);
+    try{
+        $stmt->execute();
+        $names = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
     }
+    array_push($stringToReturn, json_encode($names));
+    return $response->write('' . json_encode($stringToReturn));
 
-    echo "<br>";
-
-
-    return $response->write("" . $stringToReturn);
 });
 
-// Run with curl -i -X POST -H "Content-Type: application/json"  -d '{"first_name":"John","last_name":"Cena","email":"jcena@smu.edu","password":"cena"}' p://zero-to-slim.dev/registeruser
+// Run with curl -i -X POST -H "Content-Type: application/json"  -d '{"first_name":"Sam","last_name":"Calvert","email":"scalvert@smu.edu","password":"calvert"}' http://zero-to-slim.dev/registeruser
 
 $app->post('/registeruser', function ($request, $response, $args) {
     session_start();
