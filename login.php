@@ -5,8 +5,6 @@ $id = session_id();
 $_SESSION['session_id'] = $id;
 echo $_SESSION['session_id'];
 echo "<br>";
-//usernames: 'user' and 'user2'
-//passwords: 'passoword' and 'coolcats'
  ?>
 <html>
 <head>
