@@ -4,6 +4,10 @@ Each tab's child <ion-nav-view> directive will have its own
 navigation history that also transitions its views in and out.
 -->
 <ion-tabs class="tabs-icon-top tabs-color-active-positive">
+  <!-- Login Tab -->
+  <ion-tab title="Login" icon-off="ion-log-in" icon-on="ion-log-in" href="#/tab/login">
+    <ion-nav-view name="login"></ion-nav-view>
+  </ion-tab>
 
   <!-- browse Tab -->
   <ion-tab title="Browse" icon-off="ion-ios-paper" icon-on="ion-ios-paper" href="#/tab/browse">
@@ -20,8 +24,8 @@ navigation history that also transitions its views in and out.
     <ion-nav-view name="tab-profile"></ion-nav-view>
   </ion-tab>
   
-  <!-- view all groups Tab -->
-  <ion-tab title="View All Grups" icon-off="ion-navicon-round" icon-on="ion-navicon-round" href="#/tab/ViewAllGrups">
+  <!-- My groups Tab -->
+  <ion-tab title="My Grups" icon-off="ion-ios-albums" icon-on="ion-ios-albums" href="#/tab/ViewAllGrups">
     <ion-nav-view name="tab-ViewAllGrups"></ion-nav-view>
   </ion-tab>
 
