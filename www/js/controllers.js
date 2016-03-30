@@ -31,6 +31,10 @@ angular.module('starter.controllers', [])
     if ($scope.form.password) {
       data.password = $scope.form.password;
     };
+
+    // resets the contents of the fields
+    $scope.form.email = "";
+    $scope.form.password = "";
     
     console.log(data);
 
@@ -50,6 +54,7 @@ angular.module('starter.controllers', [])
 
     // post('', data);
 
+    $state.go('tab.browse');
   }
 
   //Calls the 'register()' function, which is called when the 'Register' button
@@ -60,7 +65,7 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('RegisterCtrl', function($scope. $state) {
+.controller('RegisterCtrl', function($scope, $state) {
 	$scope.form = {};
 
 	//This function is called when the 'next >>' button is clicked at the 
@@ -71,8 +76,11 @@ angular.module('starter.controllers', [])
 	$scope.next = function() {
 		var data = {};
 
-		if ($scope.form.name) {
-		  data.name = $scope.form.name;
+		if ($scope.form.firstName) {
+		  data.firstName = $scope.form.firstName;
+		};
+		if ($scope.form.lastName) {
+		  data.lastName = $scope.form.lastName;
 		};
 		if ($scope.form.email) {
 		  data.email = $scope.form.email;

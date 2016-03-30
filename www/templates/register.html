@@ -3,8 +3,12 @@
     <h1 class="padding">Sign up for Grüpr</h1>
     <div class="list">
 	  <label class="item item-input item-floating-label">
-	    <span class="input-label">Name</span>
-	    <input type="text" placeholder="First and Last Name" ng-model="form.name">
+	    <span class="input-label">First Name</span>
+	    <input type="text" placeholder="First Name" ng-model="form.firstName">
+	  </label>
+	  <label class="item item-input item-floating-label">
+	    <span class="input-label">Last Name</span>
+	    <input type="text" placeholder="Last Name" ng-model="form.lastName">
 	  </label>
 	  <label class="item item-input item-floating-label">
 	    <span class="input-label">Email</span>
@@ -13,10 +17,6 @@
 	  <label class="item item-input item-floating-label">
 	    <span class="input-label">Password</span>
 	    <input type="password" placeholder="Password" ng-model="form.password">
-	  </label>
-	  <label class="item item-input item-floating-label">
-	    <span class="input-label">Confirm</span>
-	    <input type="password" placeholder="Confrim Password">
 	  </label>
 	  <button class="button button-block button-positive" ng-click="next()">
 	  	Next Step >>
