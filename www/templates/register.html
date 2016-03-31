@@ -1,0 +1,26 @@
+<ion-view view-title="Register">
+  <ion-content>
+    <h1 class="padding">Sign up for Grüpr</h1>
+    <div class="list">
+	  <label class="item item-input item-floating-label">
+	    <span class="input-label">First Name</span>
+	    <input type="text" placeholder="First Name" ng-model="form.firstName">
+	  </label>
+	  <label class="item item-input item-floating-label">
+	    <span class="input-label">Last Name</span>
+	    <input type="text" placeholder="Last Name" ng-model="form.lastName">
+	  </label>
+	  <label class="item item-input item-floating-label">
+	    <span class="input-label">Email</span>
+	    <input type="text" placeholder="Email" ng-model="form.email">
+	  </label>
+	  <label class="item item-input item-floating-label">
+	    <span class="input-label">Password</span>
+	    <input type="password" placeholder="Password" ng-model="form.password">
+	  </label>
+	  <button class="button button-block button-positive" ng-click="register()">
+	  	Sign Up!
+	  </button>
+	</div>
+  </ion-content>
+</ion-view>
