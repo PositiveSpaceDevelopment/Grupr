@@ -16,7 +16,7 @@ angular.module('starter.controllers', [])
   $scope.chat = Chats.get($stateParams.chatId);
 })
 
-.controller('LoginCtrl', function($scope, $state, $http) {
+.controller('LoginCtrl', function($scope, $state, $http, ProfileData) {
     $scope.form = {};
 
   //calls the login function, which puts the data entered in the login 
@@ -49,7 +49,8 @@ angular.module('starter.controllers', [])
         },
       data: data
     }).then(function(response){
-      console.log(response);
+      ProfileData.data = response.data;
+      console.log(ProfileData.data.status);
     });
 
     // post('', data);
@@ -90,6 +91,17 @@ angular.module('starter.controllers', [])
 		};
 
 		console.log(data);
+
+    $http({
+      method: 'POST',
+      url: 'http://private-fa798-grupr.apiary-mock.com/register',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function(response){
+      console.log(response);
+    });
 
 		$state.go('tab.selectClass');
 	}
