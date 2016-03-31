@@ -39,8 +39,7 @@ angular.module('starter.controllers', [])
     console.log(data);
 
 
-    //My attempt at getting http POST to work. Not sure how to test this.
-    // Ill re-visit this when I learn more about how to test it
+    // Make the POST request to the backend 
     $http({
       method: 'POST',
       url: 'http://private-fa798-grupr.apiary-mock.com/login',
@@ -61,7 +60,7 @@ angular.module('starter.controllers', [])
   // is clicked on the login page.
   //It takes the user to the Register page
   $scope.register = function() {
-    $state.go('tab.register');
+    $state.go('register');
   }
 })
 
@@ -91,6 +90,7 @@ angular.module('starter.controllers', [])
 
 		console.log(data);
 
+    // Make the POST request to the backend 
     $http({
       method: 'POST',
       url: 'http://private-fa798-grupr.apiary-mock.com/register',

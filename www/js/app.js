@@ -7,11 +7,6 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
-//factory to carry around user data
-.factory("ProfileData",function() {
-	return {data:null};
-})
-
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -45,24 +40,17 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
   // Each tab has its own nav history stack:
 
-  .state('tab.login', {
-    url: '/login',
-    views: {
-      'login': {
-        templateUrl: 'templates/login.html',
-        controller: 'LoginCtrl'
-      }
-    }
-  })
 
-  .state('tab.register', {
+  .state('login', {
+      url: '/login',
+      templateUrl: 'templates/login.html',
+      controller: 'LoginCtrl'
+    })
+
+  .state('register', {
     url: '/register',
-    views: {
-      'register': {
-        templateUrl: 'templates/register.html',
-        controller: 'RegisterCtrl'
-      }
-    }
+    templateUrl: 'templates/register.html',
+    controller: 'RegisterCtrl'
   })
 
   .state('tab.browse', {
@@ -115,6 +103,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/login');
+  $urlRouterProvider.otherwise('/login');
 
 });

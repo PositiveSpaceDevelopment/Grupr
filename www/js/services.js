@@ -1,5 +1,11 @@
 angular.module('starter.services', [])
 
+//factory to carry around user data
+.factory("ProfileData",function() {
+  return {data:null};
+})
+
+
 .factory('Chats', function() {
   // Might use a resource here that returns a JSON array
 
