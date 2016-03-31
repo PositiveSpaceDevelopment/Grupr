@@ -16,7 +16,7 @@ angular.module('starter.controllers', [])
   $scope.chat = Chats.get($stateParams.chatId);
 })
 
-.controller('LoginCtrl', function($scope, $state) {
+.controller('LoginCtrl', function($scope, $state, $http) {
     $scope.form = {};
 
   //calls the login function, which puts the data entered in the login 
@@ -39,18 +39,18 @@ angular.module('starter.controllers', [])
     console.log(data);
 
 
-    // //My attempt at getting http POST to work. Not sure how to test this.
-    // // Ill re-visit this when I learn more about how to test it
-    // $http({
-    //   method: 'POST',
-    //   url: '',
-    //   headers: {
-    //     'Content-Type': JSON
-    //     },
-    //   data: data
-    // }).then(function(){
-
-    // });
+    //My attempt at getting http POST to work. Not sure how to test this.
+    // Ill re-visit this when I learn more about how to test it
+    $http({
+      method: 'POST',
+      url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function(response){
+      console.log(response);
+    });
 
     // post('', data);
 
