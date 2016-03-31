@@ -7,6 +7,61 @@
 
 
 // Routes
+// {"first_name":"Ross"}
+$app->post('/searchuserfirstname', function ($request, $response, $args) {
+    session_start();
+    $body = $request->getBody();
+    $decode = json_decode($body);
+    $dbc = $this->dbc;
+    $first_name = $decode->first_name;
+    $query = 'SELECT first_name, last_name, user_id FROM user_info WHERE first_name LIKE :first_name';
+    $stmt = $dbc->prepare($query);
+    $like = '%';
+    $first_name = $like . $first_name . $like;
+    $stmt->bindParam(':first_name', $first_name);
+    $stmt->execute();
+    $user_info = $stmt->fetchAll(PDO::FETCH_OBJ);
+    echo json_encode($user_info);
+}
+);
+
+// {"last_name":"Johnson"}
+$app->post('/searchuserlastname', function ($request, $response, $args) {
+    session_start();
+    $body = $request->getBody();
+    $decode = json_decode($body);
+    $dbc = $this->dbc;
+    $last_name = $decode->last_name;
+    $query = 'SELECT first_name, last_name, user_id FROM user_info WHERE last_name LIKE :last_name';
+    $stmt = $dbc->prepare($query);
+    $like = '%';
+    $last_name = $like . $last_name . $like;
+    $stmt->bindParam(':last_name', $last_name);
+    $stmt->execute();
+    $user_info = $stmt->fetchAll(PDO::FETCH_OBJ);
+    echo json_encode($user_info);
+}
+);
+// {"first_name":"Ross", "last_name":"Miller"}
+$app->post('/searchuser', function ($request, $response, $args) {
+    session_start();
+    $body = $request->getBody();
+    $decode = json_decode($body);
+    $dbc = $this->dbc;
+    $first_name = $decode->first_name;
+    $last_name = $decode->last_name;
+    $query = 'SELECT first_name, last_name, user_id FROM user_info WHERE first_name LIKE :first_name AND last_name LIKE :last_name';
+    $stmt = $dbc->prepare($query);
+    $like = '%';
+    $first_name = $like . $first_name . $like;
+    $last_name = $like . $last_name . $like;
+    $stmt->bindParam(':first_name', $first_name);
+    $stmt->bindParam(':last_name', $last_name);
+    $stmt->execute();
+    $user_info = $stmt->fetchAll(PDO::FETCH_OBJ);
+    echo json_encode($user_info);
+}
+);
 
 $app->get('/allclasses', function ($request, $response, $args){
     $dbc = $this->dbc;
