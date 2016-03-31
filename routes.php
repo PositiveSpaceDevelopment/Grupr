@@ -1,9 +1,9 @@
 <?php
 
 //Questions:
-//What is the difference between doing it /test, and /login?
 //How can I use sessions in routes?
 //Can you look at our ER diagram and come up wiht some critiques?
+//After you log someone in, can you go to the api call /profile?
 
 
 // Routes
@@ -25,20 +25,26 @@ $app->get('/allclasses', function ($request, $response, $args){
   }
 );
 
-
-$app->get('/profile', function ($request, $response, $args)
+$app->post('/profile', function ($request, $response, $args)
 {
     session_start();
     $dbc = $this->dbc;
     $stringToReturn = array();
-    $profile = "";
-    $json_user_id = $_SESSION['user_id'];
-    $json_email = $_SESSION['email'];
-    // Create a query for the database
-    $profile_user_id = $_SESSION['user_id'];
-    $query = 'SELECT email, user_id FROM user_info WHERE user_id = :user_id';
+    $body = $request->getBody();
+    $decode = json_decode($body);
+    $email = $decode->email;
+
+    $query = 'SELECT user_id FROM user_info WHERE email = :email LIMIT 1';
+    $dbc = $this->dbc;
     $stmt = $dbc->prepare($query);
-    $stmt->bindParam(':user_id', $profile_user_id);
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+    $user_id = $stmt->fetch(PDO::FETCH_ASSOC);
+    $profile_user_id = $user_id["user_id"];
+
+    $query = 'SELECT email, user_id FROM user_info WHERE email = :email';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':email', $email);
     try{
         $stmt->execute();
         $profile = $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -46,10 +52,9 @@ $app->get('/profile', function ($request, $response, $args)
         echo json_encode($e->getMessage());
     }
     array_push($stringToReturn, json_encode($profile));
-    // $strToReturn = json_encode($profile);
-    // return $response->write('' . $strToReturn);
+
     $classes = "";
-    $query = "SELECT class_subject, class_number FROM classes WHERE user_id = :user_id";
+    $query = 'SELECT class_subject, class_number FROM classes WHERE user_id = :user_id';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $profile_user_id);
     try{
@@ -58,7 +63,6 @@ $app->get('/profile', function ($request, $response, $args)
     } catch(PDOException $e) {
         echo json_encode($e->getMessage());
     }
-    // $strToReturn = json_encode($profile);
     array_push($stringToReturn, json_encode($classes));
 
     $names = "";
@@ -72,36 +76,14 @@ $app->get('/profile', function ($request, $response, $args)
         echo json_encode($e->getMessage());
     }
     array_push($stringToReturn, json_encode($names));
-    return $response->write('' . json_encode($stringToReturn));
+    echo json_encode($stringToReturn);
+    // return $response->write('' . json_encode($stringToReturn));
 
 });
 
-// Run with curl -i -X POST -H "Content-Type: application/json"  -d '{"first_name":"Sam","last_name":"Calvert","email":"scalvert@smu.edu","password":"calvert"}' http://zero-to-slim.dev/registeruser
 
-// $app->post('/registeruser', function ($request, $response, $args) {
-//     session_start();
-//     $id = session_id();
-//     $_SESSION['session_id'] = $id;
-//     $body = $request->getBody();
-//     $decode = json_decode($body);
-//     $hostname = "localhost";
-//     $username = "grupr";
-//     $dbname = "grupr";
-//     $password = "hunter2";
-//     $dbc = mysqli_connect($hostname, $username, $password) OR DIE ("Unable to
-//     connect to database! Please try again later.");
-//     mysqli_select_db($dbc, $dbname);
-//     $salt = generateRandomString();
-//     $password = $decode->password;
-//     $password = crypt($password, $salt);
-//     $stringToReturn = "";
-//     $query = "INSERT INTO user_info (email, password, session_id, first_name, last_name, salt) VALUES (?,?,?,?,?,?)";
-//     $stmt = mysqli_prepare($dbc, $query);
-//     mysqli_stmt_bind_param($stmt, 'ssssss', $decode->email, $password, $_SESSION['session_id'], $decode->first_name, $decode->last_name, $salt);
-//     mysqli_stmt_execute($stmt);
-//     mysqli_stmt_close($stmt);
-// }
-// );
+
+// Run with curl -i -X POST -H "Content-Type: application/json"  -d '{"first_name":"Sam","last_name":"Calvert","email":"scalvert@smu.edu","password":"calvert"}' http://zero-to-slim.dev/registeruser
 
 $app->post('/registeruser', function ($request, $response, $args) {
     session_start();
@@ -110,13 +92,6 @@ $app->post('/registeruser', function ($request, $response, $args) {
     $body = $request->getBody();
     $decode = json_decode($body);
     $dbc = $this->dbc;
-    // $hostname = "localhost";
-    // $username = "grupr";
-    // $dbname = "grupr";
-    // $password = "hunter2";
-    // $dbc = mysqli_connect($hostname, $username, $password) OR DIE ("Unable to
-    // connect to database! Please try again later.");
-    // mysqli_select_db($dbc, $dbname);
     $salt = generateRandomString();
     $password = $decode->password;
     $password = crypt($password, $salt);
@@ -149,6 +124,55 @@ $app->get('/salt', function ($request, $response, $args) {
     return $response->write('' . $salt_to_return);
 });
 
+$app->get('/profile', function ($request, $response, $args)
+{
+    session_start();
+    $dbc = $this->dbc;
+    $stringToReturn = array();
+    $profile = "";
+    // $json_user_id = $_SESSION['user_id'];
+    // $json_email = $_SESSION['email'];
+    echo $json_user_id;
+    echo "<br>";
+    // Create a query for the database
+    $profile_user_id = $_SESSION['user_id'];
+    $query = 'SELECT email, user_id FROM user_info WHERE user_id = :user_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $profile_user_id);
+    try{
+        $stmt->execute();
+        $profile = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+    array_push($stringToReturn, json_encode($profile));
+    $classes = "";
+    $query = "SELECT class_subject, class_number FROM classes WHERE user_id = :user_id";
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $profile_user_id);
+    try{
+        $stmt->execute();
+        $classes = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+    array_push($stringToReturn, json_encode($classes));
+
+    $names = "";
+    $query = "SELECT first_name, last_name FROM user_info WHERE user_id = :user_id";
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $profile_user_id);
+    try{
+        $stmt->execute();
+        $names = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+    array_push($stringToReturn, json_encode($names));
+    return $response->write('' . json_encode($stringToReturn));
+
+});
+
 $app->get('/password', function ($request, $response, $args) {
     $query = 'SELECT password FROM user_info WHERE email = :email LIMIT 1';
     $dbc = $this->dbc;
@@ -174,8 +198,6 @@ $app->get('/user_id', function ($request, $response, $args) {
     $user_id = $stmt->fetch(PDO::FETCH_ASSOC);
     $user_id_to_return = json_encode($user_id);
     $user_id = $user_id["user_id"];
-    echo $user_id;
-    echo "<br>";
     return $response->write('' . $user_id_to_return);
 });
 
@@ -188,16 +210,6 @@ $app->post('/login', function ($request, $response, $args) {
     $dbc = $this->dbc;
     $email = $decode->email;
     $password = $decode->password;
-    echo $email;
-    echo "email<br>";
-    echo $password;
-    echo "password<br>";
-    // $stringToReturn = "";
-    // $query = "INSERT INTO user_info (email, password, session_id, first_name, last_name, salt) VALUES (?,?,?,?,?,?)";
-    // $stmt = mysqli_prepare($dbc, $query);
-    // mysqli_stmt_bind_param($stmt, 'ssssss', $decode->email, $password, $_SESSION['session_id'], $decode->first_name, $decode->last_name, $salt);
-    // mysqli_stmt_execute($stmt);
-    // mysqli_stmt_close($stmt);
     if(login($email, $password, $dbc) == true)
     {
         $_SESSION['email'] = $email;
@@ -206,19 +218,10 @@ $app->post('/login', function ($request, $response, $args) {
         $stmt->bindParam(':session_id', $_SESSION['session_id']);
         $stmt->bindParam(':email', $_SESSION['email']);
         $stmt->execute();
-        // $stmt = mysqli_prepare($dbc, "UPDATE user_info SET session_id = ? WHERE email = ?");
-        // mysqli_stmt_bind_param($stmt, 'ss', $_SESSION['session_id'], $_SESSION['email']);
-        // mysqli_stmt_execute($stmt);
-        // mysqli_stmt_close($stmt);
-        // how do I set the timezone to my timezone
         $query = 'UPDATE user_info SET last_login = now() WHERE email = :email';
         $stmt2 = $dbc->prepare($query);
         $stmt2->bindParam(':email', $_SESSION['email']);
         $stmt2->execute();
-        // $stmt = mysqli_prepare($dbc, "UPDATE user_info SET last_login = now() WHERE email = ?");
-        // mysqli_stmt_bind_param($stmt, 's', $_SESSION['email']);
-        // mysqli_stmt_execute($stmt);
-        // mysqli_stmt_close($stmt);
         $query = 'SELECT user_id FROM user_info WHERE session_id = :session_id AND email = :email';
         $stmt3 = $dbc->prepare($query);
         $stmt3->bindParam(':session_id', $_SESSION['session_id']);
@@ -226,16 +229,53 @@ $app->post('/login', function ($request, $response, $args) {
         $stmt3->execute();
         $user_id = $stmt3->fetch(PDO::FETCH_ASSOC);
         $user_id = $user_id["user_id"];
-        echo $user_id;
-        echo "userid<br>";
-
-        // $stmt = mysqli_prepare($dbc, "SELECT user_id FROM user_info WHERE session_id = ? AND email = ?");
-        // mysqli_stmt_bind_param($stmt, 'ss', $_SESSION['session_id'], $_SESSION['email']);
-        // mysqli_stmt_execute($stmt);
-        // mysqli_stmt_bind_result($stmt, $user_id);
-        // mysqli_stmt_fetch($stmt);
-        // mysqli_stmt_close($stmt);
         $_SESSION['user_id'] = $user_id;
+
+        $stringToReturn = array();
+
+        $query = 'SELECT user_id FROM user_info WHERE email = :email LIMIT 1';
+        $dbc = $this->dbc;
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        $user_id = $stmt->fetch(PDO::FETCH_ASSOC);
+        $profile_user_id = $user_id["user_id"];
+
+        $query = 'SELECT email, user_id FROM user_info WHERE email = :email';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':email', $email);
+        try{
+            $stmt->execute();
+            $profile = $stmt->fetchAll(PDO::FETCH_OBJ);
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+        array_push($stringToReturn, json_encode($profile));
+
+        $classes = "";
+        $query = 'SELECT class_subject, class_number FROM classes WHERE user_id = :user_id';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':user_id', $profile_user_id);
+        try{
+            $stmt->execute();
+            $classes = $stmt->fetchAll(PDO::FETCH_OBJ);
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+        array_push($stringToReturn, json_encode($classes));
+
+        $names = "";
+        $query = "SELECT first_name, last_name FROM user_info WHERE user_id = :user_id";
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':user_id', $profile_user_id);
+        try{
+            $stmt->execute();
+            $names = $stmt->fetchAll(PDO::FETCH_OBJ);
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+        array_push($stringToReturn, json_encode($names));
+        echo json_encode($stringToReturn);
     } else {
         echo "login failed";
     }

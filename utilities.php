@@ -33,14 +33,10 @@ function login($login_email, $login_password, $login_dbc) {
     // Using prepared statements means that SQL injection is not possible.
     $query = 'SELECT salt FROM user_info WHERE email = :email LIMIT 1';
     $stmt = $login_dbc->prepare($query);
-    echo $login_email;
-    echo "login_email<br>";
     $stmt->bindParam(':email', $login_email);
     $stmt->execute();
     $salt = $stmt->fetch(PDO::FETCH_ASSOC);
     $salt = $salt["salt"];
-    echo $salt;
-    echo "salt<br>";
     // $salt = $stmt->fetchColumn();
     // $stmt = mysqli_prepare($login_dbc, "SELECT salt FROM user_info WHERE email = ? LIMIT 1");
     // mysqli_stmt_bind_param($stmt, 's', $login_email);
@@ -54,12 +50,8 @@ function login($login_email, $login_password, $login_dbc) {
     $stmt2->execute();
     $db_password = $stmt2->fetch(PDO::FETCH_ASSOC);
     $db_password = $db_password["password"];
-    echo $db_password;
-    echo "db pass<br>";
 
     $hashed_login_password = crypt($login_password, $salt);
-    echo $hashed_login_password;
-    echo "hashedpass<br>";
     // $stmt = mysqli_prepare($login_dbc, "SELECT password
     //                                     FROM user_info
     //                                     WHERE email = ?
@@ -80,3 +72,4 @@ function login($login_email, $login_password, $login_dbc) {
     }
 
 }
+?>
