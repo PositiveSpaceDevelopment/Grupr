@@ -39,8 +39,12 @@ angular.module('starter.controllers', [])
     console.log(data);
 
 
+<<<<<<< HEAD
+    // Make the POST request to the backend 
+=======
     //My attempt at getting http POST to work. Not sure how to test this.
     // Ill re-visit this when I learn more about how to test it
+>>>>>>> origin/Trevor
     $http({
       method: 'POST',
       url: 'http://private-fa798-grupr.apiary-mock.com/login',
@@ -50,7 +54,12 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
       ProfileData.data = response.data;
+<<<<<<< HEAD
+      console.log(ProfileData.data.email);
+
+=======
       console.log(ProfileData.data.classes[0].class_subject);
+>>>>>>> origin/Trevor
        $state.go('tab.browse');
     });
 
@@ -60,7 +69,11 @@ angular.module('starter.controllers', [])
   // is clicked on the login page.
   //It takes the user to the Register page
   $scope.register = function() {
+<<<<<<< HEAD
+    $state.go('register');
+=======
     $state.go('tab.register');
+>>>>>>> origin/Trevor
   }
 })
 
@@ -90,6 +103,10 @@ angular.module('starter.controllers', [])
 
 		console.log(data);
 
+<<<<<<< HEAD
+    // Make the POST request to the backend 
+=======
+>>>>>>> origin/Trevor
     $http({
       method: 'POST',
       url: 'http://private-fa798-grupr.apiary-mock.com/register',
@@ -107,6 +124,12 @@ angular.module('starter.controllers', [])
 	}
 })
 
+<<<<<<< HEAD
+.controller('ProfileCtrl', function($scope) {
+  $scope.settings = {
+    enableFriends: true
+  };
+=======
 .controller('ProfileCtrl', function($scope,ProfileData) {
   $scope.form = {};
   $scope.first_name = ProfileData.data.first_name;
@@ -114,4 +137,5 @@ angular.module('starter.controllers', [])
   $scope.email = ProfileData.data.email;
   $scope.user_id = ProfileData.data.user_id;
   $scope.classes = ProfileData.data.classes;
+>>>>>>> origin/Trevor
 });

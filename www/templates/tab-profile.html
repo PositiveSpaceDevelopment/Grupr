@@ -1,9 +1,8 @@
-<ion-view view-title="Profile">
+<ion-view view-title="{{first_name}} {{last_name}}">
   <ion-content>
     <ion-list>
-    <ion-toggle  ng-model="settings.enableFriends">
-        Enable Friends
-    </ion-toggle>
+    <ion-toggle  ng-model="settings.enableFriends" ng-repeat = "class in classes">
+       {{class.class_subject}} {{class.class_number}}
     </ion-list>
   </ion-content>
 </ion-view>
