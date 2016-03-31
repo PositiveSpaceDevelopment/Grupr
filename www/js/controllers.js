@@ -48,14 +48,13 @@ angular.module('starter.controllers', [])
         'Content-Type': 'application/json'
         },
       data: data
-    }).then(function(response){
+    }).then(function successCallback(response){
       ProfileData.data = response.data;
-      console.log(ProfileData.data.status);
+      console.log(ProfileData.data.email);
+
+       $state.go('tab.browse');
     });
 
-    // post('', data);
-
-    $state.go('tab.browse');
   }
 
   //Calls the 'register()' function, which is called when the 'Register' button
@@ -66,7 +65,7 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('RegisterCtrl', function($scope, $state) {
+.controller('RegisterCtrl', function($scope, $state, $http, ProfileData) {
 	$scope.form = {};
 
 	//This function is called when the 'next >>' button is clicked at the 
@@ -74,7 +73,7 @@ angular.module('starter.controllers', [])
 	// 1) stores the data entered on the screen into the 'data' object
 	// 2) advances the user to the Select Classes screen. This ensures that 
 	//    the user is not able to complete registration without selecting classes
-	$scope.next = function() {
+	$scope.register = function() {
 		var data = {};
 
 		if ($scope.form.firstName) {
@@ -99,11 +98,13 @@ angular.module('starter.controllers', [])
         'Content-Type': 'application/json'
         },
       data: data
-    }).then(function(response){
-      console.log(response);
+    }).then(function successCallback(response){
+      ProfileData.data = response.data;
+      console.log(ProfileData.data.email);
+
+      $state.go('tab.profile');
     });
 
-		$state.go('tab.selectClass');
 	}
 })
 
