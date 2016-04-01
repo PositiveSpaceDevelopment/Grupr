@@ -5,7 +5,7 @@
 1. Upload the sql file FROM the local machine to the server using the following command:
 
 <code>
-scp <pathToFile/createDatabase.sql> <server address>
+scp &ltpathToFile/createDatabase.sql&gt &ltserver address&gt
 </code>
 
 2. From your server, run the following command to execute the sql scrippity-script file
