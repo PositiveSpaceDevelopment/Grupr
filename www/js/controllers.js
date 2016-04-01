@@ -42,14 +42,15 @@ angular.module('starter.controllers', [])
     // Makes the POST http request
     $http({
       method: 'POST',
-      url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      url: 'http://54.213.15.90/login',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
     }).then(function successCallback(response){
       ProfileData.data = response.data;
-      console.log(ProfileData.data.classes[0].class_subject);
+      console.log(ProfileData.data.email);
        $state.go('tab.browse');
     });
 
@@ -74,11 +75,11 @@ angular.module('starter.controllers', [])
 	$scope.register = function() {
 		var data = {};
 
-		if ($scope.form.firstName) {
-		  data.firstName = $scope.form.firstName;
+		if ($scope.form.first_name) {
+		  data.first_name = $scope.form.first_name;
 		};
-		if ($scope.form.lastName) {
-		  data.lastName = $scope.form.lastName;
+		if ($scope.form.last_name) {
+		  data.last_name = $scope.form.last_name;
 		};
 		if ($scope.form.email) {
 		  data.email = $scope.form.email;
@@ -92,7 +93,8 @@ angular.module('starter.controllers', [])
     // Makes the POST http request
     $http({
       method: 'POST',
-      url: 'http://private-fa798-grupr.apiary-mock.com/register',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/register',
+      url: 'http://54.213.15.90/registeruser',
       headers: {
         'Content-Type': 'application/json'
         },
