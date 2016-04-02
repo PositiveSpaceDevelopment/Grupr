@@ -166,7 +166,25 @@ $app->post('/registeruser', function ($request, $response, $args) {
 }
 );
 
-//{"user_id": "1", group_name":"Teddy's study buddies", "description": "stupid people trying to learn good", "class_subject": "CSE", "class_number": "1341", "semester": "Spring 2016", "building": "Junkins", "room": "110"}
+// {"user_id": "3", "group_id": "1"}
+$app->post('/joingroup', function ($request, $response, $args) {
+    session_start();
+    $body = $request->getBody();
+    $decode = json_decode($body);
+    $dbc = $this->dbc;
+    $user_id = $decode->user_id;
+    $group_id = $decode->group_id;
+
+    $query = 'INSERT INTO members (user_id, group_id, time_joined) VALUES (:user_id, :group_id, now())';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->bindParam(':group_id', $group_id);
+    $stmt->execute();
+
+}
+);
+
+//{"user_id": "1", "group_name":"Teddy's study buddies", "time_of_meeting": "2016-04-15 19:00:00", "description": "stupid people trying to learn good", "class_subject": "CSE", "class_number": "1341", "semester": "Spring 2016", "building": "Junkins", "room": "110"}
 $app->post('/creategroup', function ($request, $response, $args) {
     session_start();
     $body = $request->getBody();
@@ -174,6 +192,7 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $dbc = $this->dbc;
     $user_id = $decode->user_id;
     $group_name = $decode->group_name;
+    $time_of_meeting = $decode->time_of_meeting;
     $description = $decode->description;
     $class_subject = $decode->class_subject;
     $class_number = $decode->class_number;
@@ -190,8 +209,7 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $stmt->execute();
     $location_id = $stmt->fetch(PDO::FETCH_ASSOC);
     $location_id = $location_id["location_id"];
-    // echo $location_id;
-        //class_id
+    //     //class_id
     $query = 'SELECT class_id FROM classes WHERE class_subject = :class_subject AND class_number = :class_number AND semester = :semester';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':class_subject', $class_subject);
@@ -200,18 +218,36 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $stmt->execute();
     $class_id = $stmt->fetch(PDO::FETCH_ASSOC);
     $class_id = $class_id["class_id"];
-        //owner_id
-        //owner_id is user_id since a group only gets created once, whoever is logged on and creates it will be the one that creates the group
-        //time_of_meeting
-    $query = 'INSERT INTO groups (group_name, description, creation_time, owner_id, class_id, location_id) VALUES (:group_name, :description, now(), :owner_id, :class_id, :location_id)';
+    //     //owner_id
+    //     //owner_id is user_id since a group only gets created once, whoever is logged on and creates it will be the one that creates the group
+    //     //time_of_meeting
+    $query = 'INSERT INTO groups (group_name, time_of_meeting, description, creation_time, owner_id, class_id, location_id) VALUES (:group_name, :time_of_meeting, :description, now(), :owner_id, :class_id, :location_id)';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':group_name', $group_name);
+    $stmt->bindParam(':time_of_meeting', $time_of_meeting);
     $stmt->bindParam(':description', $description);
     $stmt->bindParam(':owner_id', $user_id);
     $stmt->bindParam(':class_id', $class_id);
     $stmt->bindParam(':location_id', $location_id);
     $stmt->execute();
 
+    $query = 'SELECT group_id FROM groups WHERE group_name = :group_name AND time_of_meeting = :time_of_meeting AND description = :description AND owner_id = :owner_id AND class_id = :class_id AND location_id = :location_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':group_name', $group_name);
+    $stmt->bindParam(':time_of_meeting', $time_of_meeting);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':owner_id', $user_id);
+    $stmt->bindParam(':class_id', $class_id);
+    $stmt->bindParam(':location_id', $location_id);
+    $stmt->execute();
+    $group_id = $stmt->fetch(PDO::FETCH_ASSOC);
+    $group_id = $group_id["group_id"];
+
+    $query = 'INSERT INTO members (user_id, group_id, time_joined) VALUES (:user_id, :group_id, now())';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->bindParam(':group_id', $group_id);
+    $stmt->execute();
 
     //set response vairables {email, user_id, first_name, last_name};
 }
