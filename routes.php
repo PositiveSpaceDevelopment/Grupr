@@ -3,7 +3,10 @@
 //Questions:
 //How can I use sessions in routes?
 //Can you look at our ER diagram and come up wiht some critiques?
-//After you log someone in, can you go to the api call /profile?
+//How do you like a url to a ip address
+//How secure does our mobile app have to be?
+    // I have found it difficult to use sesison ID's in routes...
+
 
 
 // Routes
@@ -159,25 +162,63 @@ $app->post('/registeruser', function ($request, $response, $args) {
     $stmt->bindParam(':last_name', $decode->last_name);
     $stmt->bindParam(':salt', $salt);
     $stmt->execute();
+    //set response vairables {email, user_id, first_name, last_name};
 }
 );
 
-// Run with curl -i -X POST -H "Content-Type: application/json"  -d '{"email":"rmiller@smu.edu","password":"miller"}' http://zero-to-slim.dev/login
-
-$app->get('/salt', function ($request, $response, $args) {
-    $query = 'SELECT salt FROM user_info WHERE email = :email LIMIT 1';
+//{"user_id": "1", group_name":"Teddy's study buddies", "description": "stupid people trying to learn good", "class_subject": "CSE", "class_number": "1341", "semester": "Spring 2016", "building": "Junkins", "room": "110"}
+$app->post('/creategroup', function ($request, $response, $args) {
+    session_start();
+    $body = $request->getBody();
+    $decode = json_decode($body);
     $dbc = $this->dbc;
+    $user_id = $decode->user_id;
+    $group_name = $decode->group_name;
+    $description = $decode->description;
+    $class_subject = $decode->class_subject;
+    $class_number = $decode->class_number;
+    $semester = $decode->semester;
+    $building = $decode->building;
+    $room = $decode->room;
+    //what i need?
+        //location_id
+
+    $query = 'SELECT location_id FROM locations WHERE building = :building AND room = :room';
     $stmt = $dbc->prepare($query);
-    $login_email = "aterra@smu.edu";
-    $stmt->bindParam(':email', $login_email);
+    $stmt->bindParam(':building', $building);
+    $stmt->bindParam(':room', $room);
     $stmt->execute();
-    $salt = $stmt->fetch(PDO::FETCH_ASSOC);
-    $salt_to_return = json_encode($salt);
-    $salt = $salt["salt"];
-    echo $salt;
-    echo "<br>";
-    return $response->write('' . $salt_to_return);
-});
+    $location_id = $stmt->fetch(PDO::FETCH_ASSOC);
+    $location_id = $location_id["location_id"];
+    // echo $location_id;
+        //class_id
+    $query = 'SELECT class_id FROM classes WHERE class_subject = :class_subject AND class_number = :class_number AND semester = :semester';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':class_subject', $class_subject);
+    $stmt->bindParam(':class_number', $class_number);
+    $stmt->bindParam(':semester', $semester);
+    $stmt->execute();
+    $class_id = $stmt->fetch(PDO::FETCH_ASSOC);
+    $class_id = $class_id["class_id"];
+        //owner_id
+        //owner_id is user_id since a group only gets created once, whoever is logged on and creates it will be the one that creates the group
+        //time_of_meeting
+    $query = 'INSERT INTO groups (group_name, description, creation_time, owner_id, class_id, location_id) VALUES (:group_name, :description, now(), :owner_id, :class_id, :location_id)';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':group_name', $group_name);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':owner_id', $user_id);
+    $stmt->bindParam(':class_id', $class_id);
+    $stmt->bindParam(':location_id', $location_id);
+    $stmt->execute();
+
+
+    //set response vairables {email, user_id, first_name, last_name};
+}
+);
+
+
+// Run with curl -i -X POST -H "Content-Type: application/json"  -d '{"email":"rmiller@smu.edu","password":"miller"}' http://zero-to-slim.dev/login
 
 $app->get('/profile', function ($request, $response, $args)
 {
@@ -226,21 +267,6 @@ $app->get('/profile', function ($request, $response, $args)
     array_push($stringToReturn, json_encode($names));
     return $response->write('' . json_encode($stringToReturn));
 
-});
-
-$app->get('/password', function ($request, $response, $args) {
-    $query = 'SELECT password FROM user_info WHERE email = :email LIMIT 1';
-    $dbc = $this->dbc;
-    $stmt = $dbc->prepare($query);
-    $login_email = "aterra@smu.edu";
-    $stmt->bindParam(':email', $login_email);
-    $stmt->execute();
-    $db_password = $stmt->fetch(PDO::FETCH_ASSOC);
-    $pass_to_return = json_encode($db_password);
-    $db_password = $db_password["password"];
-    echo $db_password;
-    echo "<br>";
-    return $response->write('' . $pass_to_return);
 });
 
 $app->get('/user_id', function ($request, $response, $args) {
