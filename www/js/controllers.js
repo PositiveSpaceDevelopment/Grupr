@@ -8,7 +8,57 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('addClassCtrl', function($scope) {
+.controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
+  $scope.form = {};
+
+  $scope.createGrup = function() {
+    var data = {};
+
+    data.user_id = ProfileData.data.user_id;
+
+    if ($scope.form.group_name) {
+      data.group_name = $scope.form.group_name;
+    };
+
+    // TODO: The controller will not recognize when a dropdown menu item is selected
+    // It keeps saying its undefined even though I select an option
+    if ($scope.form.location) {
+      data.building = $scope.form.location;
+    };
+    if ($scope.form.location_details) {
+      data.location_details = $scope.form.location_details;
+    };
+
+    // TODO: This date/time thing needs to be fixed for proper format
+    // and data entry
+    if ($scope.form.meeting_time) {
+      data.time_of_meeting = $scope.form.date;
+    };
+    if ($scope.form.description) {
+      data.description = $scope.form.description;
+    };
+    
+    // TODO: This is dummy data until we figure out how to 
+    // pull in the correct information about classes
+    data.class_subject = "CSE";
+    data.class_number = "1341";
+
+    console.log(data);
+
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      url: 'http://private-fa798-grupr.apiary-mock.com/creategrup',
+      // url: 'http://54.213.15.90/creategrup',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      console.log("Status: " + response.data.status);
+    });
+
+  }
   
 })
 
@@ -51,6 +101,7 @@ angular.module('starter.controllers', [])
     }).then(function successCallback(response){
       ProfileData.data = response.data;
       console.log(ProfileData.data.email);
+      console.log(ProfileData.data.user_id);
        $state.go('tab.browse');
     });
 

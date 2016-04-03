@@ -63,12 +63,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
-  .state('tab.addClass', {
-      url: '/addClass',
+  .state('tab.createGroup', {
+      url: '/createGroup',
       views: {
-        'tab-addClass': {
-          templateUrl: 'templates/tab-addClass.html',
-          controller: 'addClassCtrl'
+        'tab-createGroup': {
+          templateUrl: 'templates/tab-createGroup.html',
+          controller: 'createGroupCtrl'
         }
       }
     })

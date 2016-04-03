@@ -1,0 +1,48 @@
+<ion-view view-title="Create a Grüp">
+   <ion-content class="padding">
+    <label class="item item-input">
+      <input type="text" placeholder="What's Your Grüp Name?" ng-model="form.group_name">
+    </label>
+    <div class="list">
+      <label class="item item-input item-select">
+        <div class="input-label">Class: </div>
+        <select>
+          <option selected>-- Select --</option>
+          <option>CSE 1341</option>
+          <option>CSE 3330</option>
+          <option>ME 4357</option>
+        </select>
+      </label>
+      <label class="item item-input item-select">
+        <div class="input-label">
+          Location: 
+        </div>
+        <select>
+          <option ng-model="form.location" value="" selected>-- Select --</option>
+          <option ng-model="form.location" value="Fondren Library">Fondren Library</option>
+          <option ng-model="form.location" value="Junkins">Junkins</option>
+          <option ng-model="form.location" value="Starbucks - Hillcrest">Starbucks - Hillcrest</option>
+          <option ng-model="form.location" value="Starbucks - Mockingbird">Starbucks - Mockingbird</option>
+        </select>
+      </label>
+      <label class="item item-input">
+        <textarea placeholder="Details. List any important details about where you are studying" ng-model="form.location_details"></textarea>
+      </label>
+      <label class="item item-input">
+        <div class="input-label">Date: </div>
+        <input type="date" ng-model="form.date"></input>
+      </label>
+      <label class="item item-input">
+        <div class="input-label">Time: </div>
+        <input type="time" ng-model="form.meeting_time"></input>
+      </label>
+      <label class="item item-input item-stacked-label">
+        <div class="input-label">Description: </div>
+        <textarea placeholder="What will you be studying? Topics, chapters, etc" ng-model="form.description"></textarea>
+      </label>
+      <label class="item">
+        <button class="button button-block button-positive" ng-click="createGrup()">Create!</button>
+      </label>
+    </div>
+  </ion-content>
+</ion-view>
