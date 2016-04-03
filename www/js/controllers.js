@@ -42,8 +42,8 @@ angular.module('starter.controllers', [])
     // Makes the POST http request
     $http({
       method: 'POST',
-      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      url: 'http://54.213.15.90/login',
+      url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      // url: 'http://54.213.15.90/login',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -93,8 +93,8 @@ angular.module('starter.controllers', [])
     // Makes the POST http request
     $http({
       method: 'POST',
-      // url: 'http://private-fa798-grupr.apiary-mock.com/register',
-      url: 'http://54.213.15.90/registeruser',
+      url: 'http://private-fa798-grupr.apiary-mock.com/register',
+      // url: 'http://54.213.15.90/registeruser',
       headers: {
         'Content-Type': 'application/json'
         },

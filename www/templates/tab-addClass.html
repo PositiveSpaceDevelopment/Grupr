@@ -1,13 +1,48 @@
 <ion-view view-title="Add Class">
    <ion-content class="padding">
-    <h2>Welcome to Add Class</h2>
-    <p>
-    </p>
-    <p>
-    </p>
-    <p>
-    </p>
-    <p>
-    </p>
+    <label class="item item-input">
+      <input type="text" placeholder="What's Your Grüp Name?">
+    </label>
+    <div class="list">
+      <label class="item item-input item-select">
+        <div class="input-label">Class: </div>
+        <select>
+          <option selected>-- Select --</option>
+          <option>CSE 1341</option>
+          <option>CSE 3330</option>
+          <option>ME 4357</option>
+        </select>
+      </label>
+      <label class="item item-input item-select">
+        <div class="input-label">
+          Location: 
+        </div>
+        <select>
+          <option selected>-- Select --</option>
+          <option>Fondren Library</option>
+          <option>Caruth Hall</option>
+          <option>Starbucks - Hillcrest</option>
+          <option>Starbucks - Mockingbird</option>
+        </select>
+      </label>
+      <label class="item item-input">
+        <textarea placeholder="Details. List any important details about where you are studying"></textarea>
+      </label>
+      <label class="item item-input">
+        <div class="input-label">Date: </div>
+        <input type="date"></input>
+      </label>
+      <label class="item item-input">
+        <div class="input-label">Time: </div>
+        <input type="time"></input>
+      </label>
+      <label class="item item-input item-stacked-label">
+        <div class="input-label">Description: </div>
+        <textarea placeholder="What will you be studying? Topics, chapters, etc"></textarea>
+      </label>
+      <label class="item">
+        <button class="button button-block button-positive" type="submit">Create!</button>
+      </label>
+    </div>
   </ion-content>
 </ion-view>
