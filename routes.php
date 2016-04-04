@@ -411,3 +411,50 @@ $app->get('/hello', function ($request, $response, $args) {
 $app->get('/goodbye', function ($request, $response, $args) {
     return $response->write("Time to go. Goodbye!");
 });
+
+$app->post('/leavegroup', function($request, $response, $args) {
+    session_start();
+    $body = $request->getBody();
+    $dbc = $this->dbc;
+    $user_id = $decode->user_id;
+    $group_id = $decode->group_id;
+    $owner_id = $decode->owner_id;
+
+    //if the owner is the one who deleted group AND
+    //the group is now empty, delete the group (I think)
+        //user_info.user_id is probably wrong...
+    $query = 'SELECT owner_id FROM groups WHERE user_info.user_id = owner_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->execute();
+    //if the query returns null, then the user leaving the group is NOT the creator
+    if(mysql_num_rows($query) == 0)
+    {
+        try
+        {
+            $query = 'DELETE FROM groups WHERE group_id = :group_id';
+            $stmt = $dbc->prepare($query);
+            $stmt->bindParam(':group_id', $group_id);
+            $stmt->execute();
+        }
+        catch(PDOException $e)
+        {
+            echo json_encode($e->getMessage());
+        }
+    }
+    else
+    {
+        //delete member from group
+        try
+        {
+            $query = 'DELETE FROM members WHERE user_id = :user_id';
+            $stmt = $dbc->prepare($query);
+            $stmt->bindParam(':user_id', $user_id);
+
+            $stmt->execute();
+        }
+        catch(PDOException $e) {
+          echo json_encode($e->getMessage());
+        }
+    }
+}
+);
