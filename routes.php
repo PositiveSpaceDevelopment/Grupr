@@ -458,3 +458,23 @@ $app->post('/leavegroup', function($request, $response, $args) {
     }
 }
 );
+ // {"user_id": "1", "password": "hunter2"}
+$app->post('/resetpassword', function ($request, $response, $args) {
+    session_start();
+    $body = $request->getBody();
+    $decode = json_decode($body);
+    $dbc = $this->dbc;
+    $user_id = $decode->user_id;
+    $password = $decode->password;
+    $salt = generateRandomString();
+    $db_pass = crypt($password, $salt);
+    $query = 'UPDATE user_info SET password = :db_pass, salt = :salt WHERE user_id = :user_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':db_pass', $db_pass);
+    $stmt->bindParam(':salt', $salt);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->execute();
+
+
+}
+);
