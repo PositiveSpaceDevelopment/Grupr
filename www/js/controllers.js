@@ -19,9 +19,6 @@ angular.module('starter.controllers', [])
     if ($scope.form.group_name) {
       data.group_name = $scope.form.group_name;
     };
-
-    // TODO: The controller will not recognize when a dropdown menu item is selected
-    // It keeps saying its undefined even though I select an option
     if ($scope.form.location) {
       data.building = $scope.form.location;
     };
@@ -38,10 +35,14 @@ angular.module('starter.controllers', [])
       data.description = $scope.form.description;
     };
     
-    // TODO: This is dummy data until we figure out how to 
-    // pull in the correct information about classes
-    data.class_subject = "CSE";
-    data.class_number = "1341";
+    // TODO: Use a regex function thing for this
+    // Grabs the class subject and number from the input
+    // and splits it up and stores it as class subject and number
+    var tempName = $scope.form.class_name;
+    var nameNum = tempName.split(" ");
+
+    data.class_subject = nameNum[0];
+    data.class_number = nameNum[1];
 
     console.log(data);
 

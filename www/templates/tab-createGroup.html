@@ -1,33 +1,38 @@
-<ion-view view-title="Create a Grüp">
-   <ion-content class="padding">
-    <label class="item item-input">
+<ion-view view-title="Create a New Grüp">
+   <ion-content>
+    <div class="item item-divider">General</div>
+    <label class="item item-input item-stacked-label">
+      <div class="input-label">Grüp Name</div>
       <input type="text" placeholder="What's Your Grüp Name?" ng-model="form.group_name">
     </label>
     <div class="list">
-      <label class="item item-input item-select">
-        <div class="input-label">Class: </div>
-        <select>
-          <option selected>-- Select --</option>
-          <option>CSE 1341</option>
-          <option>CSE 3330</option>
-          <option>ME 4357</option>
-        </select>
+      <label class="item item-input item-stacked-label">
+        <div class="input-label">Class (subject and number)</div>
+        <input type="text" placeholder="e.g. CSE 1341" ng-model="form.class_name">
       </label>
+     <!--  <label class="item item-input">
+        <div class="input-label">Class Number</div>
+        <input type="text" placeholder="Class Number">
+      </label> -->
+
+      <div class="item item-divider">Location</div>
       <label class="item item-input item-select">
         <div class="input-label">
           Location: 
         </div>
-        <select>
-          <option ng-model="form.location" value="" selected>-- Select --</option>
-          <option ng-model="form.location" value="Fondren Library">Fondren Library</option>
-          <option ng-model="form.location" value="Junkins">Junkins</option>
-          <option ng-model="form.location" value="Starbucks - Hillcrest">Starbucks - Hillcrest</option>
-          <option ng-model="form.location" value="Starbucks - Mockingbird">Starbucks - Mockingbird</option>
+        <select ng-model="form.location">
+          <option  value="" selected>-- Select --</option>
+          <option value="Fondren Library">Fondren Library</option>
+          <option value="Junkins">Junkins</option>
+          <option value="Starbucks - Hillcrest">Starbucks - Hillcrest</option>
+          <option value="Starbucks - Mockingbird">Starbucks - Mockingbird</option>
         </select>
       </label>
       <label class="item item-input">
-        <textarea placeholder="Details. List any important details about where you are studying" ng-model="form.location_details"></textarea>
+        <textarea placeholder="Important details about where you are studying. i.e. room number" ng-model="form.location_details"></textarea>
       </label>
+
+      <div class="item item-divider">Date and Time</div>
       <label class="item item-input">
         <div class="input-label">Date: </div>
         <input type="date" ng-model="form.date"></input>
@@ -36,6 +41,8 @@
         <div class="input-label">Time: </div>
         <input type="time" ng-model="form.meeting_time"></input>
       </label>
+
+      <div class="item item-divider">Description</div>
       <label class="item item-input item-stacked-label">
         <div class="input-label">Description: </div>
         <textarea placeholder="What will you be studying? Topics, chapters, etc" ng-model="form.description"></textarea>
