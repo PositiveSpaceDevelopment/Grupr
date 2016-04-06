@@ -392,6 +392,15 @@ $app->post('/login', function ($request, $response, $args) {
             echo json_encode($e->getMessage());
         }
         array_push($stringToReturn, json_encode($names));
+
+        $imageURL = "";
+        $query = 'SELECT url FROM user_info NATURAL JOIN imageURLs WHERE user_id = :user_id';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':user_id', $profile_user_id);
+        $stmt->execute();
+        $url = $stmt->fetch(PDO::FETCH_ASSOC);
+        $imageURL = $url["url"];
+        array_push($stringToReturn, json_encode($imageURL));
         echo json_encode($stringToReturn);
     } else {
         echo "login failed";
