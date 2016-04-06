@@ -13,33 +13,26 @@
     $courseSubject = $app->request()->post('courseSubj');
     $courseNumber = $app->request()->post('couseNum');
 
-    $courseQuery = $conn->query("SELECT ")
-    $courseExists = $courseQuery->fetch_assoc();
+    $classIDNum = $conn->query("SELECT class_id FROM classes WHERE user_id = $userId AND class_subject = $courseSubject AND class_number = $courseNumber");
+    $courseExists = $classIDNum->fetch_assoc();
 
     $result['status'] = 1;
     //If the course does not exist add it to the class table.
     if($courseExists == NULL) {
-      //The course doesnt exit add it to the table. Else return an error
+      //The course doesnt exit add it to the table.
       if($conn->query("INSERT INTO classes (class_subject,class_number) VALUES($courseSubject, $courseNumber)")) {
 
-        $classIDNum = $conn->query("SELECT class_id FROM classes WHERE user_id = $userId AND class_subject = $courseSubject AND class_number = $courseNumber");
+        //Insert data into the bridge table
         $conn->query("INSERT INTO students (user_id, class_id) VALUES ($userId, $classIDNum)");
       }
+      //Error inserting new class
       else {
         $result['status'] = 2;
       }
     }
-    //The course does exist. Add the user.
+    //The course does exist. Add the user to the bridge table.
     else {
-      //Insert the class into the users info. Else return error.
-      if($conn->query(
-      "INSERT INTO"
-      )) {
-
-      }
-      else {
-        $result['status'] = 3;
-      }
+      $conn->query("INSERT INTO students (user_id, class_id) VALUES ($userId, $classIDNum)");
     }
 
     echo json_encode($result)
