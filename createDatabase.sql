@@ -2,15 +2,14 @@ DROP DATABASE IF EXISTS gruprDatabase;
 CREATE database gruprDatabase;
 USE gruprDatabase;
 
-CREATE table user_info
+CREATE TABLE user_info
 (
-user_id int NOT NULL AUTO_INCREMENT,
+user_id int AUTO_INCREMENT,
 email varchar(50),
 password varchar(255),
 salt varchar(255),
 first_name varchar(25),
 last_name varchar(25),
-icon smallint,
 profile_level float,
 session_id varchar(30),
 last_login timestamp,
@@ -20,66 +19,63 @@ encrypted_password varchar(255),
 PRIMARY KEY(user_id)
 );
 
-CREATE table message
+CREATE TABLE teachers
 (
-message_id int NOT NULL auto_increment,
-content tinyblob,
-send_time timestamp,
-member_id int,
-discussion_id int,
-PRIMARY KEY(message_id)
+user_id int,
+class_id int
 );
 
-CREATE table locations
+CREATE TABLE students
+(
+user_id int,
+class_id int
+);
+
+CREATE TABLE tas
+(
+user_id int,
+class_id int
+);
+
+
+CREATE TABLE locations
 (
 location_id int auto_increment,
-building varchar(30),
-room varchar(30),
+location varchar(30),
 PRIMARY KEY(location_id)
 );
 
-CREATE table Classes
+CREATE TABLE classes
 (
 class_subject varchar(4),
 class_number varchar(4),
-semester varchar(10),
 class_id int NOT NULL auto_increment,
-user_id int,
-teacher_id int,
-ta_id int,
-PRIMARY KEY(class_id),
-FOREIGN KEY(user_id)
-	REFERENCES user_info(user_id),
-FOREIGN KEY(teacher_id)
-	REFERENCES user_info(user_id),
-FOREIGN KEY(ta_id)
-	REFERENCES user_info(user_id)
+PRIMARY KEY(class_id)
 );
 
-CREATE table groups
+CREATE TABLE groups
 (
 group_id int NOT NULL auto_increment,
 group_name varchar(55),
 class_id int,
-creation_time timestamp,
 time_of_meeting datetime,
 owner_id int,
 description varchar(200),
 location_id int,
 ta_attending tinyint,
 teacher_attending tinyint,
+location_details varchar(350),
 PRIMARY KEY(group_id),
 FOREIGN KEY(owner_id)
 	REFERENCES user_info(user_id),
 FOREIGN KEY(class_id)
-	REFERENCES Classes(class_id),
+	REFERENCES classes(class_id),
 FOREIGN KEY(location_id)
 	REFERENCES locations(location_id)
 );
 
 
-
-CREATE table members
+CREATE TABLE members
 (
 member_id int NOT NULL auto_increment,
 user_id int,
@@ -93,7 +89,21 @@ FOREIGN KEY(group_id)
 
 );
 
-CREATE table discussion
+CREATE TABLE messages
+(
+message_id int auto_increment,
+content blob,
+send_time timestamp,
+member_id int,
+group_id int,
+PRIMARY KEY (message_id),
+FOREIGN KEY (member_id)
+	REFERENCES members (member_id),
+FOREIGN KEY (group_id)
+	REFERENCES groups (group_id)
+);
+
+CREATE TABLE discussion
 (
 discussion_id int,
 group_id int,
@@ -102,12 +112,15 @@ FOREIGN KEY(group_id)
 	REFERENCES groups(group_id)
 );
 
-INSERT INTO user_info (email)
-VALUES ('hogfan@yahoo.com');
+INSERT INTO user_info (email, password)
+VALUES ('donttalktomeormyson@yeveragain.com', '12345');
 
 SELECT * FROM user_info;
 
+INSERT INTO classes (class_subject, class_number)
+VALUES ('CSE', '1341');
 
+SELECT * FROM classes;
 
 
 
