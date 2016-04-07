@@ -60,6 +60,8 @@ angular.module('starter.controllers', [])
     });
 
   }
+})
+
 .controller('addClassCtrl', function($scope,$state, $http, ProfileData, classes) {
 	$scope.form = {};
 	$scope.first_name = ProfileData.data.first_name;
@@ -82,8 +84,6 @@ angular.module('starter.controllers', [])
 		$scope.form.class_number = "";
     
 	};
-	
-  
 })
 
 .controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
