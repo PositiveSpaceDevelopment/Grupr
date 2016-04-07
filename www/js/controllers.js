@@ -20,7 +20,7 @@ angular.module('starter.controllers', [])
       data.group_name = $scope.form.group_name;
     };
     if ($scope.form.location) {
-      data.building = $scope.form.location;
+      data.location = $scope.form.location;
     };
     if ($scope.form.location_details) {
       data.location_details = $scope.form.location_details;
@@ -39,24 +39,28 @@ angular.module('starter.controllers', [])
     // Grabs the class subject and number from the input
     // and splits it up and stores it as class subject and number
     var tempName = $scope.form.class_name;
-    var nameNum = tempName.split(" ");
+    if (tempName) {
+      var nameNum = tempName.split(" ");
 
-    data.class_subject = nameNum[0];
-    data.class_number = nameNum[1];
-
+      data.class_subject = nameNum[0];
+      data.class_number = nameNum[1];
+    };
+    
     console.log(data);
 
     // Makes the POST http request
     $http({
       method: 'POST',
-      url: 'http://private-fa798-grupr.apiary-mock.com/creategrup',
-      // url: 'http://www.grupr.me/creategrup',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/creategrup',
+      url: 'http://www.grupr.me/creategroup',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
     }).then(function successCallback(response){
-      console.log("Status: " + response.data.status);
+      console.log(response.data);
+
+      $state.go('tab.ViewAllGrups');
     });
 
   }
