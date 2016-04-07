@@ -8,29 +8,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('addClassCtrl', function($scope,$state, $http, ProfileData, classes) {
-	$scope.form = {};
-	$scope.first_name = ProfileData.data.first_name;
-	  $scope.last_name = ProfileData.data.last_name;
-	  $scope.email = ProfileData.data.email;
-	  $scope.user_id = ProfileData.data.user_id;
-	  $scope.user_classes = ProfileData.data.classes;
-	  $scope.classes = classes.data.classes;
-	  $scope.level = ProfileData.data.level;
-	  $scope.icon = ProfileData.data.icon;
-	$scope.form.class_subject = "ACCT";
-	  
-	$scope.addClassSubmit = function() {
-		var data = {};
-		console.log($scope.form.class_subject );
-		console.log($scope.form.class_number);
-		data.class_subject = $scope.form.class_subject;
-		data.class_number = $scope.form.class_nubmber; 
-		$scope.form.class_subject = "ACCT";
-		$scope.form.class_number = "";
-    
-	};
-	
+.controller('addClassCtrl', function($scope) {
   
 })
 
@@ -61,7 +39,12 @@ angular.module('starter.controllers', [])
     console.log(data);
 
 
-    // Makes the POST http request
+<<<<<<< HEAD
+    // Make the POST request to the backend 
+=======
+    //My attempt at getting http POST to work. Not sure how to test this.
+    // Ill re-visit this when I learn more about how to test it
+>>>>>>> origin/Trevor
     $http({
       method: 'POST',
       url: 'http://private-fa798-grupr.apiary-mock.com/login',
@@ -71,7 +54,12 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
       ProfileData.data = response.data;
+<<<<<<< HEAD
+      console.log(ProfileData.data.email);
+
+=======
       console.log(ProfileData.data.classes[0].class_subject);
+>>>>>>> origin/Trevor
        $state.go('tab.browse');
     });
 
@@ -81,7 +69,11 @@ angular.module('starter.controllers', [])
   // is clicked on the login page.
   //It takes the user to the Register page
   $scope.register = function() {
+<<<<<<< HEAD
     $state.go('register');
+=======
+    $state.go('tab.register');
+>>>>>>> origin/Trevor
   }
 })
 
@@ -111,7 +103,10 @@ angular.module('starter.controllers', [])
 
 		console.log(data);
 
-    // Makes the POST http request
+<<<<<<< HEAD
+    // Make the POST request to the backend 
+=======
+>>>>>>> origin/Trevor
     $http({
       method: 'POST',
       url: 'http://private-fa798-grupr.apiary-mock.com/register',
@@ -129,17 +124,18 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('ProfileCtrl', function($scope,$state, $http,ProfileData) {
+<<<<<<< HEAD
+.controller('ProfileCtrl', function($scope) {
+  $scope.settings = {
+    enableFriends: true
+  };
+=======
+.controller('ProfileCtrl', function($scope,ProfileData) {
   $scope.form = {};
   $scope.first_name = ProfileData.data.first_name;
   $scope.last_name = ProfileData.data.last_name;
   $scope.email = ProfileData.data.email;
   $scope.user_id = ProfileData.data.user_id;
   $scope.classes = ProfileData.data.classes;
-  $scope.level = ProfileData.data.level;
-  $scope.icon = ProfileData.data.icon;
-  
-    $scope.addClass = function() {
-    $state.go('addClass');
-  }
+>>>>>>> origin/Trevor
 });

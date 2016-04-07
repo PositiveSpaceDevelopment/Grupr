@@ -7,6 +7,47 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
+<<<<<<< HEAD
+=======
+//factory to carry around user data
+.factory("ProfileData",function() {
+	data = {
+		"email": "aterra@smu.edu",
+		"user_id": "1",
+		"classes": [
+			{
+			  "class_subject": "CSE",
+			  "class_number": "3330"
+			},
+			{
+			  "class_subject": "CSE",
+			  "class_number": "3381"
+			},
+			{
+			  "class_subject": "CEE",
+			  "class_number": "3302"
+			},
+			{
+			  "class_subject": "PRW",
+			  "class_number": "2301"
+			},
+			{
+			  "class_subject": "CSE",
+			  "class_number": "3353"
+			},
+			{
+			  "class_subject": "CSE",
+			  "class_number": "3342"
+			}
+		],
+		"first_name": "Andrew",
+		"last_name": "Terra"
+	};
+	return {data};
+	//return {data:null};
+})
+
+>>>>>>> origin/Trevor
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -40,23 +81,38 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
   // Each tab has its own nav history stack:
 
+<<<<<<< HEAD
 
   .state('login', {
       url: '/login',
       templateUrl: 'templates/login.html',
       controller: 'LoginCtrl'
     })
-	
-   .state('addClass', {
-      url: '/addClass',
-      templateUrl: 'templates/addClass.html',
-      controller: 'addClassCtrl'
-    })
 
   .state('register', {
     url: '/register',
     templateUrl: 'templates/register.html',
     controller: 'RegisterCtrl'
+=======
+  .state('tab.login', {
+    url: '/login',
+    views: {
+      'login': {
+        templateUrl: 'templates/login.html',
+        controller: 'LoginCtrl'
+      }
+    }
+  })
+
+  .state('tab.register', {
+    url: '/register',
+    views: {
+      'register': {
+        templateUrl: 'templates/register.html',
+        controller: 'RegisterCtrl'
+      }
+    }
+>>>>>>> origin/Trevor
   })
 
   .state('tab.browse', {
@@ -69,6 +125,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
+  .state('tab.addClass', {
+      url: '/addClass',
+      views: {
+        'tab-addClass': {
+          templateUrl: 'templates/tab-addClass.html',
+          controller: 'addClassCtrl'
+        }
+      }
+    })
     .state('tab.chat-detail', {
       url: '/chats/:chatId',
       views: {
@@ -100,6 +165,10 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   });
 
   // if none of the above states are matched, use this as the fallback
+<<<<<<< HEAD
   $urlRouterProvider.otherwise('/login');
+=======
+  $urlRouterProvider.otherwise('/tab/login');
+>>>>>>> origin/Trevor
 
 });
