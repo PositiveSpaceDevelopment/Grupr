@@ -50,7 +50,7 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       url: 'http://private-fa798-grupr.apiary-mock.com/creategrup',
-      // url: 'http://54.213.15.90/creategrup',
+      // url: 'http://www.grupr.me/creategrup',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -93,15 +93,15 @@ angular.module('starter.controllers', [])
     // Makes the POST http request
     $http({
       method: 'POST',
-      url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      // url: 'http://54.213.15.90/login',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      url: 'http://www.grupr.me/login',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
     }).then(function successCallback(response){
       ProfileData.data = response.data;
-      console.log(ProfileData.data.email);
+      console.log(ProfileData.data);
       console.log(ProfileData.data.user_id);
        $state.go('tab.browse');
     });
@@ -145,8 +145,8 @@ angular.module('starter.controllers', [])
     // Makes the POST http request
     $http({
       method: 'POST',
-      url: 'http://private-fa798-grupr.apiary-mock.com/register',
-      // url: 'http://54.213.15.90/registeruser',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/register',
+      url: 'http://www.grupr.me/registeruser',
       headers: {
         'Content-Type': 'application/json'
         },
