@@ -60,6 +60,29 @@ angular.module('starter.controllers', [])
     });
 
   }
+.controller('addClassCtrl', function($scope,$state, $http, ProfileData, classes) {
+	$scope.form = {};
+	$scope.first_name = ProfileData.data.first_name;
+	  $scope.last_name = ProfileData.data.last_name;
+	  $scope.email = ProfileData.data.email;
+	  $scope.user_id = ProfileData.data.user_id;
+	  $scope.user_classes = ProfileData.data.classes;
+	  $scope.classes = classes.data.classes;
+	  $scope.level = ProfileData.data.level;
+	  $scope.icon = ProfileData.data.icon;
+	$scope.form.class_subject = "ACCT";
+	  
+	$scope.addClassSubmit = function() {
+		var data = {};
+		console.log($scope.form.class_subject );
+		console.log($scope.form.class_number);
+		data.class_subject = $scope.form.class_subject;
+		data.class_number = $scope.form.class_nubmber; 
+		$scope.form.class_subject = "ACCT";
+		$scope.form.class_number = "";
+    
+	};
+	
   
 })
 
@@ -161,11 +184,17 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('ProfileCtrl', function($scope,ProfileData) {
+.controller('ProfileCtrl', function($scope,$state, $http,ProfileData) {
   $scope.form = {};
   $scope.first_name = ProfileData.data.first_name;
   $scope.last_name = ProfileData.data.last_name;
   $scope.email = ProfileData.data.email;
   $scope.user_id = ProfileData.data.user_id;
   $scope.classes = ProfileData.data.classes;
+  $scope.level = ProfileData.data.level;
+  $scope.icon = ProfileData.data.icon;
+  
+    $scope.addClass = function() {
+    $state.go('addClass');
+  }
 });

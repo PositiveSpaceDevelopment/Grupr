@@ -46,6 +46,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       templateUrl: 'templates/login.html',
       controller: 'LoginCtrl'
     })
+	
+   .state('addClass', {
+      url: '/addClass',
+      templateUrl: 'templates/addClass.html',
+      controller: 'addClassCtrl'
+    })
 
   .state('register', {
     url: '/register',
