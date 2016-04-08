@@ -18,6 +18,29 @@ angular.module('starter.controllers', [])
 .controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
   $scope.form = {};
 
+  var step = 1;
+  $scope.form.general = true;
+  $scope.form.descriptionShow = false;
+  $scope.form.locationDate = false;
+  $scope.form.nextItem = true;
+  $scope.form.lastItem = false;
+
+  $scope.next = function() {
+    switch(step) {
+      case 1:
+        $scope.form.general = false;
+        $scope.form.locationDate = true;
+        break;
+      case 2:
+        $scope.form.locationDate = false;
+        $scope.form.descriptionShow = true;
+        $scope.form.nextItem = false;
+        $scope.form.lastItem = true;
+        break;
+    }
+    step++;
+  }
+
   $scope.createGrup = function() {
     var data = {};
 
@@ -71,6 +94,25 @@ angular.module('starter.controllers', [])
       $state.go('tab.browse');
     });
 
+    // Resets the values for the Creat Group form
+    var step = 1;
+    $scope.form.general = true;
+    $scope.form.descriptionShow = false;
+    $scope.form.locationDate = false;
+    $scope.form.nextItem = true;
+    $scope.form.lastItem = false;
+  }
+
+  $scope.cancel = function() {
+    // Resets the values for the Creat Group form
+    var step = 1;
+    $scope.form.general = true;
+    $scope.form.descriptionShow = false;
+    $scope.form.locationDate = false;
+    $scope.form.nextItem = true;
+    $scope.form.lastItem = false;
+    
+    $state.go('tab.browse');
   }
 })
 
