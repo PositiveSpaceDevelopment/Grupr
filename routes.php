@@ -11,6 +11,7 @@ session_start();
 //need to get a intermediate step that filters down classes in the beginning
 //messaging - Vegas
 //search for groups
+//get all groups
 
 
 //Questions:
@@ -436,4 +437,22 @@ $app->post('/logout', function ($request, $response, $args) {
         );
     }
     session_destroy();
+});
+
+
+//{"user_id": "3"}
+//get the members and shit
+$app->post('/getusergroups', function ($request, $response, $args) {
+    $body = $request->getBody();
+    $decode = json_decode($body);
+    $dbc = $this->dbc;
+    $user_id = $decode->user_id;
+    $group_id = $decode->group_id;
+    $query = 'SELECT group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE user_id = :user_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->execute();
+    $stuff = $stmt->fetchAll(PDO::FETCH_OBJ);
+    echo json_encode($stuff);
+
 });
