@@ -22,11 +22,10 @@
 		 </label>
 	  </form> 
 	<div class="item item-divider">Your Classes</div>	
-	<label class="item" ng-repeat = "class in user_classes">
-       {{class.class_subject}} {{class.class_number}}
-	</label>
-	<button class="button button-block button-assertive" type="submit" ng-click = "showSelectValue(mySelect)">Done</button>	  
-
+		<label class="item" ng-repeat = "class in user_classes">
+	       {{class.class_subject}} {{class.class_number}}
+		</label>
+		<button class="button button-block button-assertive" type="submit" ng-click = "done()">Done</button>  
 	</div>
 
   </ion-content>

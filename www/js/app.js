@@ -54,10 +54,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     })
 
   .state('register', {
-    url: '/register',
-    templateUrl: 'templates/register.html',
-    controller: 'RegisterCtrl'
-  })
+      url: '/register',
+      templateUrl: 'templates/register.html',
+      controller: 'RegisterCtrl'
+    })
+  .state('createGroup', {
+      url: '/createGroup',
+      templateUrl: 'templates/createGroup.html',
+      controller: 'createGroupCtrl'
+    })
 
   .state('tab.browse', {
     url: '/browse',
@@ -69,24 +74,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
-  .state('tab.createGroup', {
-      url: '/createGroup',
-      views: {
-        'tab-createGroup': {
-          templateUrl: 'templates/tab-createGroup.html',
-          controller: 'createGroupCtrl'
-        }
+  .state('tab.chat-detail', {
+    url: '/chats/:chatId',
+    views: {
+      'tab-chats': {
+        templateUrl: 'templates/chat-detail.html',
+        controller: 'ChatDetailCtrl'
       }
-    })
-    .state('tab.chat-detail', {
-      url: '/chats/:chatId',
-      views: {
-        'tab-chats': {
-          templateUrl: 'templates/chat-detail.html',
-          controller: 'ChatDetailCtrl'
-        }
-      }
-    })
+    }
+  })
 	
 	.state('tab.ViewAllGrups', {
       url: '/ViewAllGrups',

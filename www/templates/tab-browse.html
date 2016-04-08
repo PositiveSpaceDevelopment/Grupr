@@ -1,7 +1,15 @@
-<ion-view >
-  <!-- <ion-header-bar class="bar bar-header bar-stable">
-    <h1 class="title">myBeer</h1>
-  </ion-header-bar> -->
+<ion-view view-title="Browse Grüps">
+  <ion-nav-buttons side="primary">
+    <button class="button button-clear" ng-click="filter()">
+      <i class="icon ion-android-funnel"></i> Filter
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <button class="button button-clear" ng-click="newGroup()">
+      <i class="icon ion-plus-round"></i> New
+    </button>
+  </ion-nav-buttons>
+  
   <ion-content>
     <ul class="list">
       <li class="item">

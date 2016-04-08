@@ -1,6 +1,13 @@
 angular.module('starter.controllers', [])
 
-.controller('BrowseCtrl', function($scope) {
+.controller('BrowseCtrl', function($scope, $state, $http, ProfileData) {
+  $scope.newGroup = function() {
+    $state.go('createGroup');
+  }
+
+  $scope.filter = function() {
+
+  }
 
 })
 
@@ -52,7 +59,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/creategrup',
-      url: 'http://www.grupr.me/creategroup',
+      // url: 'http://www.grupr.me/creategroup',
+      url: 'http://54.213.15.90/creategroup',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -60,7 +68,7 @@ angular.module('starter.controllers', [])
     }).then(function successCallback(response){
       console.log(response.data);
 
-      $state.go('tab.ViewAllGrups');
+      $state.go('tab.browse');
     });
 
   }
@@ -88,6 +96,9 @@ angular.module('starter.controllers', [])
 		$scope.form.class_number = "";
     
 	};
+  $scope.done = function() {
+    $state.go('tab.profile');
+  }
 })
 
 .controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
@@ -121,7 +132,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      url: 'http://www.grupr.me/login',
+      // url: 'http://www.grupr.me/login',
+      url: 'http://54.213.15.90/creategroup',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -173,7 +185,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/register',
-      url: 'http://www.grupr.me/registeruser',
+      // url: 'http://www.grupr.me/registeruser',
+      url: 'http://54.213.15.90/creategroup',
       headers: {
         'Content-Type': 'application/json'
         },
