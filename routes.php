@@ -1,13 +1,16 @@
 <?php
+session_start();
 
 //To do
-// Send them the level rather than an image URL
 // fix the create group stuff to create a class if it hasn't been created (add to their profile)
 //fix session start shit
-//record that shit
-//create user on productions
-//logout shit
-//put utiliies in index.html
+//delete classes
+//active classes database
+//members in a group
+//all currently groups they are in
+//need to get a intermediate step that filters down classes in the beginning
+//messaging - Vegas
+//search for groups
 
 
 //Questions:
@@ -18,7 +21,6 @@
 
 // {"first_name":"Ross"}
 $app->post('/searchuserfirstname', function ($request, $response, $args) {
-    session_start();
     $body = $request->getBody();
     $decode = json_decode($body);
     $dbc = $this->dbc;
@@ -35,7 +37,6 @@ $app->post('/searchuserfirstname', function ($request, $response, $args) {
 
 // {"last_name":"Johnson"}
 $app->post('/searchuserlastname', function ($request, $response, $args) {
-    session_start();
     $body = $request->getBody();
     $decode = json_decode($body);
     $dbc = $this->dbc;
@@ -52,7 +53,6 @@ $app->post('/searchuserlastname', function ($request, $response, $args) {
 
 // {"first_name":"Ross", "last_name":"Miller"}
 $app->post('/searchuser', function ($request, $response, $args) {
-    session_start();
     $body = $request->getBody();
     $decode = json_decode($body);
     $dbc = $this->dbc;
@@ -88,7 +88,6 @@ $app->get('/allclasses', function ($request, $response, $args){
 );
 
 $app->post('/profile', function ($request, $response, $args){
-    session_start();
     $dbc = $this->dbc;
     $stringToReturn = array();
     $body = $request->getBody();
@@ -144,7 +143,6 @@ $app->post('/profile', function ($request, $response, $args){
 
 // {"first_name":"Sam","last_name":"Calvert","email":"scalvert@smu.edu","password":"calvert"}
 $app->post('/registeruser', function ($request, $response, $args) {
-    session_start();
     $id = session_id();
     $_SESSION['session_id'] = $id;
     $body = $request->getBody();
@@ -167,7 +165,6 @@ $app->post('/registeruser', function ($request, $response, $args) {
 
 // {"user_id": "3", "group_id": "1"}
 $app->post('/joingroup', function ($request, $response, $args) {
-    session_start();
     $body = $request->getBody();
     $decode = json_decode($body);
     $dbc = $this->dbc;
@@ -184,7 +181,6 @@ $app->post('/joingroup', function ($request, $response, $args) {
 
 //{"user_id": "1", "group_name":"Teddy's study buddies", "time_of_meeting": "2016-04-15 19:00:00", "description": "stupid people trying to learn good", "class_subject": "CSE", "class_number": "1341", "location": "Lyle", "location_details": "Junkins 110"}
 $app->post('/creategroup', function ($request, $response, $args) {
-    // session_start();
     $body = $request->getBody();
     $decode = json_decode($body);
     $dbc = $this->dbc;
@@ -197,25 +193,47 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $location_details = $decode->location_details;
     $location = $decode->location;
     //what i need?
-        //location_id
 
+    //location_id
     $query = 'SELECT location_id FROM locations WHERE location = :location';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':location', $location);
     $stmt->execute();
     $location_id = $stmt->fetch(PDO::FETCH_ASSOC);
     $location_id = $location_id["location_id"];
-    //     //class_id
-    $query = 'SELECT class_id FROM classes WHERE class_subject = :class_subject AND class_number = :class_number';
+
+    //class_id
+    $query = 'SELECT count(*) FROM classes WHERE class_subject = :class_subject AND class_number = :class_number';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':class_subject', $class_subject);
     $stmt->bindParam(':class_number', $class_number);
     $stmt->execute();
-    $class_id = $stmt->fetch(PDO::FETCH_ASSOC);
-    $class_id = $class_id["class_id"];
-    //     //owner_id
-    //     //owner_id is user_id since a group only gets created once, whoever is logged on and creates it will be the one that creates the group
-    //     //time_of_meeting
+    $number_of_rows = $stmt->fetchColumn();
+    if($number_of_rows != 0)
+    {
+        $query = 'SELECT class_id FROM classes WHERE class_subject = :class_subject AND class_number = :class_number';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':class_subject', $class_subject);
+        $stmt->bindParam(':class_number', $class_number);
+        $stmt->execute();
+        $class_id = $stmt->fetch(PDO::FETCH_ASSOC);
+        $class_id = $class_id["class_id"];
+    } else {
+        $query = 'INSERT INTO classes (class_subject, class_number) VALUES (:class_subject, :class_number)';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':class_subject', $class_subject);
+        $stmt->bindParam(':class_number', $class_number);
+        $stmt->execute();
+
+        $query = 'SELECT class_id FROM classes WHERE class_subject = :class_subject AND class_number = :class_number';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':class_subject', $class_subject);
+        $stmt->bindParam(':class_number', $class_number);
+        $stmt->execute();
+        $class_id = $stmt->fetch(PDO::FETCH_ASSOC);
+        $class_id = $class_id["class_id"];
+    }
+
     $query = 'INSERT INTO groups (group_name, time_of_meeting, description, creation_time, owner_id, class_id, location_id, location_details) VALUES (:group_name, :time_of_meeting, :description, now(), :owner_id, :class_id, :location_id, :location_details)';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':group_name', $group_name);
@@ -227,6 +245,7 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $stmt->bindParam(':location_details', $location_details);
     $stmt->execute();
 
+    //group_id
     $query = 'SELECT group_id FROM groups WHERE group_name = :group_name AND time_of_meeting = :time_of_meeting AND description = :description AND owner_id = :owner_id AND class_id = :class_id AND location_id = :location_id';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':group_name', $group_name);
@@ -245,13 +264,10 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $stmt->bindParam(':group_id', $group_id);
     $stmt->execute();
 
-    //set response vairables {email, user_id, first_name, last_name};
 });
-
 
 // {"email":"aterra@smu.edu","password":"terra"}
 $app->post('/login', function ($request, $response, $args) {
-    session_start();
     $id = session_id();
     $_SESSION['session_id'] = $id;
     $body = $request->getBody();
@@ -302,7 +318,7 @@ $app->post('/login', function ($request, $response, $args) {
         array_push($stringToReturn, $profile);
 
         $classes = "";
-        $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN class_instances WHERE user_id = :user_id';
+        $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':user_id', $profile_user_id);
         try{
@@ -325,13 +341,6 @@ $app->post('/login', function ($request, $response, $args) {
         }
         array_push($stringToReturn, $names);
 
-        $url = "";
-        $query = 'SELECT url FROM user_info NATURAL JOIN imageURLs WHERE user_id = :user_id';
-        $stmt = $dbc->prepare($query);
-        $stmt->bindParam(':user_id', $profile_user_id);
-        $stmt->execute();
-        $url = $stmt->fetch(PDO::FETCH_OBJ);
-        array_push($stringToReturn, $url);
         echo json_encode($stringToReturn, JSON_UNESCAPED_SLASHES);
     } else {
         echo "login failed";
@@ -397,8 +406,8 @@ $app->post('/leavegroup', function($request, $response, $args) {
     }
 });
  // {"user_id": "1", "password": "hunter2"}
+
 $app->post('/resetpassword', function ($request, $response, $args) {
-    session_start();
     $body = $request->getBody();
     $decode = json_decode($body);
     $dbc = $this->dbc;
