@@ -41,6 +41,17 @@ angular.module('starter.services', [])
   // return {data:null};
 })
 
+//factory to carry around user data
+.factory("GroupFeed",function() {
+  return {data:null};
+})
+
+
+
+
+
+
+
 .factory("classes",function() {
   data = {
     "classes": [

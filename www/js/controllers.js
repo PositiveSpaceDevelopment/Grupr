@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('BrowseCtrl', function($scope, $state, $http, ProfileData) {
+.controller('BrowseCtrl', function($scope, $state, $http, $document, ProfileData, GroupFeed) {
   $scope.newGroup = function() {
     $state.go('createGroup');
   }
@@ -8,6 +8,25 @@ angular.module('starter.controllers', [])
   $scope.filter = function() {
 
   }
+  $document.ready(function() {
+    // Makes the GET http request to fill the GroupFeed Data
+    $http({
+      method: 'GET',
+      url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+      // url: 'http://www.grupr.me/grups',
+      // url: 'http://54.213.15.90/grups',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response) {
+      GroupFeed.data = response.data[0][0];
+      console.log(GroupFeed.data);
+    }, function errorCallback(response) {
+      console.log("something went wrong");
+    });
+  });
+  
 
 })
 
@@ -253,7 +272,18 @@ angular.module('starter.controllers', [])
   $scope.level = ProfileData.data.level;
   $scope.icon = ProfileData.data.icon;
   
-    $scope.addClass = function() {
+  $scope.addClass = function() {
     $state.go('addClass');
+  }
+
+  $scope.logout = function() {
+    // clears data stored in ProfileDate
+    ProfileData.data = null;
+
+    // TODO: Need to sent logout request
+    // to back end to fully log out user
+
+    // returns the user to the login screen
+    $state.go('login');
   }
 });

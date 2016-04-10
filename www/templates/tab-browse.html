@@ -12,6 +12,31 @@
   
   <ion-content>
     <ul class="list">
+      <li class="item" ng-repeat="group in GroupFeed.data">
+        <div class="list card">
+          <div class=" item item-header">
+            <h3>{{group.group_name}}</h2>
+          </div>
+          <div class="item item-body">
+            <!-- <img class="full-image" src="/img/grupr-logo.png"> -->
+            <ul class="list">
+              <li class="item">
+                <h4>{{group.class_subject}} {{group.class_number}}</h4>
+              </li>
+              <li class="item">
+                <h4>{{group.time_of_meeting}}</h4> 
+              </li>
+              <li class="item">
+                <h4>{{group.location}}</h4>
+                <p>{{gropu.location_details}}</p> 
+              </li>
+            </ul>
+          </div>
+        </div>
+      </li>
+
+
+
       <li class="item">
         <div class="list card">
           <div class=" item item-header">
