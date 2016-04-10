@@ -445,27 +445,36 @@ $app->post('/getusergroups', function ($request, $response, $args) {
     $decode = json_decode($body);
     $dbc = $this->dbc;
     $user_id = $decode->user_id;
-    $query = 'SELECT group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE user_id = :user_id';
-    $stmt = $dbc->prepare($query);
-    $stmt->bindParam(':user_id', $user_id);
-    $stmt->execute();
-    $stuff = $stmt->fetchAll(PDO::FETCH_OBJ);
-    echo json_encode($stuff);
 
-    $query = 'SELECT group_id FROM groups NATURAL JOIN members WHERE user_id = :user_id';
+    $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE user_id = :user_id';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $user_id);
     $stmt->execute();
-    $group_ids = $stmt->fetchAll();
-    // var_dump($group_ids);
-    foreach ($group_ids as $row) {
+    $stuff = $stmt->fetchAll();
+    foreach($stuff as $row)
+    {
+        $stuff_to_return = array();
         $group_id = $row["group_id"];
+
+        $query = 'SELECT group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id AND user_id = :user_id';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':group_id', $group_id);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        $stuff = $stmt->fetchAll(PDO::FETCH_OBJ);
+        array_push($stuff_to_return, $stuff);
+        // echo json_encode($stuff);
+
         $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':group_id', $group_id);
         $stmt->execute();
         $more_stuff = $stmt->fetchAll(PDO::FETCH_OBJ);
-        echo json_encode($more_stuff);
+        array_push($stuff_to_return, $more_stuff);
+        // echo json_encode($more_stuff);
+        echo json_encode($stuff_to_return, JSON_UNESCAPED_SLASHES);
+        unset($stuff_to_return);
     }
+    // echo json_encode($stuff);
 
 });
