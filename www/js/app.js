@@ -74,12 +74,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
-  .state('tab.chat-detail', {
-    url: '/chats/:chatId',
+  .state('tab.groupDetail', {
+    url: '/browse/:grupID',
     views: {
-      'tab-chats': {
-        templateUrl: 'templates/chat-detail.html',
-        controller: 'ChatDetailCtrl'
+      'tab-browse': {
+        templateUrl: 'templates/groupDetail.html',
+        controller: 'GroupDetailCtrl'
       }
     }
   })

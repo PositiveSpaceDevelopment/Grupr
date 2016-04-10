@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('BrowseCtrl', function($scope, $state, $http, $document, ProfileData, GroupFeed) {
+.controller('BrowseCtrl', function($scope, $state, $http, ProfileData, GroupFeed) {
   /*GroupFeed.getFeed().then(function(data) {
     $scope.feed = data;
   });*/
@@ -12,25 +12,44 @@ angular.module('starter.controllers', [])
   $scope.filter = function() {
 
   }
-  //$document.ready(function() {
-    // Makes the GET http request to fill the GroupFeed Data
-    $http({
-      method: 'GET',
-      url: 'http://private-fa798-grupr.apiary-mock.com/grups',
-      // url: 'http://www.grupr.me/grups',
-      // url: 'http://54.213.15.90/grups',
-      headers: {
-        'Content-Type': 'application/json'
-        },
-      data: data
-    }).then(function successCallback(response) {
-      $scope.feed = response.data;
-      console.log($scope.feed);
-    }, function errorCallback(response) {
-      console.log("something went wrong");
-    });
-  //});
-  
+
+  $scope.viewGroup = function(id) {
+    $state.go("tab.groupDetail",{grupID: id});
+  }
+
+  // Makes the GET http request to fill the GroupFeed Data
+  $http({
+    method: 'GET',
+    url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+    // url: 'http://www.grupr.me/grups',
+    // url: 'http://54.213.15.90/grups',
+    headers: {
+      'Content-Type': 'application/json'
+      },
+    data: data
+  }).then(function successCallback(response) {
+    $scope.feed = response.data;
+    GroupFeed.data = response.data;
+    console.log(GroupFeed.data);
+  }, function errorCallback(response) {
+    console.log("something went wrong");
+  });
+})
+
+.controller('GroupDetailCtrl', function($scope, $stateParams, GroupFeed) {
+  // $scope.chat = Chats.get($stateParams.chatId);
+  id = $stateParams.grupID;
+
+  var index = 0; 
+  while(true){
+    if (GroupFeed.data[index].id == id) {
+      break;
+    };
+    index++;
+  }
+
+  $scope.groupInfo = GroupFeed.data[index];
+  console.log($scope.groupInfo);
 
 })
 
@@ -79,8 +98,6 @@ angular.module('starter.controllers', [])
       data.location_details = $scope.form.location_details;
     };
 
-    // TODO: This date/time thing needs to be fixed for proper format
-    // and data entry
     if ($scope.form.meeting_time) {
       data.time_of_meeting = $scope.form.date;
     };
@@ -164,10 +181,6 @@ angular.module('starter.controllers', [])
   $scope.done = function() {
     $state.go('tab.profile');
   }
-})
-
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
 })
 
 .controller('LoginCtrl', function($scope, $state, $http, ProfileData) {

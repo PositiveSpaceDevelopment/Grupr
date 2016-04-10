@@ -13,7 +13,8 @@
   <ion-content>
     <ul class="list">
 
-      <li class="item" ng-repeat="group in feed">
+      <!-- Card for each Study Group -->
+      <li class="item" ng-repeat="group in feed" ng-click="viewGroup(group.id)">
         <div class="list card">
           <div class=" item item-header">
             <h3>{{group.group_name}}</h2>
@@ -25,63 +26,17 @@
                 <h4>{{group.class_subject}} {{group.class_number}}</h4>
               </li>
               <li class="item">
-                <h4>{{group.time_of_meeting}}</h4> 
+                <h4>{{group.time_of_meeting | date:'EEE MMM dd HH:mm'}}</h4> 
               </li>
               <li class="item">
                 <h4>{{group.location}}</h4>
-                <p>{{gropu.location_details}}</p> 
+                <p>{{group.location_details}}</p> 
               </li>
             </ul>
           </div>
         </div>
       </li>
-
-
-
-      <li class="item">
-        <div class="list card">
-          <div class=" item item-header">
-            <h3>Grüp Name</h2>
-          </div>
-          <div class="item item-body">
-            <!-- <img class="full-image" src="/img/grupr-logo.png"> -->
-            <ul class="list">
-              <li class="item">
-                <h4>CSE 1341</h4>
-              </li>
-              <li class="item">
-                <h4>Monday, April 9</h4> 
-                <h4>5:30 PM</h4>
-              </li>
-              <li class="item">
-                <h4>Fondren Library</h4> 
-              </li>
-            </ul>
-          </div>
-        </div>
-      </li>
-      <li class="item">
-        <div class="list card">
-          <div class=" item item-header">
-            <h3>Grüp Name</h2>
-          </div>
-          <div class="item item-body">
-            <!-- <img class="full-image" src="/img/grupr-logo.png"> -->
-            <ul class="list">
-              <li class="item">
-                <h4>CSE 1341</h4>
-              </li>
-              <li class="item">
-                <h4>Monday, April 9</h4> 
-                <h4>5:30 PM</h4>
-              </li>
-              <li class="item">
-                <h4>Fondren Library</h4> 
-              </li>
-            </ul>
-          </div>
-        </div>
-      </li>
+      
     </ul>
   </ion-content>
 </ion-view>
