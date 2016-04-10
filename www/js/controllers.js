@@ -1,6 +1,10 @@
 angular.module('starter.controllers', [])
 
 .controller('BrowseCtrl', function($scope, $state, $http, $document, ProfileData, GroupFeed) {
+  /*GroupFeed.getFeed().then(function(data) {
+    $scope.feed = data;
+  });*/
+
   $scope.newGroup = function() {
     $state.go('createGroup');
   }
@@ -8,7 +12,7 @@ angular.module('starter.controllers', [])
   $scope.filter = function() {
 
   }
-  $document.ready(function() {
+  //$document.ready(function() {
     // Makes the GET http request to fill the GroupFeed Data
     $http({
       method: 'GET',
@@ -20,12 +24,12 @@ angular.module('starter.controllers', [])
         },
       data: data
     }).then(function successCallback(response) {
-      GroupFeed.data = response.data[0][0];
-      console.log(GroupFeed.data);
+      $scope.feed = response.data;
+      console.log($scope.feed);
     }, function errorCallback(response) {
       console.log("something went wrong");
     });
-  });
+  //});
   
 
 })
