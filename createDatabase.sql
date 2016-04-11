@@ -47,9 +47,9 @@ PRIMARY KEY(location_id)
 
 CREATE TABLE classes
 (
+class_id int NOT NULL auto_increment,
 class_subject varchar(4),
 class_number varchar(4),
-class_id int NOT NULL auto_increment,
 PRIMARY KEY(class_id)
 );
 
