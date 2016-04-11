@@ -36,8 +36,8 @@ angular.module('starter.controllers', [])
   });
 })
 
-.controller('GroupDetailCtrl', function($scope, $stateParams, GroupFeed) {
-  // $scope.chat = Chats.get($stateParams.chatId);
+.controller('GroupDetailCtrl', function($scope, $stateParams, $http, GroupFeed, ProfileData) {
+
   id = $stateParams.grupID;
 
   var index = 0; 
@@ -50,6 +50,31 @@ angular.module('starter.controllers', [])
 
   $scope.groupInfo = GroupFeed.data[index];
   console.log($scope.groupInfo);
+
+  $scope.join = function() {
+
+    var data = {}
+
+    data.user_id = ProfileData.data.user_id;
+    data.group_id = id;
+
+    console.log(data);
+
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
+      // url: 'http://www.grupr.me/joingroup',
+      url: 'http://54.213.15.90/joingroup',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      console.log("You Joined!");
+    });
+
+  }
 
 })
 
@@ -98,7 +123,7 @@ angular.module('starter.controllers', [])
       data.location_details = $scope.form.location_details;
     };
 
-    if ($scope.form.meeting_time) {
+    if ($scope.form.date) {
       data.time_of_meeting = $scope.form.date;
     };
     if ($scope.form.description) {
@@ -117,6 +142,7 @@ angular.module('starter.controllers', [])
     };
     
     console.log(data);
+    console.log($scope.form.date);
 
     // Makes the POST http request
     $http({
@@ -279,7 +305,7 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('ProfileCtrl', function($scope,$state, $http,ProfileData) {
+.controller('ProfileCtrl', function($scope,$state, $http,ProfileData, GroupFeed) {
   $scope.form = {};
   $scope.first_name = ProfileData.data.first_name;
   $scope.last_name = ProfileData.data.last_name;
@@ -294,13 +320,26 @@ angular.module('starter.controllers', [])
   }
 
   $scope.logout = function() {
-    // clears data stored in ProfileDate
+    var data = ProfileData.user_id;
+
+    // clears data stored in ProfileData
     ProfileData.data = null;
+    GroupFeed.data = null;
 
-    // TODO: Need to sent logout request
-    // to back end to fully log out user
 
-    // returns the user to the login screen
-    $state.go('login');
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
+      // url: 'http://www.grupr.me/logout',
+      url: 'http://54.213.15.90/logout',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      // returns the user to the login screen
+      $state.go('login');
+    });  
   }
 });

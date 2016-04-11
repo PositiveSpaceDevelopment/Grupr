@@ -20,6 +20,21 @@
         <h4>{{groupInfo.location}}</h4>
         <p>{{groupInfo.location_details}}</p> 
       </label>
+      <label class="item">
+        <div class="input-label">Description: </div>
+        <h4>{{groupInfo.description}}</h4> 
+      </label>
+      <label class="item">
+        <div class="input-label">Members: </div>
+        <ul>
+          <li ng-repeat="member in groupInfo.members">
+            <p>{{member.first_name}} {{member.last_name}}</p> 
+          </li>
+        </ul>
+      </label>
     </ul>
+    <button class="button button-block button-positive" ng-click="join()">
+          Join this Grüp
+        </button>
   </ion-content>
 </ion-view>
