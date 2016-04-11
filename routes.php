@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 
 //To do
 // fix the create group stuff to create a class if it hasn't been created (add to their profile)
@@ -12,6 +12,8 @@ session_start();
 //messaging - Vegas
 //search for groups
 //get all groups
+//correct the getting groups, group id in the json and similar to apiary
+//search by group name, class subject, class number, location
 
 
 //Questions:
@@ -144,6 +146,7 @@ $app->post('/profile', function ($request, $response, $args){
 
 // {"first_name":"Sam","last_name":"Calvert","email":"scalvert@smu.edu","password":"calvert"}
 $app->post('/registeruser', function ($request, $response, $args) {
+    session_start();
     $id = session_id();
     $_SESSION['session_id'] = $id;
     $body = $request->getBody();
@@ -269,6 +272,7 @@ $app->post('/creategroup', function ($request, $response, $args) {
 
 // {"email":"aterra@smu.edu","password":"terra"}
 $app->post('/login', function ($request, $response, $args) {
+    session_start();
     $id = session_id();
     $_SESSION['session_id'] = $id;
     $body = $request->getBody();
@@ -362,7 +366,6 @@ $app->get('/goodbye', function ($request, $response, $args) {
 });
 
 $app->post('/leavegroup', function($request, $response, $args) {
-    session_start();
     $body = $request->getBody();
     $dbc = $this->dbc;
     $user_id = $decode->user_id;
@@ -445,36 +448,55 @@ $app->post('/getusergroups', function ($request, $response, $args) {
     $decode = json_decode($body);
     $dbc = $this->dbc;
     $user_id = $decode->user_id;
-
+    $groups = array();
     $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE user_id = :user_id';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $user_id);
     $stmt->execute();
-    $stuff = $stmt->fetchAll();
-    foreach($stuff as $row)
+    $user_groups = $stmt->fetchAll();
+    foreach($user_groups as $row)
     {
-        $stuff_to_return = array();
         $group_id = $row["group_id"];
 
-        $query = 'SELECT group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id AND user_id = :user_id';
+        $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id AND user_id = :user_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':group_id', $group_id);
         $stmt->bindParam(':user_id', $user_id);
         $stmt->execute();
-        $stuff = $stmt->fetchAll(PDO::FETCH_OBJ);
-        array_push($stuff_to_return, $stuff);
+        $group_info = $stmt->fetchAll(PDO::FETCH_OBJ);
+        // array_push($groups, json_encode($stuff));
+        // echo json_encode($stuff);
         // echo json_encode($stuff);
 
         $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':group_id', $group_id);
         $stmt->execute();
-        $more_stuff = $stmt->fetchAll(PDO::FETCH_OBJ);
-        array_push($stuff_to_return, $more_stuff);
+        $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+        // $members = json_encode(array("members" => $member));
+        // echo json_encode($group_info) . $members;
+        $members = array("members" => $member);
+        array_push($groups, json_encode($group_info) . json_encode($members));
+        // array_push($groups, $group_info );
+        // $lots_o_stuff = $stuff . $more_stuff;
+        // array_push($groups, json_encode($stuff) . json_encode(array("members" => $more_stuff)));
+        // array_push($groups, $dif_stuff);
+        // var_dump(json_encode($lots_o_stuff));
+        // $json = json_encode("members" => array($more_stuff));
+        // echo json_encode("members" => $more_stuff);
+        // array_push($stuff_to_return, $more_stuff);
         // echo json_encode($more_stuff);
-        echo json_encode($stuff_to_return, JSON_UNESCAPED_SLASHES);
-        unset($stuff_to_return);
+        // echo json_encode($stuff_to_return, JSON_UNESCAPED_SLASHES);
+        // unset($stuff_to_return);
     }
-    // echo json_encode($stuff);
+
+    $json1 = json_encode($groups, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    $json = str_replace('\\/', '', $json1);
+    echo $json;
+    // foreach($groups as $key => $value)
+    // {
+    //     echo json_encode($value, JSON_UNESCAPED_SLASHES);
+    // }
+    // print_r( $groups);
 
 });
