@@ -39,10 +39,17 @@ $app->post('/addclass', function($request, $response, $args) {
   // $stmt->bindParam(':courseNumber', $courseNumber);
   // $stmt->execute();
 
-  $query = 'SELECT class_id FROM classes WHERE user_id =? AND class_subject =? AND class_number =?;';
+  $query =
+  'SELECT classes.class_id
+  FROM classes
+  INNER JOIN students ON classes.class_id = students.class_id
+  WHERE user_id = ? AND class_subject =? AND class_number = ?';
+
   $stmt = $dbc->prepare($query);
   $stmt->execute([$userId, $courseSubject, $courseNumber]);
   $classIDNum = $stmt->fetchColumn(0);
+
+  echo "classIDNum: " + $classIDNum;
 
   //If the course does not exist add it to the class table.
   if($classIDNum == NULL) {
@@ -50,6 +57,8 @@ $app->post('/addclass', function($request, $response, $args) {
     $classesQuery = 'INSERT INTO classes (class_subject,class_number) VALUES(?,?);';
     $classesTableInsert = $dbc->prepare($classesQuery);
     $classesTableInsert->execute([$courseSubject, $courseNumber]);
+
+    // echo "in if\n";
 
     $stmt->execute([$userId, $courseSubject, $courseNumber]);
     $classIDNum = $stmt->fetchColumn(0);
