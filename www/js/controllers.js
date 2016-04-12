@@ -20,9 +20,9 @@ angular.module('starter.controllers', [])
   // Makes the GET http request to fill the GroupFeed Data
   $http({
     method: 'GET',
-    url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+    // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
     // url: 'http://www.grupr.me/grups',
-    // url: 'http://54.213.15.90/grups',
+    url: 'http://54.213.15.90/grups',
     headers: {
       'Content-Type': 'application/json'
       },
