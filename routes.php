@@ -1,24 +1,13 @@
 <?php
 
-
 //To do
-// fix the create group stuff to create a class if it hasn't been created (add to their profile)
-//fix session start shit
 //delete classes
 //active classes database
-//members in a group
-//all currently groups they are in
 //need to get a intermediate step that filters down classes in the beginning
-//messaging - Vegas
-//search for groups
-//get all groups
-//correct the getting groups, group id in the json and similar to apiary
-//search by group name, class subject, class number, location
-
+//once someone joins a group from a class, add it to their classes
+//fix reset password
 
 //Questions:
-//How secure does our mobile app have to be?
-    // I have found it difficult to use sesison ID's in routes...
 
 // Routes
 
@@ -73,77 +62,6 @@ $app->post('/searchuser', function ($request, $response, $args) {
     echo json_encode($user_info);
 });
 
-$app->get('/allclasses', function ($request, $response, $args){
-    $dbc = $this->dbc;
-    $strToReturn = '';
-    $classes = '';
-    $sql = 'SELECT * FROM classes';
-    try {
-      $stmt = $dbc->query($sql);
-      $classes = $stmt->fetchAll(PDO::FETCH_OBJ);
-    }
-    catch(PDOException $e) {
-      echo json_encode($e->getMessage());
-    }
-    $strToReturn = json_encode($classes);
-    return $response->write('' . $strToReturn);
-  }
-);
-
-$app->post('/profile', function ($request, $response, $args){
-    $dbc = $this->dbc;
-    $stringToReturn = array();
-    $body = $request->getBody();
-    $decode = json_decode($body);
-    $email = $decode->email;
-
-    $query = 'SELECT user_id FROM user_info WHERE email = :email LIMIT 1';
-    $dbc = $this->dbc;
-    $stmt = $dbc->prepare($query);
-    $stmt->bindParam(':email', $email);
-    $stmt->execute();
-    $user_id = $stmt->fetch(PDO::FETCH_ASSOC);
-    $profile_user_id = $user_id["user_id"];
-
-    $query = 'SELECT email, user_id FROM user_info WHERE email = :email';
-    $stmt = $dbc->prepare($query);
-    $stmt->bindParam(':email', $email);
-    try{
-        $stmt->execute();
-        $profile = $stmt->fetchAll(PDO::FETCH_OBJ);
-    } catch(PDOException $e) {
-        echo json_encode($e->getMessage());
-    }
-    array_push($stringToReturn, json_encode($profile));
-
-    $classes = "";
-    $query = 'SELECT class_subject, class_number FROM classes WHERE user_id = :user_id';
-    $stmt = $dbc->prepare($query);
-    $stmt->bindParam(':user_id', $profile_user_id);
-    try{
-        $stmt->execute();
-        $classes = $stmt->fetchAll(PDO::FETCH_OBJ);
-    } catch(PDOException $e) {
-        echo json_encode($e->getMessage());
-    }
-    array_push($stringToReturn, json_encode($classes));
-
-    $names = "";
-    $query = "SELECT first_name, last_name FROM user_info WHERE user_id = :user_id";
-    $stmt = $dbc->prepare($query);
-    $stmt->bindParam(':user_id', $profile_user_id);
-    try{
-        $stmt->execute();
-        $names = $stmt->fetchAll(PDO::FETCH_OBJ);
-    } catch(PDOException $e) {
-        echo json_encode($e->getMessage());
-    }
-    array_push($stringToReturn, json_encode($names));
-    echo json_encode($stringToReturn);
-    // return $response->write('' . json_encode($stringToReturn));
-
-});
-
 // {"first_name":"Sam","last_name":"Calvert","email":"scalvert@smu.edu","password":"calvert"}
 $app->post('/registeruser', function ($request, $response, $args) {
     session_start();
@@ -155,7 +73,7 @@ $app->post('/registeruser', function ($request, $response, $args) {
     $salt = generateRandomString();
     $password = $decode->password;
     $password = crypt($password, $salt);
-    $query = 'INSERT INTO user_info (email, password, session_id, first_name, last_name, salt, image_id, level) VALUES (:email,:password,:session_id,:first_name,:last_name,:salt, 1, 1.0)';
+    $query = 'INSERT INTO user_info (email, password, session_id, first_name, last_name, salt, level, last_login) VALUES (:email,:password,:session_id,:first_name,:last_name,:salt, 1.0, now())';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':email', $decode->email);
     $stmt->bindParam(':password', $password);
@@ -163,8 +81,12 @@ $app->post('/registeruser', function ($request, $response, $args) {
     $stmt->bindParam(':first_name', $decode->first_name);
     $stmt->bindParam(':last_name', $decode->last_name);
     $stmt->bindParam(':salt', $salt);
-    $stmt->execute();
-    //set response vairables {email, user_id, first_name, last_name};
+
+    try {
+        $stmt->execute();
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
 });
 
 // {"user_id": "3", "group_id": "1"}
@@ -179,7 +101,50 @@ $app->post('/joingroup', function ($request, $response, $args) {
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $user_id);
     $stmt->bindParam(':group_id', $group_id);
-    $stmt->execute();
+    try {
+        $stmt->execute();
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $query = 'SELECT class_subject, class_number, class_id FROM groups NATURAL JOIN classes where group_id = :group_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':group_id', $group_id);
+    try {
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        $class_subject = $result->class_subject;
+        $class_number = $result->class_number;
+        $class_id = $result->class_id;
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $query = 'SELECT count(*) FROM classes NATURAL JOIN students NATURAL JOIN user_info where class_subject = :class_subject AND class_number = :class_number AND user_id = :user_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':class_subject', $class_subject);
+    $stmt->bindParam(':class_number', $class_number);
+    $stmt->bindParam(':user_id', $user_id);
+
+    try {
+        $stmt->execute();
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $has_class = $stmt->fetchColumn();
+    if($has_class == 0)
+    {
+        $query = 'INSERT INTO students VALUES (:user_id, :class_id)';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':class_id', $class_id);
+        try {
+            $stmt->execute();
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+    }
 
 });
 
@@ -196,46 +161,99 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $class_number = $decode->class_number;
     $location_details = $decode->location_details;
     $location = $decode->location;
-    //what i need?
 
     //location_id
     $query = 'SELECT location_id FROM locations WHERE location = :location';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':location', $location);
-    $stmt->execute();
-    $location_id = $stmt->fetch(PDO::FETCH_ASSOC);
-    $location_id = $location_id["location_id"];
+
+    try {
+        $stmt->execute();
+        $location_id = $stmt->fetch(PDO::FETCH_ASSOC);
+        $location_id = $location_id["location_id"];
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
 
     //class_id
     $query = 'SELECT count(*) FROM classes WHERE class_subject = :class_subject AND class_number = :class_number';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':class_subject', $class_subject);
     $stmt->bindParam(':class_number', $class_number);
-    $stmt->execute();
+
+    try {
+        $stmt->execute();
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
     $number_of_rows = $stmt->fetchColumn();
+
     if($number_of_rows != 0)
     {
         $query = 'SELECT class_id FROM classes WHERE class_subject = :class_subject AND class_number = :class_number';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':class_subject', $class_subject);
         $stmt->bindParam(':class_number', $class_number);
-        $stmt->execute();
-        $class_id = $stmt->fetch(PDO::FETCH_ASSOC);
-        $class_id = $class_id["class_id"];
+
+        try {
+            $stmt->execute();
+            $class_id = $stmt->fetch(PDO::FETCH_ASSOC);
+            $class_id = $class_id["class_id"];
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+
     } else {
         $query = 'INSERT INTO classes (class_subject, class_number) VALUES (:class_subject, :class_number)';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':class_subject', $class_subject);
         $stmt->bindParam(':class_number', $class_number);
-        $stmt->execute();
+
+        try {
+            $stmt->execute();
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
 
         $query = 'SELECT class_id FROM classes WHERE class_subject = :class_subject AND class_number = :class_number';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':class_subject', $class_subject);
         $stmt->bindParam(':class_number', $class_number);
+
+        try {
+            $stmt->execute();
+            $class_id = $stmt->fetch(PDO::FETCH_ASSOC);
+            $class_id = $class_id["class_id"];
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+    }
+
+    $query = 'SELECT count(*) FROM classes NATURAL JOIN students NATURAL JOIN user_info where class_subject = :class_subject AND class_number = :class_number AND user_id = :user_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':class_subject', $class_subject);
+    $stmt->bindParam(':class_number', $class_number);
+    $stmt->bindParam(':user_id', $user_id);
+
+    try {
         $stmt->execute();
-        $class_id = $stmt->fetch(PDO::FETCH_ASSOC);
-        $class_id = $class_id["class_id"];
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $has_class = $stmt->fetchColumn();
+    if($has_class == 0)
+    {
+        $query = 'INSERT INTO students VALUES (:user_id, :class_id)';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':class_id', $class_id);
+        try {
+            $stmt->execute();
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
     }
 
     $query = 'INSERT INTO groups (group_name, time_of_meeting, description, creation_time, owner_id, class_id, location_id, location_details) VALUES (:group_name, :time_of_meeting, :description, now(), :owner_id, :class_id, :location_id, :location_details)';
@@ -247,7 +265,12 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $stmt->bindParam(':class_id', $class_id);
     $stmt->bindParam(':location_id', $location_id);
     $stmt->bindParam(':location_details', $location_details);
-    $stmt->execute();
+
+    try {
+        $stmt->execute();
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
 
     //group_id
     $query = 'SELECT group_id FROM groups WHERE group_name = :group_name AND time_of_meeting = :time_of_meeting AND description = :description AND owner_id = :owner_id AND class_id = :class_id AND location_id = :location_id';
@@ -258,15 +281,25 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $stmt->bindParam(':owner_id', $user_id);
     $stmt->bindParam(':class_id', $class_id);
     $stmt->bindParam(':location_id', $location_id);
-    $stmt->execute();
-    $group_id = $stmt->fetch(PDO::FETCH_ASSOC);
-    $group_id = $group_id["group_id"];
+
+    try {
+        $stmt->execute();
+        $group_id = $stmt->fetch(PDO::FETCH_ASSOC);
+        $group_id = $group_id["group_id"];
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
 
     $query = 'INSERT INTO members (user_id, group_id, time_joined) VALUES (:user_id, :group_id, now())';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $user_id);
     $stmt->bindParam(':group_id', $group_id);
-    $stmt->execute();
+
+    try {
+        $stmt->execute();
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
 
 });
 
@@ -289,64 +322,73 @@ $app->post('/login', function ($request, $response, $args) {
         $stmt->bindParam(':email', $_SESSION['email']);
         $stmt->execute();
         $query = 'UPDATE user_info SET last_login = now() WHERE email = :email';
-        $stmt2 = $dbc->prepare($query);
-        $stmt2->bindParam(':email', $_SESSION['email']);
-        $stmt2->execute();
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':email', $_SESSION['email']);
+
+        try {
+            $stmt->execute();
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+
         $query = 'SELECT user_id FROM user_info WHERE session_id = :session_id AND email = :email';
-        $stmt3 = $dbc->prepare($query);
-        $stmt3->bindParam(':session_id', $_SESSION['session_id']);
-        $stmt3->bindParam(':email', $_SESSION['email']);
-        $stmt3->execute();
-        $user_id = $stmt3->fetch(PDO::FETCH_ASSOC);
-        $user_id = $user_id["user_id"];
-        $_SESSION['user_id'] = $user_id;
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':session_id', $_SESSION['session_id']);
+        $stmt->bindParam(':email', $_SESSION['email']);
+
+        try {
+            $stmt->execute();
+            $user_id = $stmt->fetch(PDO::FETCH_ASSOC);
+            $user_id = $user_id["user_id"];
+            $_SESSION['user_id'] = $user_id;
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
 
         $stringToReturn = array();
-
-        $query = 'SELECT user_id FROM user_info WHERE email = :email LIMIT 1';
-        $dbc = $this->dbc;
-        $stmt = $dbc->prepare($query);
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-        $user_id = $stmt->fetch(PDO::FETCH_ASSOC);
-        $profile_user_id = $user_id["user_id"];
 
         $query = 'SELECT email, user_id, level FROM user_info WHERE email = :email';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':email', $email);
-        try{
+
+        try {
             $stmt->execute();
             $profile = $stmt->fetchAll(PDO::FETCH_OBJ);
         } catch(PDOException $e) {
             echo json_encode($e->getMessage());
         }
+
         array_push($stringToReturn, $profile);
 
         $classes = "";
         $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id';
         $stmt = $dbc->prepare($query);
-        $stmt->bindParam(':user_id', $profile_user_id);
-        try{
+        $stmt->bindParam(':user_id', $_SESSION['user_id']);
+
+        try {
             $stmt->execute();
             $classes = $stmt->fetchAll(PDO::FETCH_OBJ);
         } catch(PDOException $e) {
             echo json_encode($e->getMessage());
         }
+
         array_push($stringToReturn, $classes);
 
         $names = "";
         $query = "SELECT first_name, last_name FROM user_info WHERE user_id = :user_id";
         $stmt = $dbc->prepare($query);
-        $stmt->bindParam(':user_id', $profile_user_id);
-        try{
+        $stmt->bindParam(':user_id', $_SESSION['user_id']);
+
+        try {
             $stmt->execute();
             $names = $stmt->fetchAll(PDO::FETCH_OBJ);
         } catch(PDOException $e) {
             echo json_encode($e->getMessage());
         }
+
         array_push($stringToReturn, $names);
 
-        echo json_encode($stringToReturn, JSON_UNESCAPED_SLASHES);
+        echo json_encode($stringToReturn, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     } else {
         echo "login failed";
     }
@@ -424,7 +466,11 @@ $app->post('/resetpassword', function ($request, $response, $args) {
     $stmt->bindParam(':db_pass', $db_pass);
     $stmt->bindParam(':salt', $salt);
     $stmt->bindParam(':user_id', $user_id);
-    $stmt->execute();
+    try {
+        $stmt->execute();
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
 
 
 });
@@ -452,7 +498,13 @@ $app->post('/getusergroups', function ($request, $response, $args) {
     $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE user_id = :user_id';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $user_id);
-    $stmt->execute();
+
+    try {
+        $stmt->execute();
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
     $user_groups = $stmt->fetchAll();
     foreach($user_groups as $row)
     // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
@@ -463,15 +515,74 @@ $app->post('/getusergroups', function ($request, $response, $args) {
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':group_id', $group_id);
         $stmt->bindParam(':user_id', $user_id);
-        $stmt->execute();
-        $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        try {
+            $stmt->execute();
+            $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
 
         $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':group_id', $group_id);
+        try {
+            $stmt->execute();
+            $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+
+        $group_info["members"] = $member;
+        array_push($groups, $group_info);
+
+    }
+
+    $json = json_encode($groups, JSON_PRETTY_PRINT);
+    echo $json;
+
+
+});
+
+$app->get('/grups', function ($request, $response, $args) {
+    $dbc = $this->dbc;
+    $groups = array();
+    $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN classes NATURAL JOIN locations';
+    $stmt = $dbc->prepare($query);
+
+    try {
         $stmt->execute();
-        $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $all_groups = $stmt->fetchAll();
+    foreach($all_groups as $row)
+    // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
+    {
+        // $group_id = $group_info["group_id"];
+        $group_id = $row["group_id"];
+        $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':group_id', $group_id);
+
+        try {
+            $stmt->execute();
+            $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+
+        $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+        $stmt = $dbc->prepare($query);
+        $stmt->bindParam(':group_id', $group_id);
+
+        try {
+            $stmt->execute();
+            $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
 
         $group_info["members"] = $member;
         array_push($groups, $group_info);
