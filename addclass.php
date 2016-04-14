@@ -51,9 +51,22 @@ $app->post('/addclass', function($request, $response, $args) {
   //The course does exist. Add the user to the bridge table.
   else {
 
-    $userQuery = 'INSERT INTO students (user_id, class_id, is_active) VALUES (?,?, TRUE);';
-    $insertUser = $dbc->prepare($userQuery);
-    $insertUser->execute([$userId, $classIDNum]);
+    $studentTableQuery = 'Select user_id, class_id from students WHERE is_active = TRUE AND user_id =? AND class_id =?;';
+    $studentTableExists = $dbc->prepare($studentTableQuery);
+    $studentTableExists->execute([$userId, $classIDNum]);
+
+    $studentTableEntry = $studentTableExists->fetchAll();
+
+
+    if($studentTableEntry == NULL) {
+
+      $userQuery = 'INSERT INTO students (user_id, class_id, is_active) VALUES (?,?, TRUE);';
+      $insertUser = $dbc->prepare($userQuery);
+      $insertUser->execute([$userId, $classIDNum]);
+    }
+    else {
+
+    }
   }
   //send back a list of all classes that the user is in
 
