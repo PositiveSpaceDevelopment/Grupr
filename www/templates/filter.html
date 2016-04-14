@@ -1,0 +1,13 @@
+<ion-view view-title="Filter">
+  
+  <ion-content>
+	<div class="list">
+	<div class="item item-divider">Which of your classes do you want to filter?</div>	
+		   <ion-toggle class="item" ng-repeat = "class in user_classes">
+		   {{class.class_subject}} {{class.class_number}}
+		   </ion-toggle>
+		<button class="button button-block button-assertive" type="submit" ng-click = "done()">Done</button>  
+	</div>
+
+  </ion-content>
+</ion-view>

@@ -1,11 +1,209 @@
 angular.module('starter.controllers', [])
 
-.controller('BrowseCtrl', function($scope) {
+.controller('BrowseCtrl', function($scope, $state, $http, ProfileData, GroupFeed) {
+  
+
+  $scope.newGroup = function() {
+    $state.go('createGroup');
+  }
+
+    $scope.filter = function() {
+	$state.go('filter')
+  }
+
+  $scope.viewGroup = function(id) {
+    $state.go("tab.groupDetail",{grupID: id});
+  }
+
+  // Makes the GET http request to fill the GroupFeed Data
+  $http({
+    method: 'GET',
+    // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+    // url: 'http://www.grupr.me/grups',
+    url: 'http://54.213.15.90/grups',
+    headers: {
+      'Content-Type': 'application/json'
+      },
+    data: data
+  }).then(function successCallback(response) {
+    $scope.feed = response.data;
+    GroupFeed.data = response.data;
+    console.log(GroupFeed.data);
+  }, function errorCallback(response) {
+    console.log("something went wrong");
+  });
+})
+
+.controller('GroupDetailCtrl', function($scope, $stateParams, $http, GroupFeed, ProfileData) {
+
+  id = $stateParams.grupID;
+
+  var index = 0; 
+  while(true){
+    if (GroupFeed.data[index].id == id) {
+      break;
+    };
+    index++;
+  }
+
+  $scope.groupInfo = GroupFeed.data[index];
+  console.log($scope.groupInfo);
+
+  $scope.join = function() {
+
+    var data = {}
+
+    data.user_id = ProfileData.data.user_id;
+    data.group_id = id;
+
+    console.log(data);
+
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
+      // url: 'http://www.grupr.me/joingroup',
+      url: 'http://54.213.15.90/joingroup',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      console.log("You Joined!");
+    });
+
+  }
 
 })
 
-.controller('ViewAllGrupsCtrl', function($scope) {
+.controller('ViewAllGrupsCtrl', function($scope, $state, $http, ProfileData, GroupFeed, UserGroups) {
+	var data = {};
+	data.user_id = ProfileData.data.user_id;
+	// Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      // url: 'http://www.grupr.me/creategrup',
+      url: 'http://54.213.15.90/creategroup',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      UserGroups.data = response.data;
+      console.log(UserGroups.data);
+    });
+  $scope.newGroup = function() {
+    $state.go('createGroup');
+  }
 
+  $scope.filter = function() {
+	$state.go('filter')
+  }
+
+  $scope.viewGroup = function(id) {
+    $state.go("tab.groupDetail",{grupID: id});
+  }
+})
+
+.controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
+  $scope.form = {};
+
+  var step = 1;
+  $scope.form.general = true;
+  $scope.form.descriptionShow = false;
+  $scope.form.locationDate = false;
+  $scope.form.nextItem = true;
+  $scope.form.lastItem = false;
+
+  $scope.next = function() {
+    switch(step) {
+      case 1:
+        $scope.form.general = false;
+        $scope.form.locationDate = true;
+        break;
+      case 2:
+        $scope.form.locationDate = false;
+        $scope.form.descriptionShow = true;
+        $scope.form.nextItem = false;
+        $scope.form.lastItem = true;
+        break;
+    }
+    step++;
+  }
+
+  $scope.createGrup = function() {
+    var data = {};
+
+    data.user_id = ProfileData.data.user_id;
+
+    if ($scope.form.group_name) {
+      data.group_name = $scope.form.group_name;
+    };
+    if ($scope.form.location) {
+      data.location = $scope.form.location;
+    };
+    if ($scope.form.location_details) {
+      data.location_details = $scope.form.location_details;
+    };
+
+    if ($scope.form.date) {
+      data.time_of_meeting = $scope.form.date;
+    };
+    if ($scope.form.description) {
+      data.description = $scope.form.description;
+    };
+    
+    // TODO: Use a regex function thing for this
+    // Grabs the class subject and number from the input
+    // and splits it up and stores it as class subject and number
+    var tempName = $scope.form.class_name;
+    if (tempName) {
+      var nameNum = tempName.split(" ");
+
+      data.class_subject = nameNum[0];
+      data.class_number = nameNum[1];
+    };
+    
+    console.log(data);
+    console.log($scope.form.date);
+
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/creategrup',
+      // url: 'http://www.grupr.me/creategroup',
+      url: 'http://54.213.15.90/creategroup',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      console.log(response.data);
+
+      $state.go('tab.browse');
+    });
+
+    // Resets the values for the Creat Group form
+    var step = 1;
+    $scope.form.general = true;
+    $scope.form.descriptionShow = false;
+    $scope.form.locationDate = false;
+    $scope.form.nextItem = true;
+    $scope.form.lastItem = false;
+  }
+
+  $scope.cancel = function() {
+    // Resets the values for the Creat Group form
+    var step = 1;
+    $scope.form.general = true;
+    $scope.form.descriptionShow = false;
+    $scope.form.locationDate = false;
+    $scope.form.nextItem = true;
+    $scope.form.lastItem = false;
+    
+    $state.go('tab.browse');
+  }
 })
 
 .controller('addClassCtrl', function($scope,$state, $http, ProfileData, classes) {
@@ -30,12 +228,35 @@ angular.module('starter.controllers', [])
 		$scope.form.class_number = "";
     
 	};
-	
-  
+  $scope.done = function() {
+    $state.go('tab.profile');
+  }
 })
-
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
+.controller('filterCtrl', function($scope,$state, $http, ProfileData, classes) {
+	$scope.form = {};
+	$scope.first_name = ProfileData.data.first_name;
+	  $scope.last_name = ProfileData.data.last_name;
+	  $scope.email = ProfileData.data.email;
+	  $scope.user_id = ProfileData.data.user_id;
+	  $scope.user_classes = ProfileData.data.classes;
+	  $scope.classes = classes.data.classes;
+	  $scope.level = ProfileData.data.level;
+	  $scope.icon = ProfileData.data.icon;
+	$scope.form.class_subject = "ACCT";
+	  
+	$scope.addClassSubmit = function() {
+		var data = {};
+		console.log($scope.form.class_subject );
+		console.log($scope.form.class_number);
+		data.class_subject = $scope.form.class_subject;
+		data.class_number = $scope.form.class_nubmber; 
+		$scope.form.class_subject = "ACCT";
+		$scope.form.class_number = "";
+    
+	};
+  $scope.done = function() {
+    $state.go('tab.browse');
+  }
 })
 
 .controller('LoginCtrl', function($scope, $state, $http, ProfileData) {
@@ -64,14 +285,17 @@ angular.module('starter.controllers', [])
     // Makes the POST http request
     $http({
       method: 'POST',
-      url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      // url: 'http://www.grupr.me/login',
+      url: 'http://54.213.15.90/creategroup',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
     }).then(function successCallback(response){
       ProfileData.data = response.data;
-      console.log(ProfileData.data.classes[0].class_subject);
+      console.log(ProfileData.data);
+      console.log(ProfileData.data.user_id);
        $state.go('tab.browse');
     });
 
@@ -96,11 +320,11 @@ angular.module('starter.controllers', [])
 	$scope.register = function() {
 		var data = {};
 
-		if ($scope.form.firstName) {
-		  data.firstName = $scope.form.firstName;
+		if ($scope.form.first_name) {
+		  data.first_name = $scope.form.first_name;
 		};
-		if ($scope.form.lastName) {
-		  data.lastName = $scope.form.lastName;
+		if ($scope.form.last_name) {
+		  data.last_name = $scope.form.last_name;
 		};
 		if ($scope.form.email) {
 		  data.email = $scope.form.email;
@@ -114,7 +338,9 @@ angular.module('starter.controllers', [])
     // Makes the POST http request
     $http({
       method: 'POST',
-      url: 'http://private-fa798-grupr.apiary-mock.com/register',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/register',
+      // url: 'http://www.grupr.me/registeruser',
+      url: 'http://54.213.15.90/creategroup',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -129,7 +355,7 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('ProfileCtrl', function($scope,$state, $http,ProfileData) {
+.controller('ProfileCtrl', function($scope,$state, $http,ProfileData, GroupFeed) {
   $scope.form = {};
   $scope.first_name = ProfileData.data.first_name;
   $scope.last_name = ProfileData.data.last_name;
@@ -139,7 +365,32 @@ angular.module('starter.controllers', [])
   $scope.level = ProfileData.data.level;
   $scope.icon = ProfileData.data.icon;
   
-    $scope.addClass = function() {
-    $state.go('addClass');
+  $scope.addClass = function() 
+  {
+	$state.go('filter');
+  }
+
+  $scope.logout = function() {
+    var data = ProfileData.user_id;
+
+    // clears data stored in ProfileData
+    ProfileData.data = null;
+    GroupFeed.data = null;
+
+
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
+      // url: 'http://www.grupr.me/logout',
+      url: 'http://54.213.15.90/logout',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      // returns the user to the login screen
+      $state.go('login');
+    });  
   }
 });
