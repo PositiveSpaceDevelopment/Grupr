@@ -43,7 +43,7 @@ $app->post('/addclass', function($request, $response, $args) {
     $stmt->execute([$courseSubject, $courseNumber]);
     $classIDNum = $stmt->fetchColumn(0);
 
-    $studentsQuery = 'INSERT INTO students (user_id, class_id) VALUES (?,?);';
+    $studentsQuery = 'INSERT INTO students (user_id, class_id, is_active) VALUES (?,?, TRUE);';
     $studentTableInsert = $dbc->prepare($studentsQuery);
     $studentTableInsert->execute([$userId, $classIDNum]);
   }
@@ -51,10 +51,17 @@ $app->post('/addclass', function($request, $response, $args) {
   //The course does exist. Add the user to the bridge table.
   else {
 
-    $userQuery = 'INSERT INTO students (user_id, class_id) VALUES (?,?);';
+    $userQuery = 'INSERT INTO students (user_id, class_id, is_active) VALUES (?,?, TRUE);';
     $insertUser = $dbc->prepare($userQuery);
     $insertUser->execute([$userId, $classIDNum]);
   }
+  //send back a list of all classes that the user is in
 
-  // echo json_encode($classIDNum);
+  $allClassesQuery = 'SELECT class_subject,class_number from classes INNER JOIN students on classes.class_id = students.class_id WHERE user_id =? AND is_active = TRUE;';
+  $fetchAllClasses = $dbc->prepare($allClassesQuery);
+  $fetchAllClasses ->execute([$userId]);
+
+  $classList = $fetchAllClasses->fetchAll(PDO::FETCH_ASSOC);
+
+  echo json_encode($classList);
 });
