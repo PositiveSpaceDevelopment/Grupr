@@ -479,7 +479,6 @@ $app->post('/getusergroups', function ($request, $response, $args) {
 
 });
 
-//started this 4-11-16
 $app->post('/getgroups', function($request, $response, $args) 
 {
 	$body = $request->getBody();
@@ -496,85 +495,121 @@ $app->post('/getgroups', function($request, $response, $args)
         
         
 	
-		if(empty($decode->{'class_number'}) && empty($decode->{'location'}) && empty($decode->{'group_name'}) )	//just class subject
+		if(empty($decode->{'class_number'}) && empty($decode->{'location'}) && empty($decode->{'group_name'}) && !empty($decode->{'class_subject'}))	//just class subject
 		{
-    		$class_subject = $decode->class_subject;
-    		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject';
-    		$stmt = $dbc->prepare($query);
-    		$stmt->bindParam(':class_subject', $class_subject);
-    		$stmt->execute();
-        	$stuff = $stmt->fetchAll();
+		$class_subject = $decode->class_subject;
+		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject';
+		$stmt = $dbc->prepare($query);
+		$stmt->bindParam(':class_subject', $class_subject);
+		$stmt->execute();
+    	$stuff = $stmt->fetchAll();
     	
     	//more stuff
 		
 		}
-		else if(empty($decode->{'class_number'}) && empty($decode->{'location'}) && empty($decode->{'class_subject'}))	//just groupname
+		else if(empty($decode->{'class_subject'}) && empty($decode->{'location'}) && empty($decode->{'group_name'}) && !empty($decode->{'class_number'}))//just class_number
 		{
-    		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_name = :group_name';
-    		$stmt = $dbc->prepare($query);
-    		$stmt->bindParam(':group_name', $group_name);
-    		$stmt->execute();
-        	$stuff = $stmt->fetchAll();
+		$class_subject = $decode->class_subject;
+		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_number = :class_number';
+		$stmt = $dbc->prepare($query);
+		$stmt->bindParam(':class_number', $class_number);
+		$stmt->execute();
+    	$stuff = $stmt->fetchAll();
+		
+		}
+		else if(empty($decode->{'class_number'}) && empty($decode->{'location'}) && empty($decode->{'class_subject'}) && !empty($decode->{'group_name'}))	//just groupname
+		{
+		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_name = :group_name';
+		$stmt = $dbc->prepare($query);
+		$stmt->bindParam(':group_name', $group_name);
+		$stmt->execute();
+    	$stuff = $stmt->fetchAll();
     	
     	//more stuff
 		}
-		else if(empty($decode->{'class_number'}) && empty($decode->{'class_subject'}) && empty($decode->{'group_name'})) //just location
+		else if(empty($decode->{'class_number'}) && empty($decode->{'class_subject'}) && empty($decode->{'group_name'}) && !empty($decode->{'location'})) //just location
 		{
-    		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE location = :location';
-    		$stmt = $dbc->prepare($query);
-    		$stmt->bindParam(':location', $location);
-    		$stmt->execute();
-        	$stuff = $stmt->fetchAll();
+		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE location = :location';
+		$stmt = $dbc->prepare($query);
+		$stmt->bindParam(':location', $location);
+		$stmt->execute();
+    	$stuff = $stmt->fetchAll();
     	
     	//more stuff
 		}
-		else if(empty($decode->{'class_number'}) && empty($decode->{'group_name'})) //just class subject and location
+		else if(empty($decode->{'class_number'}) && empty($decode->{'group_name'}) && !empty($decode->{'class_subject'}) && !empty($decode->{'location'})) //just class subject and location
 		{
-    		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND location = :location';
-    		$stmt = $dbc->prepare($query);
-    		$stmt->bindParam(':class_subject', $class_subject);
-    		$stmt->bindParam(':location', $location);
-    		$stmt->execute();
-        	$stuff = $stmt->fetchAll();
+		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND location = :location';
+		$stmt = $dbc->prepare($query);
+		$stmt->bindParam(':class_subject', $class_subject);
+		$stmt->bindParam(':location', $location);
+		$stmt->execute();
+    	$stuff = $stmt->fetchAll();
 	
 		//more stuff	
 		}
 	
 		
-		else if(empty($decode->{'location'}) && empty($decode->{'group_name'}))//they just enter "class subject" and "class number"
+		else if(empty($decode->{'location'}) && empty($decode->{'group_name'}) && !empty($decode->{'class_number'}) && empty($decode->{'class_subject'}))//just class subject and class number
 		{
-    		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number';
-    		$stmt = $dbc->prepare($query);
-    		$stmt->bindParam(':class_subject', $class_subject);
-    		$stmt->bindParam(':class_number', $class_number);
-    		$stmt->execute();
-        	$stuff = $stmt->fetchAll();
+		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number';
+		$stmt = $dbc->prepare($query);
+		$stmt->bindParam(':class_subject', $class_subject);
+		$stmt->bindParam(':class_number', $class_number);
+		$stmt->execute();
+    	$stuff = $stmt->fetchAll();
 	
 		//more stuff
 		}
-		else if (empty($decode->{'location'})) //class subj, number and groupname
+		else if(empty($decode->{'location'}) && !empty($decode->{'class_number'}) && !empty($decode->{'class_subject'}) && !empty($decode->{'group_name'})) //class subj, number and groupname
 		{
-    		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number AND group_name = :group_name';
-    		$stmt = $dbc->prepare($query);
-    		$stmt->bindParam(':class_subject', $class_subject);
-    		$stmt->bindParam(':class_number', $class_number);
-    		$stmt->bindParam(':group_name', $group_name);
-    		$stmt->execute();
-        	$stuff = $stmt->fetchAll();
+		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number AND group_name = :group_name';
+		$stmt = $dbc->prepare($query);
+		$stmt->bindParam(':class_subject', $class_subject);
+		$stmt->bindParam(':class_number', $class_number);
+		$stmt->bindParam(':group_name', $group_name);
+		$stmt->execute();
+    	$stuff = $stmt->fetchAll();
 	
 		//more stuff
+		}
+		else if(empty($decode->{'class_subject'}) && empty($decode->{'group_name'}) && !empty($decode->{'class_number'}) && !empty($decode->{'location'}))	//just class number, location (added 4-14)
+		{
+		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE location = :location AND class_number = :class_number';
+		$stmt = $dbc->prepare($query);
+		$stmt->bindParam(':location', $location);
+		$stmt->bindParam(':class_number', $class_number);
+		$stmt->execute();
+    	$stuff = $stmt->fetchAll();
+		
+		}
+		
+		else if(empty($decode->{'class_subject'}) && empty($decode->{'class_number'}) && !empty($decode->{'group_name'}) && !empty($decode->{'location'}))//just group_name and location (added 4-14)
+		{
+		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_name = :group_name AND location = :location';
+		$stmt = $dbc->prepare($query);
+		$stmt->bindParam(':location', $location);
+		$stmt->bindParam(':group_name', $group_name);
+		$stmt->execute();
+    	$stuff = $stmt->fetchAll();
+		
 		}
 		else if(!empty($decode->{'location'} && !empty($decode->{'class_subject'}) && !empty($decode->{'class_number'}) && !empty($decode->{'group_name'}))	//all 4
 		{
-		    $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number AND group_name = :group_name AND location = :location';
-		    $stmt = $dbc->prepare($query);
-    		$stmt->bindParam(':class_subject', $class_subject);
-    		$stmt->bindParam(':class_number', $class_number);
-    		$stmt->bindParam(':group_name', $group_name);
-    		$stmt->bindParam(':location', $location);
-		    $stmt->execute();
-    	    $stuff = $stmt->fetchAll();
+		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number AND group_name = :group_name AND location = :location';
+		$stmt = $dbc->prepare($query);
+		$stmt->bindParam(':class_subject', $class_subject);
+		$stmt->bindParam(':class_number', $class_number);
+		$stmt->bindParam(':group_name', $group_name);
+		$stmt->bindParam(':location', $location);
+		$stmt->execute();
+    	$stuff = $stmt->fetchAll();
 		
+		}
+		
+		else
+		{
+			//error...
 		}
 		
 		echo json_encode($stuff, JSON_UNESCAPED_SLASHES);
