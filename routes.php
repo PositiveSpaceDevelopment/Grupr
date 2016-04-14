@@ -4,8 +4,11 @@
 //delete classes
 //active classes database
 //need to get a intermediate step that filters down classes in the beginning
-//once someone joins a group from a class, add it to their classes
 //fix reset password
+//leaving a group
+//get the current groups, not groups in the past
+//delete and get everything correctly
+//edit classes
 
 //Questions:
 
@@ -593,4 +596,62 @@ $app->get('/grups', function ($request, $response, $args) {
     echo $json;
 
 
+});
+
+// {"group_id": "6", "user_id": "1", "content": "I love sports"}
+$app->post('/sendmessage', function ($request, $response, $args) {
+    $dbc = $this->dbc;
+    $body = $request->getBody();
+    $decode = json_decode($body);
+    $group_id = $decode->group_id;
+    $user_id = $decode->user_id;
+    $content = $decode->content;
+
+    $query = 'SELECT member_id FROM members NATURAL JOIN groups WHERE user_id = :user_id AND group_id = :group_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->bindParam(':group_id', $group_id);
+    try {
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        $member_id = $result->member_id;
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $query = 'INSERT INTO messages (content, send_time, member_id, group_id) VALUES (:content, now(), :member_id, :group_id)';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':content', $content);
+    $stmt->bindParam(':member_id', $member_id);
+    $stmt->bindParam(':group_id', $group_id);
+    try {
+        $stmt->execute();
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+});
+
+// {"group_id": "6"}
+$app->post('/getmessages', function ($request, $response, $args) {
+    $body = $request->getBody();
+    $decode = json_decode($body);
+    $dbc = $this->dbc;
+    $group_id = $decode->group_id;
+    $messages = array();
+
+    $query = 'SELECT content, send_time, member_id, first_name, last_name FROM messages NATURAL JOIN members NATURAL JOIN user_info WHERE group_id = :group_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':group_id', $group_id);
+    try {
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach($result as $row)
+        {
+            array_push($messages, $row);
+        }
+        echo json_encode($messages, JSON_PRETTY_PRINT);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
 });
