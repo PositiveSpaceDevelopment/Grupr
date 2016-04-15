@@ -52,6 +52,11 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       templateUrl: 'templates/addClass.html',
       controller: 'addClassCtrl'
     })
+	.state('filter', {
+      url: '/filter',
+      templateUrl: 'templates/filter.html',
+      controller: 'filterCtrl'
+    })
 
   .state('register', {
       url: '/register',
@@ -84,12 +89,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 	
-	.state('tab.ViewAllGrups', {
-      url: '/ViewAllGrups',
+	.state('tab.MyGroups', {
+      url: '/MyGroups',
       views: {
-        'tab-ViewAllGrups': {
-          templateUrl: 'templates/tab-ViewAllGrups.html',
-          controller: 'ViewAllGrupsCtrl'
+        'tab-MyGroups': {
+          templateUrl: 'templates/tab-MyGroups.html',
+          controller: 'MyGroupsCtrl'
         }
       }
     })

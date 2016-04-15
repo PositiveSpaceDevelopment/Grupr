@@ -8,7 +8,7 @@
 		Class Subject 
 		</div>
 		<select ng-model="form.class_subject">
-		  <option ng-repeat = "class in classes">
+		  <option ng-repeat = "class in classesToTake">
 		  {{class.class_subject}} 
 		  </option>
 		</select>
@@ -21,10 +21,14 @@
           <button class="button button-block button-positive" type="submit">Add Class</button>
 		 </label>
 	  </form> 
-	<div class="item item-divider">Your Classes</div>	
-		<label class="item" ng-repeat = "class in user_classes">
-	       {{class.class_subject}} {{class.class_number}}
-		</label>
+	<div class="item item-divider">Your current classes</div>
+		<ion-list>
+		<ion-item ng-repeat = "class in classes">
+		<ion-option-button class="button-positive">Edit</ion-option-button>
+		<ion-option-button class="button-assertive">Delete</ion-option-button>
+	       {{class.class_subject}} {{class.class_number}} 
+		</ion-item>
+		</ion-list>
 		<button class="button button-block button-assertive" type="submit" ng-click = "done()">Done</button>  
 	</div>
 

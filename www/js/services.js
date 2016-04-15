@@ -45,6 +45,10 @@ angular.module('starter.services', [])
 .factory("GroupFeed",function() {
   return {data:null};
 })
+//factory to carry around groups the user is in
+.factory("UserGroups",function() {
+  return {data:null};
+})
 
 
 
