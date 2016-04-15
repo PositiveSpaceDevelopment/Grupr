@@ -24,15 +24,17 @@
 		level: {{level}}
 		</ion-item>
 		<ion-item>
-		<button class="button" ng-click="addClass()">
+		<button class="button" ng-click="filter()">
 			<i></i> Filter classes 
 		</button>
 		</ion-item>
+		
+		<div class="item item-divider">Your Classes</div>
+		<ion-item ng-repeat = "class in classes">
+		<ion-option-button class="button-positive">Edit</ion-option-button>
+		<ion-option-button class="button-assertive">Delete</ion-option-button>
+	       {{class.class_subject}} {{class.class_number}} 
+		</ion-item>
 		</ion-list>
-		<div class="item item-divider">Your Classes</div>	
-		<label class="item" ng-repeat = "class in classes">
-	       {{class.class_subject}} {{class.class_number}}
-		</label>
-		</div>
   </ion-content>
 </ion-view>
