@@ -28,8 +28,8 @@ angular.module('starter.controllers', [])
       },
     data: data
   }).then(function successCallback(response) {
-    $scope.feed = response.data;
     GroupFeed.data = response.data;
+    $scope.feed = GroupFeed.data;
     console.log(GroupFeed.data);
   }, function errorCallback(response) {
     console.log("something went wrong");
@@ -42,7 +42,7 @@ angular.module('starter.controllers', [])
 
   var index = 0; 
   while(true){
-    if (GroupFeed.data[index].id == id) {
+    if (GroupFeed.data[index].group_id == id) {
       break;
     };
     index++;
@@ -237,7 +237,7 @@ angular.module('starter.controllers', [])
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/login',
       // url: 'http://www.grupr.me/login',
-      url: 'http://54.213.15.90/creategroup',
+      url: 'http://54.213.15.90/login',
       headers: {
         'Content-Type': 'application/json'
         },

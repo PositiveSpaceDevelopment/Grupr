@@ -8,7 +8,84 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('addClassCtrl', function($scope) {
+<<<<<<< HEAD
+.controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
+  $scope.form = {};
+
+  $scope.createGrup = function() {
+    var data = {};
+
+    data.user_id = ProfileData.data.user_id;
+
+    if ($scope.form.group_name) {
+      data.group_name = $scope.form.group_name;
+    };
+    if ($scope.form.location) {
+      data.building = $scope.form.location;
+    };
+    if ($scope.form.location_details) {
+      data.location_details = $scope.form.location_details;
+    };
+
+    // TODO: This date/time thing needs to be fixed for proper format
+    // and data entry
+    if ($scope.form.meeting_time) {
+      data.time_of_meeting = $scope.form.date;
+    };
+    if ($scope.form.description) {
+      data.description = $scope.form.description;
+    };
+    
+    // TODO: Use a regex function thing for this
+    // Grabs the class subject and number from the input
+    // and splits it up and stores it as class subject and number
+    var tempName = $scope.form.class_name;
+    var nameNum = tempName.split(" ");
+
+    data.class_subject = nameNum[0];
+    data.class_number = nameNum[1];
+
+    console.log(data);
+
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      url: 'http://private-fa798-grupr.apiary-mock.com/creategrup',
+      // url: 'http://www.grupr.me/creategrup',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      console.log("Status: " + response.data.status);
+    });
+
+  }
+=======
+.controller('addClassCtrl', function($scope,$state, $http, ProfileData, classes) {
+	$scope.form = {};
+	$scope.first_name = ProfileData.data.first_name;
+	  $scope.last_name = ProfileData.data.last_name;
+	  $scope.email = ProfileData.data.email;
+	  $scope.user_id = ProfileData.data.user_id;
+	  $scope.user_classes = ProfileData.data.classes;
+	  $scope.classes = classes.data.classes;
+	  $scope.level = ProfileData.data.level;
+	  $scope.icon = ProfileData.data.icon;
+	$scope.form.class_subject = "ACCT";
+	  
+	$scope.addClassSubmit = function() {
+		var data = {};
+		console.log($scope.form.class_subject );
+		console.log($scope.form.class_number);
+		data.class_subject = $scope.form.class_subject;
+		data.class_number = $scope.form.class_nubmber; 
+		$scope.form.class_subject = "ACCT";
+		$scope.form.class_number = "";
+    
+	};
+	
+>>>>>>> Trevor
   
 })
 
@@ -39,27 +116,19 @@ angular.module('starter.controllers', [])
     console.log(data);
 
 
-<<<<<<< HEAD
-    // Make the POST request to the backend 
-=======
-    //My attempt at getting http POST to work. Not sure how to test this.
-    // Ill re-visit this when I learn more about how to test it
->>>>>>> origin/Trevor
+    // Makes the POST http request
     $http({
       method: 'POST',
-      url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      url: 'http://www.grupr.me/login',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
     }).then(function successCallback(response){
       ProfileData.data = response.data;
-<<<<<<< HEAD
-      console.log(ProfileData.data.email);
-
-=======
-      console.log(ProfileData.data.classes[0].class_subject);
->>>>>>> origin/Trevor
+      console.log(ProfileData.data);
+      console.log(ProfileData.data.user_id);
        $state.go('tab.browse');
     });
 
@@ -69,11 +138,7 @@ angular.module('starter.controllers', [])
   // is clicked on the login page.
   //It takes the user to the Register page
   $scope.register = function() {
-<<<<<<< HEAD
     $state.go('register');
-=======
-    $state.go('tab.register');
->>>>>>> origin/Trevor
   }
 })
 
@@ -88,11 +153,11 @@ angular.module('starter.controllers', [])
 	$scope.register = function() {
 		var data = {};
 
-		if ($scope.form.firstName) {
-		  data.firstName = $scope.form.firstName;
+		if ($scope.form.first_name) {
+		  data.first_name = $scope.form.first_name;
 		};
-		if ($scope.form.lastName) {
-		  data.lastName = $scope.form.lastName;
+		if ($scope.form.last_name) {
+		  data.last_name = $scope.form.last_name;
 		};
 		if ($scope.form.email) {
 		  data.email = $scope.form.email;
@@ -103,13 +168,11 @@ angular.module('starter.controllers', [])
 
 		console.log(data);
 
-<<<<<<< HEAD
-    // Make the POST request to the backend 
-=======
->>>>>>> origin/Trevor
+    // Makes the POST http request
     $http({
       method: 'POST',
-      url: 'http://private-fa798-grupr.apiary-mock.com/register',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/register',
+      url: 'http://www.grupr.me/registeruser',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -124,18 +187,17 @@ angular.module('starter.controllers', [])
 	}
 })
 
-<<<<<<< HEAD
-.controller('ProfileCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
-  };
-=======
-.controller('ProfileCtrl', function($scope,ProfileData) {
+.controller('ProfileCtrl', function($scope,$state, $http,ProfileData) {
   $scope.form = {};
   $scope.first_name = ProfileData.data.first_name;
   $scope.last_name = ProfileData.data.last_name;
   $scope.email = ProfileData.data.email;
   $scope.user_id = ProfileData.data.user_id;
   $scope.classes = ProfileData.data.classes;
->>>>>>> origin/Trevor
+  $scope.level = ProfileData.data.level;
+  $scope.icon = ProfileData.data.icon;
+  
+    $scope.addClass = function() {
+    $state.go('addClass');
+  }
 });
