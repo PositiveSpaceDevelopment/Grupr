@@ -1,13 +1,42 @@
-<ion-view view-title="Browse">
-  <ion-content class="padding">
-    <h2>Browse</h2>
-    <p>
-    </p>
-    <p>
-    </p>
-    <p>
-    </p>
-    <p>
-    </p>
+<ion-view view-title="Browse Grüps">
+  <ion-nav-buttons side="primary">
+    <button class="button button-clear" ng-click="filter()">
+      <i class="icon ion-android-funnel"></i> Filter
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <button class="button button-clear" ng-click="newGroup()">
+      <i class="icon ion-plus-round"></i> New
+    </button>
+  </ion-nav-buttons>
+  
+  <ion-content>
+    <ul class="list">
+
+      <!-- Card for each Study Group -->
+      <li class="item" ng-repeat="group in feed" ng-click="viewGroup(group.group_id)">
+        <div class="list card">
+          <div class=" item item-header">
+            <h3>{{group.group_name}}</h2>
+          </div>
+          <div class="item item-body">
+            <!-- <img class="full-image" src="/img/grupr-logo.png"> -->
+            <ul class="list">
+              <li class="item">
+                <h4>{{group.class_subject}} {{group.class_number}}</h4>
+              </li>
+              <li class="item">
+                <h4>{{group.time_of_meeting | date:'EEE MMM dd HH:mm'}}</h4> 
+              </li>
+              <li class="item">
+                <h4>{{group.location}}</h4>
+                <p>{{group.location_details}}</p> 
+              </li>
+            </ul>
+          </div>
+        </div>
+      </li>
+      
+    </ul>
   </ion-content>
 </ion-view>

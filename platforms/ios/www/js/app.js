@@ -7,11 +7,6 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
-//factory to carry around user data
-.factory("ProfileData",function() {
-	return {data:null};
-})
-
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -45,25 +40,34 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
   // Each tab has its own nav history stack:
 
-  .state('tab.login', {
-    url: '/login',
-    views: {
-      'login': {
-        templateUrl: 'templates/login.html',
-        controller: 'LoginCtrl'
-      }
-    }
-  })
 
-  .state('tab.register', {
-    url: '/register',
-    views: {
-      'register': {
-        templateUrl: 'templates/register.html',
-        controller: 'RegisterCtrl'
-      }
-    }
-  })
+  .state('login', {
+      url: '/login',
+      templateUrl: 'templates/login.html',
+      controller: 'LoginCtrl'
+    })
+	
+   .state('addClass', {
+      url: '/addClass',
+      templateUrl: 'templates/addClass.html',
+      controller: 'addClassCtrl'
+    })
+	.state('filter', {
+      url: '/filter',
+      templateUrl: 'templates/filter.html',
+      controller: 'filterCtrl'
+    })
+
+  .state('register', {
+      url: '/register',
+      templateUrl: 'templates/register.html',
+      controller: 'RegisterCtrl'
+    })
+  .state('createGroup', {
+      url: '/createGroup',
+      templateUrl: 'templates/createGroup.html',
+      controller: 'createGroupCtrl'
+    })
 
   .state('tab.browse', {
     url: '/browse',
@@ -75,31 +79,22 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
-  .state('tab.addClass', {
-      url: '/addClass',
-      views: {
-        'tab-addClass': {
-          templateUrl: 'templates/tab-addClass.html',
-          controller: 'addClassCtrl'
-        }
+  .state('tab.groupDetail', {
+    url: '/browse/:grupID',
+    views: {
+      'tab-browse': {
+        templateUrl: 'templates/groupDetail.html',
+        controller: 'GroupDetailCtrl'
       }
-    })
-    .state('tab.chat-detail', {
-      url: '/chats/:chatId',
-      views: {
-        'tab-chats': {
-          templateUrl: 'templates/chat-detail.html',
-          controller: 'ChatDetailCtrl'
-        }
-      }
-    })
+    }
+  })
 	
-	.state('tab.ViewAllGrups', {
-      url: '/ViewAllGrups',
+	.state('tab.MyGroups', {
+      url: '/MyGroups',
       views: {
-        'tab-ViewAllGrups': {
-          templateUrl: 'templates/tab-ViewAllGrups.html',
-          controller: 'ViewAllGrupsCtrl'
+        'tab-MyGroups': {
+          templateUrl: 'templates/tab-MyGroups.html',
+          controller: 'MyGroupsCtrl'
         }
       }
     })
@@ -115,6 +110,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/login');
+  $urlRouterProvider.otherwise('/login');
 
 });

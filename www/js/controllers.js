@@ -338,7 +338,6 @@ angular.module('starter.controllers', [])
     }).then(function successCallback(response){
       ProfileData.data = response.data;
       console.log(ProfileData.data);
-      console.log(ProfileData.data.user_id);
        $state.go('tab.browse');
     });
 
