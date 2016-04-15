@@ -594,7 +594,7 @@ $app->post('/getgroups', function($request, $response, $args)
     	$stuff = $stmt->fetchAll();
 		
 		}
-		else if(!empty($decode->{'location'} && !empty($decode->{'class_subject'}) && !empty($decode->{'class_number'}) && !empty($decode->{'group_name'}))	//all 4
+		else if(!empty($decode->{'location'}) && !empty($decode->{'class_subject'}) && !empty($decode->{'class_number'}) && !empty($decode->{'group_name'}))	//all 4
 		{
 		$query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number AND group_name = :group_name AND location = :location';
 		$stmt = $dbc->prepare($query);
