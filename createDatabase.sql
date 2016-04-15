@@ -28,7 +28,8 @@ class_id int
 CREATE TABLE students
 (
 user_id int,
-class_id int
+class_id int,
+is_active Boolean
 );
 
 CREATE TABLE tas
