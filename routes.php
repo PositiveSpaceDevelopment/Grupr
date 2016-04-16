@@ -3,17 +3,9 @@
 //To do
 //delete classes
 //active classes database
-//need to get a intermediate step that filters down classes in the beginning
-//leaving a group
 //get the current groups, not groups in the past
-//delete and get everything correctly
 //edit classes
-//fix add classes
 //get classes
-//add pics for each profile
-//elevator speech
-//do something if all members leave a group
-//get groups filter needs some work
 
 //Questions:
 
@@ -204,7 +196,7 @@ $app->post('/joingroup', function ($request, $response, $args) {
     $has_class = $stmt->fetchColumn();
     if($has_class == 0)
     {
-        $query = 'INSERT INTO students VALUES (:user_id, :class_id)';
+        $query = 'INSERT INTO students VALUES (:user_id, :class_id, TRUE)';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
         $stmt->bindParam(':class_id', $class_id);
@@ -314,7 +306,7 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $has_class = $stmt->fetchColumn();
     if($has_class == 0)
     {
-        $query = 'INSERT INTO students VALUES (:user_id, :class_id)';
+        $query = 'INSERT INTO students VALUES (:user_id, :class_id, TRUE)';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
         $stmt->bindParam(':class_id', $class_id);
@@ -710,6 +702,37 @@ $app->post('/addclass', function($request, $response, $args) {
   echo json_encode($classList);
 });
 
+$app->post('/removeclass', function($request, $response, $args) {
+  $body = $request->getBody();
+  $decode = json_decode($body);
+  $dbc = $this->dbc;
+  $userId = $decode->user_id;
+  $courseSubject = $decode->class_subject;
+  $courseNumber = $decode->class_number;
+  $query = 'SELECT classes.class_id FROM classes WHERE class_subject =? AND class_number = ?';
+  $stmt = $dbc->prepare($query);
+  $stmt->execute([$courseSubject, $courseNumber]);
+  $classIDNum = $stmt->fetchColumn(0);
+  //If the course does not exist add it to the class table.
+  if($classIDNum != NULL) {
+    $studentTableQuery = 'Select user_id, class_id from students WHERE is_active = TRUE AND user_id =? AND class_id =?;';
+    $studentTableExists = $dbc->prepare($studentTableQuery);
+    $studentTableExists->execute([$userId, $classIDNum]);
+    $studentTableEntry = $studentTableExists->fetchAll();
+    if($studentTableEntry != NULL) {
+      $userQuery = 'UPDATE students SET is_active = FALSE WHERE user_id =? AND class_id =?;';
+      $insertUser = $dbc->prepare($userQuery);
+      $insertUser->execute([$userId, $classIDNum]);
+    }
+  }
+  //send back a list of all classes that the user is in
+  $allClassesQuery = 'SELECT class_subject,class_number from classes INNER JOIN students on classes.class_id = students.class_id WHERE user_id =? AND is_active = TRUE;';
+  $fetchAllClasses = $dbc->prepare($allClassesQuery);
+  $fetchAllClasses ->execute([$userId]);
+  $classList = $fetchAllClasses->fetchAll(PDO::FETCH_ASSOC);
+  echo json_encode($classList);
+});
+
 //need this post request
 //make group name so it matches similar charcters
 // {"location": "Lyle"}
@@ -823,6 +846,8 @@ $app->post('/filtergroups', function($request, $response, $args) {
 		{
             $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_name = :group_name ORDER BY time_of_meeting ASC';
             $stmt = $dbc->prepare($query);
+            $like = '%';
+            $group_name = $like . $group_name . $like;
     		$stmt->bindParam(':group_name', $group_name);
             try {
                 $stmt->execute();
@@ -1008,6 +1033,8 @@ $app->post('/filtergroups', function($request, $response, $args) {
 		{
             $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number AND group_name = :group_name ORDER BY time_of_meeting ASC';
             $stmt = $dbc->prepare($query);
+            $like = '%';
+            $group_name = $like . $group_name . $like;
     		$stmt->bindParam(':class_subject', $class_subject);
             $stmt->bindParam(':class_number', $class_number);
             $stmt->bindParam(':group_name', $group_name);
@@ -1098,11 +1125,12 @@ $app->post('/filtergroups', function($request, $response, $args) {
             }
 
 		}
-
 		else if(empty($class_subject) && empty($class_number) && !empty($group_name) && !empty($location))//just group_name and location (added 4-14)
 		{
             $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_name = :group_name AND location = :location ORDER BY time_of_meeting ASC';
             $stmt = $dbc->prepare($query);
+            $like = '%';
+            $group_name = $like . $group_name . $like;
     		$stmt->bindParam(':group_name', $group_name);
             $stmt->bindParam(':location', $location);
             try {
@@ -1146,9 +1174,11 @@ $app->post('/filtergroups', function($request, $response, $args) {
 
 		}
 		else if(!empty($location) && !empty($class_subject) && !empty($class_number) && !empty($group_name))	//all 4
-		{
+        {
             $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number AND location = :location AND group_name =:group_name ORDER BY time_of_meeting ASC';
             $stmt = $dbc->prepare($query);
+            $like = '%';
+            $group_name = $like . $group_name . $like;
     		$stmt->bindParam(':class_subject', $class_subject);
             $stmt->bindParam(':class_number', $class_number);
             $stmt->bindParam(':location', $location);
@@ -1194,6 +1224,252 @@ $app->post('/filtergroups', function($request, $response, $args) {
             }
 
 		}
+        else if(empty($location) && !empty($class_subject) && empty($class_number) && !empty($group_name))	//subject/name
+        {
+            $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND group_name =:group_name ORDER BY time_of_meeting ASC';
+            $stmt = $dbc->prepare($query);
+            $like = '%';
+            $group_name = $like . $group_name . $like;
+            $stmt->bindParam(':class_subject', $class_subject);
+            $stmt->bindParam(':group_name', $group_name);
+
+            try {
+                $stmt->execute();
+            } catch(PDOException $e) {
+                echo json_encode($e->getMessage());
+            }
+
+            $groups = $stmt->fetchAll();
+
+            foreach($groups as $row)
+            // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
+            {
+                // $group_id = $group_info["group_id"];
+                $group_id = $row["group_id"];
+                $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+                $stmt = $dbc->prepare($query);
+                $stmt->bindParam(':group_id', $group_id);
+
+                try {
+                    $stmt->execute();
+                    $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+                } catch(PDOException $e) {
+                    echo json_encode($e->getMessage());
+                }
+
+                $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+                $stmt = $dbc->prepare($query);
+                $stmt->bindParam(':group_id', $group_id);
+                try {
+                    $stmt->execute();
+                    $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+                } catch(PDOException $e) {
+                    echo json_encode($e->getMessage());
+                }
+
+                $group_info["members"] = $member;
+                array_push($groups, $group_info);
+
+            }
+
+        }
+        else if(empty($location) && empty($class_subject) && !empty($class_number) && !empty($group_name))	//number/name
+        {
+            $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_number = :class_number AND group_name = :group_name ORDER BY time_of_meeting ASC';
+            $stmt = $dbc->prepare($query);
+            $like = '%';
+            $group_name = $like . $group_name . $like;
+            $stmt->bindParam(':class_number', $class_number);
+            $stmt->bindParam(':group_name', $group_name);
+
+            try {
+                $stmt->execute();
+            } catch(PDOException $e) {
+                echo json_encode($e->getMessage());
+            }
+
+            $groups = $stmt->fetchAll();
+
+            foreach($groups as $row)
+            // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
+            {
+                // $group_id = $group_info["group_id"];
+                $group_id = $row["group_id"];
+                $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+                $stmt = $dbc->prepare($query);
+                $stmt->bindParam(':group_id', $group_id);
+
+                try {
+                    $stmt->execute();
+                    $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+                } catch(PDOException $e) {
+                    echo json_encode($e->getMessage());
+                }
+
+                $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+                $stmt = $dbc->prepare($query);
+                $stmt->bindParam(':group_id', $group_id);
+                try {
+                    $stmt->execute();
+                    $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+                } catch(PDOException $e) {
+                    echo json_encode($e->getMessage());
+                }
+
+                $group_info["members"] = $member;
+                array_push($groups, $group_info);
+
+            }
+
+        }
+        else if(!empty($location) && !empty($class_subject) && !empty($class_number) && empty($group_name))	//subject/number/location
+        {
+            $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number AND location = :location ORDER BY time_of_meeting ASC';
+            $stmt = $dbc->prepare($query);
+            $stmt->bindParam(':class_subject', $class_subject);
+            $stmt->bindParam(':class_number', $class_number);
+            $stmt->bindParam(':location', $location);
+
+            try {
+                $stmt->execute();
+            } catch(PDOException $e) {
+                echo json_encode($e->getMessage());
+            }
+
+            $groups = $stmt->fetchAll();
+
+            foreach($groups as $row)
+            // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
+            {
+                // $group_id = $group_info["group_id"];
+                $group_id = $row["group_id"];
+                $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+                $stmt = $dbc->prepare($query);
+                $stmt->bindParam(':group_id', $group_id);
+
+                try {
+                    $stmt->execute();
+                    $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+                } catch(PDOException $e) {
+                    echo json_encode($e->getMessage());
+                }
+
+                $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+                $stmt = $dbc->prepare($query);
+                $stmt->bindParam(':group_id', $group_id);
+                try {
+                    $stmt->execute();
+                    $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+                } catch(PDOException $e) {
+                    echo json_encode($e->getMessage());
+                }
+
+                $group_info["members"] = $member;
+                array_push($groups, $group_info);
+
+            }
+
+        }
+        else if(!empty($location) && empty($class_subject) && !empty($class_number) && !empty($group_name))	//number/location/name
+        {
+            $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_number = :class_number AND location = :location AND group_name =:group_name ORDER BY time_of_meeting ASC';
+            $stmt = $dbc->prepare($query);
+            $like = '%';
+            $group_name = $like . $group_name . $like;
+            $stmt->bindParam(':class_number', $class_number);
+            $stmt->bindParam(':location', $location);
+            $stmt->bindParam(':group_name', $group_name);
+
+            try {
+                $stmt->execute();
+            } catch(PDOException $e) {
+                echo json_encode($e->getMessage());
+            }
+
+            $groups = $stmt->fetchAll();
+
+            foreach($groups as $row)
+            // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
+            {
+                // $group_id = $group_info["group_id"];
+                $group_id = $row["group_id"];
+                $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+                $stmt = $dbc->prepare($query);
+                $stmt->bindParam(':group_id', $group_id);
+
+                try {
+                    $stmt->execute();
+                    $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+                } catch(PDOException $e) {
+                    echo json_encode($e->getMessage());
+                }
+
+                $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+                $stmt = $dbc->prepare($query);
+                $stmt->bindParam(':group_id', $group_id);
+                try {
+                    $stmt->execute();
+                    $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+                } catch(PDOException $e) {
+                    echo json_encode($e->getMessage());
+                }
+
+                $group_info["members"] = $member;
+                array_push($groups, $group_info);
+
+            }
+
+        }
+        else if(!empty($location) && !empty($class_subject) && empty($class_number) && !empty($group_name))	//subject/location/name
+        {
+            $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND location = :location AND group_name =:group_name ORDER BY time_of_meeting ASC';
+            $stmt = $dbc->prepare($query);
+            $like = '%';
+            $group_name = $like . $group_name . $like;
+            $stmt->bindParam(':class_subject', $class_subject);
+            $stmt->bindParam(':location', $location);
+            $stmt->bindParam(':group_name', $group_name);
+
+            try {
+                $stmt->execute();
+            } catch(PDOException $e) {
+                echo json_encode($e->getMessage());
+            }
+
+            $groups = $stmt->fetchAll();
+
+            foreach($groups as $row)
+            // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
+            {
+                // $group_id = $group_info["group_id"];
+                $group_id = $row["group_id"];
+                $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+                $stmt = $dbc->prepare($query);
+                $stmt->bindParam(':group_id', $group_id);
+
+                try {
+                    $stmt->execute();
+                    $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+                } catch(PDOException $e) {
+                    echo json_encode($e->getMessage());
+                }
+
+                $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+                $stmt = $dbc->prepare($query);
+                $stmt->bindParam(':group_id', $group_id);
+                try {
+                    $stmt->execute();
+                    $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+                } catch(PDOException $e) {
+                    echo json_encode($e->getMessage());
+                }
+
+                $group_info["members"] = $member;
+                array_push($groups, $group_info);
+
+            }
+
+        }
 
         else
 		{
