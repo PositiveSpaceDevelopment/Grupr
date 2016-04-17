@@ -20,9 +20,9 @@ angular.module('starter.controllers', [])
   // Makes the GET http request to fill the GroupFeed Data
   $http({
     method: 'GET',
-    // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+    url: 'http://private-fa798-grupr.apiary-mock.com/grups',
     // url: 'http://www.grupr.me/grups',
-    url: 'http://54.213.15.90/grups',
+    // url: 'http://54.213.15.90/grups',
     headers: {
       'Content-Type': 'application/json'
       },
@@ -139,8 +139,8 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
       UserGroups.data = response.data;
-	  $scope.UserGroups = response.data;
-	  console.log($scope.UserGroups);
+  	  $scope.UserGroups = response.data;
+  	  console.log($scope.UserGroups);
       console.log(UserGroups.data);
     });
 	
@@ -338,7 +338,7 @@ angular.module('starter.controllers', [])
     }).then(function successCallback(response){
       ProfileData.data = response.data;
       console.log(ProfileData.data);
-       $state.go('tab.browse');
+      $state.go('tab.browse');
     });
 
   }

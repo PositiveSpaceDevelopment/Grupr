@@ -18,15 +18,60 @@ $dark:                            #444 !default;
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
-// Put all of our custom SASS in here
+// ****************************************
+// Put all of our custom SASS below here  *
+// ****************************************
 
-$positive: #387ef5 !default;
+// -------------------
+// Font Stuff
+// -------------------
+@import url(https://fonts.googleapis.com/css?family=Nixie+One);
+$NixieOne: 'Nixie One', cursive;
+@import url(https://fonts.googleapis.com/css?family=Muli);
+$Muli: 'Muli', sans-serif;
+$header: #19bbd5;
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: $NixieOne;
+}
+
+p {
+	font-family: $Muli;
+}
+
+
+// --------------------
+// Group Detail Page
+// --------------------
 
 .detailImg {
 	height: 15rem;
 }
 
+// --------------------
+// Browse - item colors
+// --------------------
+.colorCol {
+	width: 0.75rem;
+}
+.CSE {
+	background-color: #ffc900;
+}
 
+.DUMB, .MATH {
+	background-color: #11c1f3;
+}
+.ACCT {
+	background-color: #886aea;
+}
+
+.EE {
+	background-color: #ef473a;
+}
+
+.divider {
+	background-color: #11c1f3;
+}
 
 
 

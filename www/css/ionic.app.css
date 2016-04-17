@@ -15,8 +15,34 @@ $assertive:                       #ef473a !default;
 $royal:                           #886aea !default;
 $dark:                            #444 !default;
 */
+@import url(https://fonts.googleapis.com/css?family=Nixie+One);
+@import url(https://fonts.googleapis.com/css?family=Muli);
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Nixie One", cursive; }
+
+p {
+  font-family: "Muli", sans-serif; }
+
 .detailImg {
   height: 15rem; }
+
+.colorCol {
+  width: 0.75rem; }
+
+.CSE {
+  background-color: #ffc900; }
+
+.DUMB, .MATH {
+  background-color: #11c1f3; }
+
+.ACCT {
+  background-color: #886aea; }
+
+.EE {
+  background-color: #ef473a; }
+
+.divider {
+  background-color: #11c1f3; }
 
 /*!
   Ionicons, v2.0.1
