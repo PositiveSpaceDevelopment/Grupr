@@ -6,6 +6,7 @@
 //get the current groups, not groups in the past
 //edit classes
 //get classes
+//fix the stuff on the production server for utilities
 
 //Questions:
 
@@ -397,18 +398,18 @@ $app->post('/login', function ($request, $response, $args) {
 
         $stringToReturn = array();
 
-        $query = 'SELECT email, user_id, level FROM user_info WHERE email = :email';
+        $query = 'SELECT email, user_id, first_name, last_name,level FROM user_info WHERE email = :email';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':email', $email);
 
         try {
             $stmt->execute();
-            $profile = $stmt->fetchAll(PDO::FETCH_OBJ);
+            $login_info = $stmt->fetch(PDO::FETCH_ASSOC);
         } catch(PDOException $e) {
             echo json_encode($e->getMessage());
         }
 
-        array_push($stringToReturn, $profile);
+        // array_push($stringToReturn, $profile);
 
         $classes = "";
         $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id';
@@ -421,24 +422,25 @@ $app->post('/login', function ($request, $response, $args) {
         } catch(PDOException $e) {
             echo json_encode($e->getMessage());
         }
+        $login_info["classes"] = $classes;
+        // array_push($stringToReturn, $classes);
 
-        array_push($stringToReturn, $classes);
+        // $names = "";
+        // $query = "SELECT first_name, last_name, level FROM user_info WHERE user_id = :user_id";
+        // $stmt = $dbc->prepare($query);
+        // $stmt->bindParam(':user_id', $user_id);
+        //
+        // try {
+        //     $stmt->execute();
+        //     $names = $stmt->fetchAll(PDO::FETCH_OBJ);
+        // } catch(PDOException $e) {
+        //     echo json_encode($e->getMessage());
+        // }
+        //
+        // array_push($stringToReturn, $names);
 
-        $names = "";
-        $query = "SELECT first_name, last_name FROM user_info WHERE user_id = :user_id";
-        $stmt = $dbc->prepare($query);
-        $stmt->bindParam(':user_id', $user_id);
-
-        try {
-            $stmt->execute();
-            $names = $stmt->fetchAll(PDO::FETCH_OBJ);
-        } catch(PDOException $e) {
-            echo json_encode($e->getMessage());
-        }
-
-        array_push($stringToReturn, $names);
-
-        echo json_encode($stringToReturn, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        // echo json_encode($stringToReturn, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        echo json_encode($login_info, JSON_PRETTY_PRINT);
     } else {
         echo "login failed";
     }
@@ -500,7 +502,8 @@ $app->post('/getusergroups', function ($request, $response, $args) {
     $dbc = $this->dbc;
     $user_id = $decode->user_id;
     $groups = array();
-    $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE user_id = :user_id AND time_of_meeting > now() ORDER BY time_of_meeting ASC';
+    //and time_of_meeting > now()
+    $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE user_id = :user_id ORDER BY time_of_meeting ASC';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $user_id);
 
@@ -552,7 +555,8 @@ $app->post('/getusergroups', function ($request, $response, $args) {
 $app->get('/grups', function ($request, $response, $args) {
     $dbc = $this->dbc;
     $groups = array();
-    $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN classes NATURAL JOIN locations WHERE time_of_meeting > now() ORDER BY time_of_meeting ASC';
+    // $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN classes NATURAL JOIN locations WHERE time_of_meeting > now() ORDER BY time_of_meeting ASC';
+    $query = 'SELECT group_id, group_name, time_of_meeting, description, ta_attending, teacher_attending, class_subject, class_number, location, location_details FROM groups NATURAL JOIN classes NATURAL JOIN locations ORDER BY time_of_meeting ASC';
     $stmt = $dbc->prepare($query);
 
     try {
