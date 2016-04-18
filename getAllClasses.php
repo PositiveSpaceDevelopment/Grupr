@@ -1,14 +1,14 @@
-<?php
+$app->get('/getallclasses', function($request, $response, $args) {
 
-  //Send all the whole class table to the front end
-  $app->post('/getClasses', function() {
-    global $conn;
-    global $app;
+  $dbc = $this->dbc;
 
-    $classQuery = $conn->query("SELECT class_id, class_subject, class_number, semester, ta_id, teacher_id FROM classes");
-    $result = $classQuery->fetch_assoc();
+  //send back a list of all classes that the user is in
+  $allClassesQuery = 'SELECT class_subject,class_number from classes;';
+  $fetchAllClasses = $dbc->prepare($allClassesQuery);
+  $fetchAllClasses ->execute();
 
-    echo json_encode($result);
-    return;
-  });
-?>
+  $classList = $fetchAllClasses->fetchAll(PDO::FETCH_ASSOC);
+
+  $json = json_encode($classList);
+  echo $json;
+});
