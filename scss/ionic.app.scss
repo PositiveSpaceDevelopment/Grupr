@@ -29,6 +29,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 $NixieOne: 'Nixie One', cursive;
 @import url(https://fonts.googleapis.com/css?family=Muli);
 $Muli: 'Muli', sans-serif;
+
 $header: #19bbd5;
 
 h1, h2, h3, h4, h5, h6 {
@@ -46,6 +47,16 @@ p {
 
 .detailImg {
 	height: 15rem;
+	background-image: url("/img/Fondren.jpg");
+	// opacity: 0.5;
+
+	h1 {
+		margin: auto;
+		padding-top: 2rem;
+	}
+	.row.imgBody {
+		padding-top: 1rem;
+	}
 }
 
 // --------------------
@@ -54,19 +65,23 @@ p {
 .colorCol {
 	width: 0.75rem;
 }
-.CSE {
+.CSE, .UZP{
 	background-color: #ffc900;
 }
 
-.DUMB, .MATH {
+.JVI, .MATH {
 	background-color: #11c1f3;
 }
-.ACCT {
+.ACCT, .ZOV, .WXC{
 	background-color: #886aea;
 }
 
-.EE {
+.EE, .ZGY, .WGM {
 	background-color: #ef473a;
+}
+
+.YBF, .TOW {
+	background-color: #00cc99;
 }
 
 .divider {
