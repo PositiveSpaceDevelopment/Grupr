@@ -2,7 +2,8 @@
 
 //To do
 //json web tokens
-//nice web ui stuff (d3 javascript)
+//nice web ui stuff (d3 javascript) https://www.youtube.com/watch?v=5pNz_Dyf9_c
+//site map and er diagram
 //fix the stuff on the production server for utilities
 //creating a class_index on the classes most people are in
     // select class_number, class_subject, count(*) from classes NATURAL JOIN students group by class_id ORDER by count(*) DESC;
@@ -1570,11 +1571,12 @@ $app->post('/filtergroups', function($request, $response, $args) {
 
 $app->get('/d3', function ($request, $response, $args) {
     $dbc = $this->dbc;
-    $query = 'SELECT class_subject, class_number, cnt FROM classes NATURAL JOIN (SELECT  class_id, count(user_id) AS cnt FROM students GROUP BY class_id) AS tbl ORDER BY cnt DESC';
+    $query = 'SELECT class_subject, class_number, cnt FROM classes NATURAL JOIN (SELECT  class_id, is_active, count(user_id) AS cnt FROM students GROUP BY class_id) AS tbl WHERE is_active = TRUE ORDER BY cnt DESC';
     $stmt = $dbc->prepare($query);
     $stmt->execute();
     $class_info = $stmt->fetchAll(PDO::FETCH_OBJ);
     $json = json_encode($class_info, JSON_PRETTY_PRINT);
+    // print $json;
     $file = 'd3json_real.json';
 
     file_get_contents($file, $json);
@@ -1586,56 +1588,158 @@ $app->get('/d3', function ($request, $response, $args) {
     </head>
     <body>
 
+        <div id = "chart"></div>
         <script>
+
+
             d3.json("d3json_real.json", function (data) {
             // d3.json($json, function (data) {
+                var margin = {top: 30, right: 30, bottom: 40, left: 50};
+                var width = 1150- margin.top-margin.bottom;
+                var height = 600-margin.right-margin.left;
 
-                var widthScale = d3.scale.linear()
-                                    .domain([0, 8])
-                                    .range([0, 500]);
+                var tooltip = d3.select('body').append('div')
+                                .style('position', 'absolute')
+                                .style('background', '#f4f4f4')
+                                .style('padding', '5 15px')
+                                .style('border', '1px #333 solid')
+                                .style('border-radius', '5px')
+                                .style('opacity', '0');
 
-                var color = d3.scale.category10().domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+                var yScale = d3.scale.linear()
+                                .domain([0, 8])
+                                .range([0, height]);
+                var xScale = d3.scale.ordinal()
+                                .domain(d3.range(0, data.length))
+                                .rangeBands([0, width]);
+                var colors = d3.scale.linear()
+                                .domain([0, data.length])
+                                .range(['#860a26', '#3a13a6']);
+
+                var myChart = d3.select('#chart').append('svg')
+                        .attr('width', width +margin.right + margin.left + 50)
+                        .attr('height', height + margin.top + margin.right)
+                        .append('g')
+                        .attr('transform', 'translate('+(margin.left+50)+','+margin.top+')')
+                        .style('background', '#f4f4f4')
+                        .selectAll('rect')
+                            .data(data)
+                            .enter().append('rect')
+                                .style('fill', function (d, i) {
+                                    return colors(i);
+                                })
+                                .attr('width', xScale.rangeBand())
+                                .attr('height', 0)
+                                .attr('x', function (d, i) {
+                                    return xScale(i);
+                                })
+                                .attr('y', height)
+                            .on('mouseover', function(d) {
+                                tooltip.transition()
+                                    .style('opacity', 1)
+                                tooltip.html(d.class_subject+d.class_number)
+                                    .style('left', (d3.event.pageX)+'px')
+                                    .style('top', (d3.event.pageY)+'px')
+                                d3.select(this).style('opacity', 0.5)
+                            })
+                            .on('mouseout', function(d) {
+                                tooltip.transition()
+                                    .style('opacity', 0)
+                                d3.select(this).style('opacity', 1)
+                            })
+
+
+                    myChart.transition()
+                        .attr('height', function(d) {
+                            return yScale(parseInt(d.cnt))
+                        })
+                        .attr('y', function(d){
+                            return height - yScale(parseInt(d.cnt))
+                        })
+                        .duration(700)
+                        .delay(function (d,i) {
+                            return i * 30;
+                        })
+                        .ease('elastic')
+
+                var vScale = d3.scale.linear()
+                            .domain([0, 8])
+                            .range([height, 0]);
+                var hScale = d3.scale.ordinal()
+                            .domain(d3.range(0, data.length))
+                            .rangeBands([0, width]);
+
+                var vAxis = d3.svg.axis()
+                            .scale(vScale)
+                            .orient('left')
+                            .ticks(9)
+                            .tickPadding(1)
+                var vGuide = d3.select('svg')
+                            .append('g')
+                                vAxis(vGuide)
+                                vGuide.attr('transform', 'translate('+(margin.left+50)+','+margin.top+')')
+                                vGuide.selectAll('path')
+                                    .style('fill', 'none')
+                                    .style('stroke', '#000')
+                                vGuide.selectAll('line')
+                                    .style('stroke', '#000')
 
 
 
-                var axis = d3.svg.axis()
-                            .scale(widthScale);
+                var vis = d3.select("body")
+                    .append("svg:svg")
+                    .attr("width", 1250- margin.top-margin.bottom)
+                    .attr("height", 50);
+
+                var vis2 = d3.select("body")
+                    .append("svg:svg")
+                    .attr("width", 75 )
+                    .attr("height", 600);
+                    // .attr("transform", "translate(300,50)");
+
+                var hAxis = d3.svg.axis()
+                            .scale(hScale)
+                            .orient('bottom')
+                            .tickValues(hScale.domain().filter(function(d,i) {
+                                return 0;
+                            }))
 
 
-                var canvas = d3.select("body")
-                            .append("svg")
-                            .attr("width", 500)
-                            .attr("height", 5000)
-                            .append("g")
-                            .attr("transform", "translate(20, 0)");
+                var hGuide = d3.select('svg')
+                            .append('g')
+                                hAxis(hGuide)
+                                hGuide.attr('transform', 'translate('+(margin.left+50)+','+(height+margin.top)+')')
+                                hGuide.selectAll('path')
+                                    .style('fill', 'none')
+                                    .style('stroke', '#000')
+                                hGuide.selectAll('line')
+                                    .style('stroke', '#000')
 
-                canvas.selectAll("rect")
-                    .data(data)
-                    .enter()
-                        .append("rect")
-                        .attr("width", function (d) { return widthScale(parseInt(d.cnt)); })
-                        .attr("height", 48)
-                        .attr("fill", function (d) {return color(parseInt(d.cnt)); })
-                        // .attr("fill", "blue")
-                        .attr("y", function (d, i) { return i * 50;})
+                var yName = d3.select('svg')
+                            .append('g')
+                            .append('text')
+                            .attr("transform", "rotate(-90)")
+                            .attr("y", 50)
+                            .attr("x", -300)
+                            .attr("dy", "1em")
+                            .style("text-anchor", "middle")
+                            .text('# of students in class')
 
+                var xName = d3.select('svg')
+                            .append('g')
+                            .append('text')
+                            .attr("y", 560)
+                            .attr("x", 600)
+                            .attr("dy", "1em")
+                            .style("text-anchor", "middle")
+                            .text("Active Classes")
 
-                canvas.selectAll("text")
-                    .data(data)
-                    .enter()
-                        .append("text")
-                        .attr("fill", "magenta")
-                        .attr("y", function (d, i) { return i * 50 + 24;})
-                        .text(function (d) { return d.class_subject + d.class_number; })
-
-
-                canvas.append("g")
-                    .attr("transform", "translate(0, 4900)")
-                    .call(axis);
             });
 
         </script>
     </body>
     </html>
+
+
     <?php
 });
