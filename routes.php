@@ -1,10 +1,15 @@
 <?php
 
 //To do
+//json web tokens
+//nice web ui stuff (d3 javascript)
 //fix the stuff on the production server for utilities
 //creating a class_index on the classes most people are in
     // select class_number, class_subject, count(*) from classes NATURAL JOIN students group by class_id ORDER by count(*) DESC;
-
+    //index on user_id
+        //group_id
+        //class_subject
+        //class_number
 //Questions:
 
 // Routes
@@ -419,7 +424,7 @@ $app->post('/login', function ($request, $response, $args) {
         // array_push($stringToReturn, $profile);
 
         $classes = "";
-        $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id';
+        $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id AND is_active = TRUE';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
 
@@ -467,7 +472,7 @@ $app->post('/profile', function ($request, $response, $args) {
 
 
         $classes = "";
-        $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id';
+        $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id AND is_active = TRUE';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
 
@@ -798,7 +803,6 @@ $app->post('/removeclass', function($request, $response, $args) {
 
 // {"user_id": "3"}
 $app->post('/getusersclasses', function($request, $response, $args) {
-
   $body = $request->getBody();
   $decode = json_decode($body);
   $dbc = $this->dbc;
@@ -1562,4 +1566,76 @@ $app->post('/filtergroups', function($request, $response, $args) {
 	catch(PDOException $e) {
           echo json_encode($e->getMessage());
     }
+});
+
+$app->get('/d3', function ($request, $response, $args) {
+    $dbc = $this->dbc;
+    $query = 'SELECT class_subject, class_number, cnt FROM classes NATURAL JOIN (SELECT  class_id, count(user_id) AS cnt FROM students GROUP BY class_id) AS tbl ORDER BY cnt DESC';
+    $stmt = $dbc->prepare($query);
+    $stmt->execute();
+    $class_info = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $json = json_encode($class_info, JSON_PRETTY_PRINT);
+    $file = 'd3json_real.json';
+
+    file_get_contents($file, $json);
+    ?>
+    <html>
+    <head>
+            <title> d3 tutorial </title>
+            <script src ="http://d3js.org/d3.v3.min.js"></script>
+    </head>
+    <body>
+
+        <script>
+            d3.json("d3json_real.json", function (data) {
+            // d3.json($json, function (data) {
+
+                var widthScale = d3.scale.linear()
+                                    .domain([0, 8])
+                                    .range([0, 500]);
+
+                var color = d3.scale.category10().domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+
+
+                var axis = d3.svg.axis()
+                            .scale(widthScale);
+
+
+                var canvas = d3.select("body")
+                            .append("svg")
+                            .attr("width", 500)
+                            .attr("height", 5000)
+                            .append("g")
+                            .attr("transform", "translate(20, 0)");
+
+                canvas.selectAll("rect")
+                    .data(data)
+                    .enter()
+                        .append("rect")
+                        .attr("width", function (d) { return widthScale(parseInt(d.cnt)); })
+                        .attr("height", 48)
+                        .attr("fill", function (d) {return color(parseInt(d.cnt)); })
+                        // .attr("fill", "blue")
+                        .attr("y", function (d, i) { return i * 50;})
+
+
+                canvas.selectAll("text")
+                    .data(data)
+                    .enter()
+                        .append("text")
+                        .attr("fill", "magenta")
+                        .attr("y", function (d, i) { return i * 50 + 24;})
+                        .text(function (d) { return d.class_subject + d.class_number; })
+
+
+                canvas.append("g")
+                    .attr("transform", "translate(0, 4900)")
+                    .call(axis);
+            });
+
+        </script>
+    </body>
+    </html>
+    <?php
 });
