@@ -204,6 +204,8 @@ angular.module('starter.controllers', [])
   $scope.form = {};
 
   var step = 1;
+  $scope.form.createFirstStep = true;
+
   $scope.form.general = true;
   $scope.form.descriptionShow = false;
   $scope.form.locationDate = false;
@@ -224,6 +226,7 @@ angular.module('starter.controllers', [])
         break;
     }
     step++;
+    $scope.form.createFirstStep = false;
   }
 
   $scope.createGrup = function() {
@@ -279,7 +282,9 @@ angular.module('starter.controllers', [])
     });
 
     // Resets the values for the Creat Group form
-    var step = 1;
+    step = 1;
+    $scope.form.createFirstStep = true;
+
     $scope.form.general = true;
     $scope.form.descriptionShow = false;
     $scope.form.locationDate = false;
@@ -289,7 +294,9 @@ angular.module('starter.controllers', [])
 
   $scope.cancel = function() {
     // Resets the values for the Creat Group form
-    var step = 1;
+    step = 1;
+    $scope.form.createFirstStep = true;
+
     $scope.form.general = true;
     $scope.form.descriptionShow = false;
     $scope.form.locationDate = false;
@@ -297,6 +304,26 @@ angular.module('starter.controllers', [])
     $scope.form.lastItem = false;
     
     $state.go('tab.browse');
+  }
+
+  $scope.createGroupBack = function() {
+    switch(step) {
+      case 2:
+        $scope.form.general = true;
+        $scope.form.locationDate = false;
+
+        $scope.form.createFirstStep = true;
+        break;
+      case 3:
+        $scope.form.locationDate = true;
+        $scope.form.descriptionShow = false;
+        $scope.form.nextItem = true;
+        $scope.form.lastItem = false;
+
+        $scope.form.createFirstStep = false;
+        break;
+    }
+    step--;
   }
 })
 

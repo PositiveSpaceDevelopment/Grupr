@@ -1,8 +1,13 @@
 <ion-view view-title="Create a New Grüp">
   
-  <ion-nav-buttons side="primary">
+  <ion-nav-buttons side="right">
     <button class="button button-clear" ng-click="cancel()">
       Cancel
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="primary">
+    <button class="button button-clear" ng-hide="form.createFirstStep" ng-click="createGroupBack()">
+      < Back
     </button>
   </ion-nav-buttons>
 
