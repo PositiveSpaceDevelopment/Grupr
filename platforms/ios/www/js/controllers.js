@@ -139,8 +139,8 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
       UserGroups.data = response.data;
-	  $scope.UserGroups = response.data;
-	  console.log($scope.UserGroups);
+  	  $scope.UserGroups = response.data;
+  	  console.log($scope.UserGroups);
       console.log(UserGroups.data);
     });
 	
@@ -338,7 +338,7 @@ angular.module('starter.controllers', [])
     }).then(function successCallback(response){
       ProfileData.data = response.data;
       console.log(ProfileData.data);
-       $state.go('tab.browse');
+      $state.go('tab.browse');
     });
 
   }

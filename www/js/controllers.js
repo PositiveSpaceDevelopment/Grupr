@@ -74,6 +74,25 @@ angular.module('starter.controllers', [])
       console.log("You Joined!");
     });
 
+
+    // Makes the GET http request to fill the GroupFeed Data
+    $http({
+      method: 'GET',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+      // url: 'http://www.grupr.me/grups',
+      url: 'http://54.213.15.90/grups',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response) {
+      $scope.feed = response.data;
+      GroupFeed.data = response.data;
+      console.log(GroupFeed.data);
+    }, function errorCallback(response) {
+      console.log("something went wrong");
+    });
+
   }
 
 })
@@ -152,10 +171,34 @@ angular.module('starter.controllers', [])
 	$state.go('filter')
   }
 
-  $scope.viewGroup = function(id) {
-    $state.go("tab.groupDetail",{grupID: id});
+  $scope.viewMyGroup = function(id) {
+    $state.go("tab.myGroupDetail",{grupID: id});
   }
 })
+
+.controller('MyGroupDetailCtrl', function($scope, $stateParams, $http, GroupFeed, ProfileData) {
+
+  id = $stateParams.grupID;
+
+  var index = 0; 
+  while(true){
+    if (GroupFeed.data[index].group_id == id) {
+      break;
+    };
+    index++;
+  }
+
+  $scope.myGroupInfo = GroupFeed.data[index];
+  console.log($scope.myGroupInfo);
+
+  $scope.leave = function() {
+
+  }
+
+})
+
+
+
 
 .controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
   $scope.form = {};

@@ -15,8 +15,43 @@ $assertive:                       #ef473a !default;
 $royal:                           #886aea !default;
 $dark:                            #444 !default;
 */
+@import url(https://fonts.googleapis.com/css?family=Nixie+One);
+@import url(https://fonts.googleapis.com/css?family=Muli);
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Nixie One", cursive; }
+
+p {
+  font-family: "Muli", sans-serif; }
+
 .detailImg {
-  height: 15rem; }
+  height: 15rem;
+  background-image: url("/img/Fondren.jpg"); }
+  .detailImg h1 {
+    margin: auto;
+    padding-top: 2rem; }
+  .detailImg .row.imgBody {
+    padding-top: 1rem; }
+
+.colorCol {
+  width: 0.75rem; }
+
+.CSE, .UZP {
+  background-color: #ffc900; }
+
+.JVI, .MATH {
+  background-color: #11c1f3; }
+
+.ACCT, .ZOV, .WXC {
+  background-color: #886aea; }
+
+.EE, .ZGY, .WGM {
+  background-color: #ef473a; }
+
+.YBF, .TOW {
+  background-color: #00cc99; }
+
+.divider {
+  background-color: #11c1f3; }
 
 /*!
   Ionicons, v2.0.1
