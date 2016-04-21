@@ -3,6 +3,7 @@
 //To do
 //json web tokens
 //nice web ui stuff (d3 javascript) https://www.youtube.com/watch?v=5pNz_Dyf9_c
+//circle.html for number of students in certain class_subjects (popular classes)
 //site map and er diagram
 //fix the stuff on the production server for utilities
 //creating a class_index on the classes most people are in
@@ -1032,9 +1033,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-        	$groups = $stmt->fetchAll();
+        	$groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1079,9 +1080,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-        	$groups = $stmt->fetchAll();
+        	$groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1129,9 +1130,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-        	$groups = $stmt->fetchAll();
+        	$groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1176,9 +1177,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-        	$groups = $stmt->fetchAll();
+        	$groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1224,9 +1225,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-        	$groups = $stmt->fetchAll();
+        	$groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1275,9 +1276,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-        	$groups = $stmt->fetchAll();
+        	$groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1324,9 +1325,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-            $groups = $stmt->fetchAll();
+            $groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1373,9 +1374,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-            $groups = $stmt->fetchAll();
+            $groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1421,9 +1422,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-            $groups = $stmt->fetchAll();
+            $groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1471,9 +1472,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-            $groups = $stmt->fetchAll();
+            $groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1521,9 +1522,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
                 echo json_encode($e->getMessage());
             }
 
-            $groups = $stmt->fetchAll();
+            $groups1 = $stmt->fetchAll();
 
-            foreach($groups as $row)
+            foreach($groups1 as $row)
             // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
             {
                 // $group_id = $group_info["group_id"];
@@ -1571,15 +1572,14 @@ $app->post('/filtergroups', function($request, $response, $args) {
 
 $app->get('/d3', function ($request, $response, $args) {
     $dbc = $this->dbc;
-    $query = 'SELECT class_subject, class_number, cnt FROM classes NATURAL JOIN (SELECT  class_id, is_active, count(user_id) AS cnt FROM students GROUP BY class_id) AS tbl WHERE is_active = TRUE ORDER BY cnt DESC';
+    $query = 'SELECT class_subject, class_number, cnt FROM classes NATURAL JOIN (SELECT  class_id, is_active, count(user_id) AS cnt FROM students GROUP BY class_id) AS tbl WHERE is_active = TRUE';
     $stmt = $dbc->prepare($query);
     $stmt->execute();
     $class_info = $stmt->fetchAll(PDO::FETCH_OBJ);
     $json = json_encode($class_info, JSON_PRETTY_PRINT);
     // print $json;
     $file = 'd3json_real.json';
-
-    file_get_contents($file, $json);
+    file_put_contents($file, $json);
     ?>
     <html>
     <head>
@@ -1595,8 +1595,8 @@ $app->get('/d3', function ($request, $response, $args) {
             d3.json("d3json_real.json", function (data) {
             // d3.json($json, function (data) {
                 var margin = {top: 30, right: 30, bottom: 40, left: 50};
-                var width = 1150- margin.top-margin.bottom;
-                var height = 600-margin.right-margin.left;
+                var width = 1250- margin.top-margin.bottom;
+                var height = 700-margin.right-margin.left;
 
                 var tooltip = d3.select('body').append('div')
                                 .style('position', 'absolute')
@@ -1680,9 +1680,9 @@ $app->get('/d3', function ($request, $response, $args) {
                                 vGuide.attr('transform', 'translate('+(margin.left+50)+','+margin.top+')')
                                 vGuide.selectAll('path')
                                     .style('fill', 'none')
-                                    .style('stroke', '#000')
+                                    .style('stroke', '#fff')
                                 vGuide.selectAll('line')
-                                    .style('stroke', '#000')
+                                    .style('stroke', '#fff')
 
 
 
@@ -1711,9 +1711,9 @@ $app->get('/d3', function ($request, $response, $args) {
                                 hGuide.attr('transform', 'translate('+(margin.left+50)+','+(height+margin.top)+')')
                                 hGuide.selectAll('path')
                                     .style('fill', 'none')
-                                    .style('stroke', '#000')
+                                    .style('stroke', '#fff')
                                 hGuide.selectAll('line')
-                                    .style('stroke', '#000')
+                                    .style('stroke', '#fff')
 
                 var yName = d3.select('svg')
                             .append('g')
@@ -1722,24 +1722,222 @@ $app->get('/d3', function ($request, $response, $args) {
                             .attr("y", 50)
                             .attr("x", -300)
                             .attr("dy", "1em")
+                            .attr("fill", "#fff")
                             .style("text-anchor", "middle")
                             .text('# of students in class')
 
                 var xName = d3.select('svg')
                             .append('g')
                             .append('text')
-                            .attr("y", 560)
+                            .attr("y", 655)
                             .attr("x", 600)
                             .attr("dy", "1em")
+                            .attr("fill", "#fff")
                             .style("text-anchor", "middle")
                             .text("Active Classes")
+            // var svg = d3.select("body").append("svg")
+            //     .attr("width", width + margin.right + margin.left)
+            //     .attr("height", height + margin.top + margin.bottom)
+            //     .attr("class", "graph-svg-component");
 
             });
 
         </script>
+        <body style="background: #000000">
     </body>
+
     </html>
 
 
+    <?php
+});
+
+$app->get('/circles', function ($request, $response, $args) {
+    $dbc = $this->dbc;
+    $query = 'SELECT class_subject AS name, cnt AS value FROM classes NATURAL JOIN (SELECT class_id, is_active, count(user_id) AS cnt FROM students NATURAL JOIN classes GROUP BY class_subject) AS tbl where is_active = true ORDER BY class_subject';
+    $stmt = $dbc->prepare($query);
+    $stmt->execute();
+    $outside_json_object = array();
+    $outside_json_object["name"] = "parent";
+    $outside_json_object["value"] = 200;
+
+    $info = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $inside_json_array = array();
+    $outside_json_object["children"] = $info;
+
+    $json = json_encode($outside_json_object, JSON_PRETTY_PRINT);
+    // echo $json;
+    $file = 'd3real_circles.json';
+    file_put_contents($file, $json);
+    ?>
+
+    <!DOCTYPE html>
+    <meta charset="utf-8">
+
+
+    <body>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script>
+
+
+    var tooltip = d3.select('body').append('div')
+                    .style('position', 'absolute')
+                    .style('background', '#f4f4f4')
+                    .style('padding', '5 15px')
+                    .style('border', '1px #333 solid')
+                    .style('border-radius', '5px')
+                    .style('opacity', '0');
+
+        var width = 1200,
+            height = 725;
+
+        var canvas = d3.select("body").append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .append("g")
+                        .attr("transform", "translate(50, 50)");
+
+        var pack = d3.layout.pack()
+                    .size([width, height - 50])
+                    .padding(10);
+
+
+
+        d3.json("d3real_circles.json", function (data) {
+            var color = d3.scale.category20();
+
+
+            var nodes = pack.nodes(data);
+
+            var node = canvas.selectAll(".node")
+                        .data(nodes)
+                        .enter()
+                        .append("g")
+                            .attr("class", "node")
+                            .attr("transform", function (d) {return "translate("+d.x+","+d.y+")";});
+
+
+
+            node.append("circle")
+                .attr("r", function (d) {return (d.r);})
+                .attr("opacity", 0.95)
+                .transition()
+                .duration(700)
+                .delay(function (d,i) {
+                    return i * 50;
+                })
+                .ease('bounce')
+                .attr("stroke", "#ADADAD")
+                .attr("stroke-width", "2")
+                .style('fill', function(d) { return color(d.name); });
+
+            // node.transition().duration(1000).attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+            node.append("text")
+                .text(function (d) { return d.children ? "" : d.name;})
+                .style("font-size", "1px")
+                .each(getSize)
+                .style("font-size", function (d) {return (d.scale -5) +"px";})
+                .style("text-anchor", "middle")
+                .style("alignment-baseline", "middle")
+                .attr("transform", "translate(0,1)")
+                .on('mouseover', function(d) {
+                    tooltip.transition()
+                        .style('opacity', 1)
+                    tooltip.html("students: "+d.value)
+                        .style('left', (d3.event.pageX)+'px')
+                        .style('top', (d3.event.pageY)+'px')
+                    d3.select(this).style('opacity', 0.5)
+                })
+                .on('mouseout', function(d) {
+                    tooltip.transition()
+                        .style('opacity', 0)
+                    d3.select(this).style('opacity', 1)
+                });
+
+            node.selectAll("circle")
+            .on('mouseover', function(d) {
+                tooltip.transition()
+                    .style('opacity', 1)
+                tooltip.html("students: "+d.value)
+                    .style('left', (d3.event.pageX)+'px')
+                    .style('top', (d3.event.pageY)+'px')
+                d3.select(this).style('opacity', 0.5)
+            })
+            .on('mouseout', function(d) {
+                tooltip.transition()
+                    .style('opacity', 0)
+                d3.select(this).style('opacity', 1)
+            })
+
+            function getSize(d) {
+                  var bbox = this.getBBox(),
+                  cbbox = this.parentNode.getBBox(),
+                  scale = Math.min(cbbox.width/bbox.width, cbbox.height/bbox.height);
+                  d.scale = scale;
+            }
+
+        });
+
+    </script>
+    <body style="background: #000000">
+    </body>
+
+
+    <?php
+});
+
+$app->get('/morecircles', function ($request, $response, $args) {
+    $dbc = $this->dbc;
+    $query = 'SELECT location AS "text", count(location_id) AS count FROM locations NATURAL JOIN groups GROUP BY location_id ORDER BY count DESC';
+    $stmt = $dbc->prepare($query);
+    $stmt->execute();
+
+    $info = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $json_array = array();
+    $json_array["items"] = $info;
+
+    $json = json_encode($json_array, JSON_PRETTY_PRINT);
+    // echo $json;
+    // $file = 'd3real_circles.json';
+    // file_put_contents($file, $json);
+    ?>
+
+    <html>
+    <head>
+      <title>Clicky circles</title>
+      <meta charset="utf-8">
+
+      <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600,200italic,600italic&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
+
+      <script src="http://phuonghuynh.github.io/js/bower_components/jquery/dist/jquery.min.js"></script>
+      <script src="http://phuonghuynh.github.io/js/bower_components/d3/d3.min.js"></script>
+      <script src="http://phuonghuynh.github.io/js/bower_components/d3-transform/src/d3-transform.js"></script>
+      <script src="http://phuonghuynh.github.io/js/bower_components/cafej/src/extarray.js"></script>
+      <script src="http://phuonghuynh.github.io/js/bower_components/cafej/src/misc.js"></script>
+      <script src="http://phuonghuynh.github.io/js/bower_components/cafej/src/micro-observer.js"></script>
+      <script src="http://phuonghuynh.github.io/js/bower_components/microplugin/src/microplugin.js"></script>
+      <script src="http://phuonghuynh.github.io/js/bower_components/bubble-chart/src/bubble-chart.js"></script>
+      <script src="http://phuonghuynh.github.io/js/bower_components/bubble-chart/src/plugins/central-click/central-click.js"></script>
+      <script src="http://phuonghuynh.github.io/js/bower_components/bubble-chart/src/plugins/lines/lines.js"></script>
+      <script src="clickycircles.js"></script>
+      <style>
+        .bubbleChart {
+          min-width: 100px;
+          max-width: 1200px;
+          height: 700px;
+          margin: 0 auto;
+        }
+        .bubbleChart svg{
+          background: #000000;
+        }
+      </style>
+    </head>
+    <body style="background: #000000">
+    <div class="bubbleChart"/>
+    </body>
+    </html>
     <?php
 });
