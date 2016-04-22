@@ -474,7 +474,7 @@ angular.module('starter.controllers', [])
   $scope.email = ProfileData.data.email;
   $scope.user_id = ProfileData.data.user_id;
   $scope.classes = ProfileData.data.classes;
-  $scope.level = ProfileData.data.level;
+  $scope.level = (ProfileData.data.level | 2);
   $scope.icon = ProfileData.data.icon;
   
   $scope.addClass = function() 
