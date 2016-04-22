@@ -149,8 +149,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
 	  
-      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      // url: 'http://www.grupr.me/creategrup',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/getusergroups',
+      // url: 'http://www.grupr.me/getusergroups',
       url: 'http://54.213.15.90/getusergroups',
       headers: {
         'Content-Type': 'application/json'
@@ -237,9 +237,9 @@ angular.module('starter.controllers', [])
     if ($scope.form.group_name) {
       data.group_name = $scope.form.group_name;
     };
-    if ($scope.form.location) {
-      data.location = $scope.form.location;
-    };
+    // if ($scope.form.professor) {
+    //   data.professor = $scope.form.professor;
+    // };
     if ($scope.form.location_details) {
       data.location_details = $scope.form.location_details;
     };

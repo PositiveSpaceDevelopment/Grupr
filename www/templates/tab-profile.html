@@ -30,10 +30,11 @@
 		</ion-item>
 		
 		<div class="item item-divider">Your Classes</div>
-		<ion-item ng-repeat = "class in classes">
-		<ion-option-button class="button-positive">Edit</ion-option-button>
-		<ion-option-button class="button-assertive">Delete</ion-option-button>
-	       {{class.class_subject}} {{class.class_number}} 
+		<ion-item ng-repeat = "class in classes" class="item item-icon-right">
+			<ion-option-button class="button-positive">Edit</ion-option-button>
+			<ion-option-button class="button-assertive">Delete</ion-option-button>
+	       	{{class.class_subject}} {{class.class_number}} 
+	       	<i class="icon ion-more"></i>
 		</ion-item>
 		</ion-list>
   </ion-content>
