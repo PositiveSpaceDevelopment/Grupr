@@ -2,16 +2,10 @@
 
 //To do
 //json web tokens
-//nice web ui stuff (d3 javascript) https://www.youtube.com/watch?v=5pNz_Dyf9_c
-//circle.html for number of students in certain class_subjects (popular classes)
 //site map and er diagram
 //fix the stuff on the production server for utilities
-//creating a class_index on the classes most people are in
-    // select class_number, class_subject, count(*) from classes NATURAL JOIN students group by class_id ORDER by count(*) DESC;
-    //index on user_id
-        //group_id
-        //class_subject
-        //class_number
+
+
 //Questions:
 
 // Routes
@@ -214,7 +208,7 @@ $app->post('/joingroup', function ($request, $response, $args) {
 
 });
 
-//{"user_id": "1", "group_name":"Teddy's study buddies", "time_of_meeting": "2016-04-15 19:00:00", "description": "stupid people trying to learn good", "class_subject": "CSE", "class_number": "1341", "location": "Lyle", "location_details": "Junkins 110"}
+//{"user_id": "1", "group_name":"Teddy's study buddies", "time_of_meeting": "2016-04-15 19:00:00", "description": "stupid people trying to learn good", "class_subject": "CSE", "class_number": "1341", "professor": "Fontenot", "location_details": "Junkins 110"}
 $app->post('/creategroup', function ($request, $response, $args) {
     $body = $request->getBody();
     $decode = json_decode($body);
@@ -226,20 +220,20 @@ $app->post('/creategroup', function ($request, $response, $args) {
     $class_subject = $decode->class_subject;
     $class_number = $decode->class_number;
     $location_details = $decode->location_details;
-    $location = $decode->location;
+    $professor = $decode->professor;
 
     //location_id
-    $query = 'SELECT location_id FROM locations WHERE location = :location';
-    $stmt = $dbc->prepare($query);
-    $stmt->bindParam(':location', $location);
-
-    try {
-        $stmt->execute();
-        $location_id = $stmt->fetch(PDO::FETCH_ASSOC);
-        $location_id = $location_id["location_id"];
-    } catch(PDOException $e) {
-        echo json_encode($e->getMessage());
-    }
+    // $query = 'SELECT location_id FROM locations WHERE location = :location';
+    // $stmt = $dbc->prepare($query);
+    // $stmt->bindParam(':location', $location);
+    //
+    // try {
+    //     $stmt->execute();
+    //     $location_id = $stmt->fetch(PDO::FETCH_ASSOC);
+    //     $location_id = $location_id["location_id"];
+    // } catch(PDOException $e) {
+    //     echo json_encode($e->getMessage());
+    // }
 
     //class_id
     $query = 'SELECT count(*) FROM classes WHERE class_subject = :class_subject AND class_number = :class_number';
@@ -322,14 +316,14 @@ $app->post('/creategroup', function ($request, $response, $args) {
         }
     }
 
-    $query = 'INSERT INTO groups (group_name, time_of_meeting, description, creation_time, owner_id, class_id, location_id, location_details) VALUES (:group_name, :time_of_meeting, :description, now(), :owner_id, :class_id, :location_id, :location_details)';
+    $query = 'INSERT INTO groups (group_name, time_of_meeting, description, creation_time, owner_id, class_id, location_details, professor) VALUES (:group_name, :time_of_meeting, :description, now(), :owner_id, :class_id, :location_details, :professor)';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':group_name', $group_name);
     $stmt->bindParam(':time_of_meeting', $time_of_meeting);
     $stmt->bindParam(':description', $description);
     $stmt->bindParam(':owner_id', $user_id);
     $stmt->bindParam(':class_id', $class_id);
-    $stmt->bindParam(':location_id', $location_id);
+    $stmt->bindParam(':professor', $professor);
     $stmt->bindParam(':location_details', $location_details);
 
     try {
@@ -339,14 +333,14 @@ $app->post('/creategroup', function ($request, $response, $args) {
     }
 
     //group_id
-    $query = 'SELECT group_id FROM groups WHERE group_name = :group_name AND time_of_meeting = :time_of_meeting AND description = :description AND owner_id = :owner_id AND class_id = :class_id AND location_id = :location_id';
+    $query = 'SELECT group_id FROM groups WHERE group_name = :group_name AND time_of_meeting = :time_of_meeting AND description = :description AND owner_id = :owner_id AND class_id = :class_id AND professor = :professor';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':group_name', $group_name);
     $stmt->bindParam(':time_of_meeting', $time_of_meeting);
     $stmt->bindParam(':description', $description);
     $stmt->bindParam(':owner_id', $user_id);
     $stmt->bindParam(':class_id', $class_id);
-    $stmt->bindParam(':location_id', $location_id);
+    $stmt->bindParam(':professor', $professor);
 
     try {
         $stmt->execute();
@@ -547,7 +541,7 @@ $app->post('/getusergroups', function ($request, $response, $args) {
     $user_id = $decode->user_id;
     $groups = array();
     //and time_of_meeting > now()
-    $query = 'SELECT group_id, group_name, time_of_meeting, description class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE user_id = :user_id ORDER BY time_of_meeting ASC';
+    $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE user_id = :user_id ORDER BY time_of_meeting ASC';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $user_id);
 
@@ -563,7 +557,7 @@ $app->post('/getusergroups', function ($request, $response, $args) {
     {
         // $group_id = $group_info["group_id"];
         $group_id = $row["group_id"];
-        $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id AND user_id = :user_id';
+        $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id AND user_id = :user_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':group_id', $group_id);
         $stmt->bindParam(':user_id', $user_id);
@@ -600,7 +594,7 @@ $app->get('/grups', function ($request, $response, $args) {
     $dbc = $this->dbc;
     $groups = array();
     // $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location, location_details FROM groups NATURAL JOIN classes NATURAL JOIN locations WHERE time_of_meeting > now() ORDER BY time_of_meeting ASC';
-    $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location, location_details FROM groups NATURAL JOIN classes NATURAL JOIN locations ORDER BY time_of_meeting ASC';
+    $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN classes NATURAL JOIN locations ORDER BY time_of_meeting ASC';
     $stmt = $dbc->prepare($query);
 
     try {
@@ -615,7 +609,7 @@ $app->get('/grups', function ($request, $response, $args) {
     {
         // $group_id = $group_info["group_id"];
         $group_id = $row["group_id"];
-        $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+        $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':group_id', $group_id);
 
@@ -761,6 +755,76 @@ $app->post('/addclass', function($request, $response, $args) {
 
 });
 
+// {"user_id": 1, "class_subject_to_change": "CSE", "class_subject_change_to": "CSEE", "class_number_to_change": "9999", "class_number_change_to": ""}
+$app->post('/editclass', function($request, $response, $args) {
+  $body = $request->getBody();
+  $decode = json_decode($body);
+  $dbc = $this->dbc;
+  $user_id = $decode->user_id;
+  $class_subject_to_change = $decode->class_subject_to_change;
+  $class_subject_change_to = $decode->class_subject_change_to;
+  $class_number_to_change = $decode->class_number_to_change;
+  $class_number_change_to = $decode->class_number_change_to;
+
+  if(empty($class_number_change_to))
+  {
+      $query = 'UPDATE classes SET class_subject = :class_subject_change_to WHERE class_subject = :class_subject_to_change AND class_number = :class_number_to_change';
+      $stmt = $dbc->prepare($query);
+      $stmt->bindParam(':class_subject_change_to', $class_subject_change_to);
+      $stmt->bindParam(':class_subject_to_change', $class_subject_to_change);
+      $stmt->bindParam(':class_number_to_change', $class_number_to_change);
+      try {
+          $stmt->execute();
+      } catch(PDOException $e) {
+          echo json_encode($e->getMessage());
+      }
+  }
+  elseif (empty($class_subject_change_to)) {
+      $query = 'UPDATE classes SET class_number = :class_number_change_to WHERE class_subject = :class_subject_to_change AND class_number = :class_number_to_change';
+      $stmt = $dbc->prepare($query);
+      $stmt->bindParam(':class_number_change_to', $class_number_change_to);
+      $stmt->bindParam(':class_subject_to_change', $class_subject_to_change);
+      $stmt->bindParam(':class_number_to_change', $class_number_to_change);
+      try {
+          $stmt->execute();
+      } catch(PDOException $e) {
+          echo json_encode($e->getMessage());
+      }
+  }
+  elseif (!empty($class_subject_change_to) && !empty($class_number_change_to)) {
+      $query = 'UPDATE classes SET class_number = :class_number_change_to, class_subject = :class_subject_change_to WHERE class_subject = :class_subject_to_change AND class_number = :class_number_to_change';
+      $stmt = $dbc->prepare($query);
+      $stmt->bindParam(':class_number_change_to', $class_number_change_to);
+      $stmt->bindParam(':class_subject_change_to', $class_subject_change_to);
+      $stmt->bindParam(':class_subject_to_change', $class_subject_to_change);
+      $stmt->bindParam(':class_number_to_change', $class_number_to_change);
+      try {
+          $stmt->execute();
+      } catch(PDOException $e) {
+          echo json_encode($e->getMessage());
+      }
+  }
+  else {
+      echo "shit";
+  }
+
+
+
+  $query= 'SELECT class_subject,class_number from classes INNER JOIN students on classes.class_id = students.class_id WHERE user_id = :user_id AND is_active = TRUE';
+  $stmt = $dbc->prepare($query);
+  $stmt->bindParam(':user_id', $user_id);
+  try {
+      $stmt->execute();
+  } catch(PDOException $e) {
+      echo json_encode($e->getMessage());
+  }
+  $classList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  echo json_encode($classList);
+
+
+
+});
+
 // {"user_id": "3", "class_subject": "CSE", "class_number": "1342"}
 $app->post('/removeclass', function($request, $response, $args) {
   $body = $request->getBody();
@@ -822,6 +886,7 @@ $app->post('/getusersclasses', function($request, $response, $args) {
 });
 
 // {"location": "Lyle"}
+//someone fix all of this for professors
 $app->post('/filtergroups', function($request, $response, $args) {
 	$body = $request->getBody();
 	$decode = json_decode($body);
@@ -1068,9 +1133,9 @@ $app->post('/filtergroups', function($request, $response, $args) {
 
 
 		}
-		else if(empty($location) && empty($group_name) && !empty($class_number) && empty($class_subject))//just class subject and class number
+		else if(empty($location) && empty($group_name) && !empty($class_number) && !empty($class_subject))//just class subject and class number
 		{
-            $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number ORDER BY time_of_meeting ASC';
+            $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number ORDER BY time_of_meeting ASC';
             $stmt = $dbc->prepare($query);
     		$stmt->bindParam(':class_subject', $class_subject);
             $stmt->bindParam(':class_number', $class_number);
@@ -1087,7 +1152,7 @@ $app->post('/filtergroups', function($request, $response, $args) {
             {
                 // $group_id = $group_info["group_id"];
                 $group_id = $row["group_id"];
-                $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location, location_details FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+                $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
                 $stmt = $dbc->prepare($query);
                 $stmt->bindParam(':group_id', $group_id);
 
