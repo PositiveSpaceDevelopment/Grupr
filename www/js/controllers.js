@@ -29,6 +29,7 @@ angular.module('starter.controllers', [])
     data: data
   }).then(function successCallback(response) {
     GroupFeed.data = response.data;
+    var tempArray = [];
 
     
     for (var i = 0; i < GroupFeed.data.length; i++) {
@@ -43,14 +44,19 @@ angular.module('starter.controllers', [])
       var lastHour = 0;
 
       if (Date('d',GroupFeed.data[i].time_of_meeting) != lastDay || Date('h',GroupFeed.data[i].time_of_meeting) != lastHour){
-        // GroupFeed.data.push(
-        //   {
-        //     // location_details:Date('N h:mm a',GroupFeed.data[i].time_of_meeting),
-        //     divider:true
-        //   })
-      };
+        newItem = {
+          dividerText: GroupFeed.data[i].time_of_meeting,
+          time_of_meeting: (GroupFeed.data[i].time_of_meeting - 100),
+          divider: true
+        };
 
+        tempArray.push(newItem);
+        lastDay = Date('d',GroupFeed.data[i].time_of_meeting);
+        lastHour = Date('h',GroupFeed.data[i].time_of_meeting);
+      };
     };
+    GroupFeed.data = GroupFeed.data.concat(tempArray);
+
     $scope.feed = GroupFeed.data;
     console.log(GroupFeed.data);
 
@@ -264,9 +270,9 @@ angular.module('starter.controllers', [])
     if ($scope.form.group_name) {
       data.group_name = $scope.form.group_name;
     };
-    // if ($scope.form.professor) {
-    //   data.professor = $scope.form.professor;
-    // };
+    if ($scope.form.professor) {
+      data.professor = $scope.form.professor;
+    };
     if ($scope.form.location_details) {
       data.location_details = $scope.form.location_details;
     };

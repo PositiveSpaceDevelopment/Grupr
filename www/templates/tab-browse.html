@@ -12,14 +12,12 @@
   
   <ion-content>
     <ul class="list">
-
-      <div class="item-divider divider padding">6:00 PM</div>
-
       <!-- List Item for each Study Session -->
-      <li class="item row" ng-repeat="group in feed | orderBy: '-time_of_meeting'" ng-click="viewGroup(group.group_id)" ng-class="group.divider? 'item-divider':''">
-        <div class="colorCol" ng-class="group.class_subject">
+      <li class="item row" ng-repeat="group in feed | orderBy: 'time_of_meeting'" ng-click="viewGroup(group.group_id)" ng-class="group.divider? 'item-divider':''">
+        <p ng-show="group.divider" class="padding">{{group.dividerText | date:'MMM dd h:00 a'}}</p>
+        <div class="colorCol" ng-class="group.class_subject" ng-hide="group.divider">
         </div>
-        <div class="col">
+        <div class="col" ng-hide="group.divider">
           <div class="row">
             <div class="col">
               <h2>{{group.class_subject}} {{group.class_number}}</h2>
@@ -41,7 +39,6 @@
           </div>
         </div>
       </li>
-
     </ul>
   </ion-content>
 </ion-view>
