@@ -1,4 +1,4 @@
-<ion-view view-title="My Grüps">
+<ion-view view-title="My Grüps" cache-view="false">
   <ion-nav-buttons side="primary">
     <button class="button button-clear" ng-click="filter()">
       <i class="icon ion-android-funnel"></i> Filter
@@ -13,10 +13,11 @@
   <ion-content>
     <ul class="list">
       <!-- List Item for each Study Session -->
-      <li class="item row" ng-repeat="group in UserGroups" ng-click="viewMyGroup(group.group_id)">
-        <div class="colorCol" ng-class="group.class_subject">
+      <li class="item row" ng-repeat="group in UserGroups | orderBy: 'time_of_meeting'" ng-click="viewMyGroup(group.group_id)" ng-class="group.divider? 'item-divider':''">
+        <p ng-show="group.divider" class="padding">{{group.dividerText | date:'MMM dd h:00 a'}}</p>
+        <div class="colorCol" ng-class="group.class_subject" ng-hide="group.divider">
         </div>
-        <div class="col">
+        <div class="col" ng-hide="group.divider">
           <div class="row">
           <div class="col">
             <h2>{{group.class_subject}} {{group.class_number}}</h2>

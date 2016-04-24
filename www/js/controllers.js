@@ -17,6 +17,19 @@ angular.module('starter.controllers', [])
     $state.go("tab.groupDetail",{grupID: id});
   }
 
+
+
+  // data = {user_id: 1};
+  // $http({
+  //     method: 'POST',
+  //     // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
+  //     // url: 'http://www.grupr.me/joingroup',
+  //     url: 'http://54.213.15.90/getuserclassesgroups',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //       },
+  //     data: data
+
   // Makes the GET http request to fill the GroupFeed Data
   $http({
     method: 'GET',
@@ -32,6 +45,7 @@ angular.module('starter.controllers', [])
     var tempArray = [];
     var lastDay = 0;
     var lastHour = 0;
+    var lastMonth = 0;
 
     for (var i = 0; i < GroupFeed.data.length; i++) {
       //converts the date time string provided by the database 
@@ -42,20 +56,16 @@ angular.module('starter.controllers', [])
       // Determines when the day or hour of the meeting time changes and them
       // adds a list divider to mark the change in time
       var currentDate = new Date(dateString);
-
-      if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour){
+      if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour || currentDate.getMonth() != lastMonth){
         newItem = {
           dividerText: GroupFeed.data[i].time_of_meeting,
           time_of_meeting: (GroupFeed.data[i].time_of_meeting - 100),
           divider: true
         };
-
         tempArray.push(newItem);
         lastDay = currentDate.getDate();
         lastHour = currentDate.getHours();
-
-        console.log(lastDay);
-        console.log(currentDate);
+        lastMonth = currentDate.getMonth();
       };
     };
     GroupFeed.data = GroupFeed.data.concat(tempArray);
@@ -190,13 +200,32 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
       UserGroups.data = response.data;
+      var tempArray = [];
+      var lastDay = 0;
+      var lastHour = 0;
 
-      //converts the date time string provided by the database 
-      // into a unix code datetime number that AngularJS can filter
       for (var i = 0; i < UserGroups.data.length; i++) {
+        //converts the date time string provided by the database 
+        // into a unix code datetime number that AngularJS can filter
         var dateString = UserGroups.data[i].time_of_meeting;
         UserGroups.data[i].time_of_meeting = new Date(dateString).getTime();
+
+        // Determines when the day or hour of the meeting time changes and them
+        // adds a list divider to mark the change in time
+        var currentDate = new Date(dateString);
+        if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour){
+          newItem = {
+            dividerText: UserGroups.data[i].time_of_meeting,
+            time_of_meeting: (UserGroups.data[i].time_of_meeting - 100),
+            divider: true
+          };
+          tempArray.push(newItem);
+          lastDay = currentDate.getDate();
+          lastHour = currentDate.getHours();
+        };
       };
+      UserGroups.data = UserGroups.data.concat(tempArray);
+
       $scope.UserGroups = UserGroups.data;
   	  console.log($scope.UserGroups);
       console.log(UserGroups.data);
@@ -238,6 +267,7 @@ angular.module('starter.controllers', [])
 
 .controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
   $scope.form = {};
+  $scope.form.description = new Date();
 
   var step = 1;
   $scope.form.createFirstStep = true;
@@ -281,7 +311,19 @@ angular.module('starter.controllers', [])
     };
 
     if ($scope.form.date) {
-      data.time_of_meeting = $scope.form.date;
+      var tempDate = new Date($scope.form.date);
+      // var newTime = tempDate.getTime() - 18000000;
+      // tempDate.setTime(newTime);
+
+      var yearStr = tempDate.getUTCFullYear();
+      var monthStr = tempDate.getUTCMonth()+1;
+      var dayStr = tempDate.getUTCDate();
+      var hourStr = tempDate.getUTCHours()-5;
+      var minStr = tempDate.getUTCMinutes();
+      var secStr = tempDate.getUTCSeconds();
+      var dateStr = yearStr+'-'+monthStr+'-'+dayStr+' '+hourStr+':'+minStr+':'+secStr;
+
+      data.time_of_meeting = dateStr;
     };
     if ($scope.form.description) {
       data.description = $scope.form.description;
@@ -326,6 +368,14 @@ angular.module('starter.controllers', [])
     $scope.form.locationDate = false;
     $scope.form.nextItem = true;
     $scope.form.lastItem = false;
+
+    // Re-sets the input fields
+    $scope.form.group_name = "";
+    $scope.form.professor = "";
+    $scope.form.location_details = "";
+    $scope.form.date = "";
+    $scope.form.description = new Date();
+    $scope.form.class_name = "";
   }
 
   $scope.cancel = function() {
@@ -338,6 +388,14 @@ angular.module('starter.controllers', [])
     $scope.form.locationDate = false;
     $scope.form.nextItem = true;
     $scope.form.lastItem = false;
+
+    // Re-sets the input fields
+    $scope.form.group_name = "";
+    $scope.form.professor = "";
+    $scope.form.location_details = "";
+    $scope.form.date = "";
+    $scope.form.description = new Date();
+    $scope.form.class_name = "";
     
     $state.go('tab.browse');
   }
