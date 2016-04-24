@@ -52,6 +52,11 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       templateUrl: 'templates/addClass.html',
       controller: 'addClassCtrl'
     })
+	   .state('editClass', {
+      url: '/editClass',
+      templateUrl: 'templates/editClass.html',
+      controller: 'editClassCtrl'
+    })
 	.state('filter', {
       url: '/filter',
       templateUrl: 'templates/filter.html',

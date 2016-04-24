@@ -1,4 +1,4 @@
-<ion-view view-title="All your Grups">
+<ion-view view-title="My Grüps">
   <ion-nav-buttons side="primary">
     <button class="button button-clear" ng-click="filter()">
       <i class="icon ion-android-funnel"></i> Filter
@@ -21,15 +21,18 @@
           <div class="col">
             <h2>{{group.class_subject}} {{group.class_number}}</h2>
           </div>
-          <div class="col col-offset-10">
-            <p>5 members</p>
+          <div class="col">
+            <p>{{group.professor}}</p>
+          </div>
+          <div class="col browseRightAlgin">
+            <i class="icon ion-android-person" ng-repeat="member in group.members"></i>
           </div>
           </div>
           <div class="row">
-          <div class="col col-offset-10">
-            <p>{{group.location}}</p>
-          </div>
           <div class="col">
+            <p>{{group.location_details}}</p>
+          </div>
+          <div class="col browseRightAlgin">
             <p>{{group.time_of_meeting | date:'h:mm a'}}</p>
           </div>
           </div>

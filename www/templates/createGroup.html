@@ -7,7 +7,8 @@
   </ion-nav-buttons>
   <ion-nav-buttons side="primary">
     <button class="button button-clear" ng-hide="form.createFirstStep" ng-click="createGroupBack()">
-      < Back
+      <i class="icon ion-ios-arrow-back"></i> 
+      Back
     </button>
   </ion-nav-buttons>
 
@@ -26,25 +27,18 @@
           <div class="input-label">Class (subject and number)</div>
           <input type="text" placeholder="e.g. CSE 1341" ng-model="form.class_name">
         </label>
+        <label class="item item-input item-stacked-label">
+          <div class="input-label">Professor (for your class section)</div>
+          <input type="text" placeholder="e.g. Mark Fontenot" ng-model="form.professor">
+        </label>
       </div>
 
       <!-- Location and Date -->
       <div ng-show="form.locationDate">
         <div class="item item-divider">Location</div>
-        <label class="item item-input item-select">
-          <div class="input-label">
-            Location: 
-          </div>
-          <select ng-model="form.location">
-            <option  value="" selected>-- Select --</option>
-            <option value="Fondren Library">Fondren Library</option>
-            <option value="Lyle">Lyle</option>
-            <option value="Starbucks - Hillcrest">Starbucks - Hillcrest</option>
-            <option value="Starbucks - Mockingbird">Starbucks - Mockingbird</option>
-          </select>
         </label>
         <label class="item item-input">
-          <textarea placeholder="Important details about where you are studying. i.e. room number" ng-model="form.location_details"></textarea>
+          <textarea placeholder="Tell everyone where you are studying. i.e. building and room number" ng-model="form.location_details"></textarea>
         </label>
 
         <div class="item item-divider">Date and Time</div>
@@ -69,7 +63,9 @@
 
       <!-- Buttons -->
       <label class="item" ng-show="form.nextItem">
-        <button class="button button-block button-outline button-calm" ng-click="next()">Next >></button>
+        <button class="button button-block button-outline button-calm" ng-click="next()">
+          Next <i class="icon ion-ios-arrow-forward"></i><i class="icon ion-ios-arrow-forward"></i>
+        </button>
       </label>
       <label class="item" ng-show="form.lastItem">
         <button class="button button-block button-calm" ng-click="createGrup()">Create!</button>

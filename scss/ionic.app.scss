@@ -21,6 +21,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // ****************************************
 // Put all of our custom SASS below here  *
 // ****************************************
+$positive: #50AFDD;
+$calm: #4BCAEA;
+$assertive: #E15554;
+
 
 // -------------------
 // Font Stuff
@@ -45,19 +49,46 @@ p {
 // Group Detail Page
 // --------------------
 
-.detailImg {
-	height: 15rem;
-	background-image: url("/img/Fondren.jpg");
-	// opacity: 0.5;
-
-	h1 {
-		margin: auto;
-		padding-top: 2rem;
+.detailContainer {
+	.detailImg {
+		height: 15rem;
+		width: 100%;
+		background-image: url("/img/Fondren.jpg");
+		background-size: cover;
+		opacity: 0.5;
+		position: absolute;
 	}
-	.row.imgBody {
-		padding-top: 1rem;
+
+	.detailContainerContent{
+		height: 15rem;
+		width: 100%;
+		background-color: black;
+		color: white;
+
+		h1 {
+			color: white;
+			margin: auto;
+			padding-top: 2rem;
+		}
+		.row.imgBody {
+			padding-top: 1rem;
+			h4 {
+				color: white;
+			}
+		}
 	}
 }
+
+
+// --------------------
+// Browse - List Items
+// --------------------
+
+.browseRightAlgin {
+	text-align: right;
+}
+
+
 
 // --------------------
 // Browse - item colors

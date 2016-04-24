@@ -2,40 +2,7 @@ angular.module('starter.services', [])
 
 //factory to carry around user data
 .factory("ProfileData",function() {
-  data = {
- //    "email": "aterra@smu.edu",
- //    "user_id": "1",
- //    "classes": [
- //      {
- //        "class_subject": "CSE",
- //        "class_number": "3330"
- //      },
- //      {
- //        "class_subject": "CSE",
- //        "class_number": "3381"
- //      },
- //      {
- //        "class_subject": "CEE",
- //        "class_number": "3302"
- //      },
- //      {
- //        "class_subject": "PRW",
- //        "class_number": "2301"
- //      },
- //      {
- //        "class_subject": "CSE",
- //        "class_number": "3353"
- //      },
- //      {
- //        "class_subject": "CSE",
- //        "class_number": "3342"
- //      }
- //    ],
- //    "first_name": "Andrew",
- //    "last_name": "Terra",
-	// "level": "5.4",
-	// "icon": "grupr-logo.png"
-  }
+  data = {}
   return {data};
 
   // return {data:null};
@@ -49,7 +16,10 @@ angular.module('starter.services', [])
 .factory("UserGroups",function() {
   return {data:null};
 })
-
+.factory("editData",function() {
+	data = {}
+	return {data};
+})
 
 
 

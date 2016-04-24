@@ -1,11 +1,20 @@
 <ion-view view-title="Filter">
   
   <ion-content>
+	
 	<div class="list">
-	<div class="item item-divider">Which of your classes do you want to filter?</div>	
-		   <ion-toggle class="item" ng-repeat = "class in user_classes">
+	<ion-toggle ng-model = "FilterClasses">
+	Use Filters? 
+	</ion-toggle>	
+	<div ng-show= "FilterClasses">
+			<ion-radio ng-model ="choice" ng-click = "filterAll()">
+			All of them
+			</ion-radio>
+		   <ion-radio ng-model ="$parent.choice" ng-repeat = "class in user_classes" ng-value = "class" ng-click = "filter(choice)">
+			
 		   {{class.class_subject}} {{class.class_number}}
-		   </ion-toggle>
+		   </ion-radio>
+	</div>
 	</div>
 
   </ion-content>
