@@ -163,7 +163,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('MyGroupsCtrl', function($scope, $state, $http, ProfileData, GroupFeed, UserGroups) {
-	$scope.viewGroup = function(id) {
+	$scope.viewGroup = function(id){
     $state.go("tab.groupDetail",{grupID: id});
   }
 	var data = {};
@@ -355,7 +355,9 @@ angular.module('starter.controllers', [])
 })
 
 .controller('addClassCtrl', function($scope,$state, $http, ProfileData, classes) {
-	
+	$scope.cancel = function() { 
+    $state.go('tab.profile');
+  }
 	$scope.form = {};
 	$scope.classes = classes.data.classes;
 	$scope.form.class_subject = "ACCT";

@@ -25,16 +25,16 @@
 		</ion-item>
 		<ion-item>
 		<button class="button button-clear button-calm" ng-click="filter()">
+			<i class="icon ion-android-funnel"></i> 
 			<i></i> Filter classes 
 		</button>
 		</ion-item>
 		
 		<div class="item item-divider">Your Classes</div>
-		<ion-item ng-repeat = "class in classes" class="item item-icon-right">
-			<ion-option-button class="button-positive">Edit</ion-option-button>
-			<ion-option-button class="button-assertive">Delete</ion-option-button>
-	       	{{class.class_subject}} {{class.class_number}} 
-	       	<i class="icon ion-more"></i>
+		<ion-item ng-repeat = "class in classes">
+		<ion-option-button class="button-positive">Edit</ion-option-button>
+		<ion-option-button class="button-assertive">Delete</ion-option-button>
+	       {{class.class_subject}} {{class.class_number}} 
 		</ion-item>
 		</ion-list>
   </ion-content>
