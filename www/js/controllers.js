@@ -30,8 +30,9 @@ angular.module('starter.controllers', [])
   }).then(function successCallback(response) {
     GroupFeed.data = response.data;
     var tempArray = [];
+    var lastDay = 0;
+    var lastHour = 0;
 
-    
     for (var i = 0; i < GroupFeed.data.length; i++) {
       //converts the date time string provided by the database 
       // into a unix code datetime number that AngularJS can filter
@@ -40,10 +41,9 @@ angular.module('starter.controllers', [])
 
       // Determines when the day or hour of the meeting time changes and them
       // adds a list divider to mark the change in time
-      var lastDay = 0;
-      var lastHour = 0;
+      var currentDate = new Date(dateString);
 
-      if (Date('d',GroupFeed.data[i].time_of_meeting) != lastDay || Date('h',GroupFeed.data[i].time_of_meeting) != lastHour){
+      if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour){
         newItem = {
           dividerText: GroupFeed.data[i].time_of_meeting,
           time_of_meeting: (GroupFeed.data[i].time_of_meeting - 100),
@@ -51,8 +51,11 @@ angular.module('starter.controllers', [])
         };
 
         tempArray.push(newItem);
-        lastDay = Date('d',GroupFeed.data[i].time_of_meeting);
-        lastHour = Date('h',GroupFeed.data[i].time_of_meeting);
+        lastDay = currentDate.getDate();
+        lastHour = currentDate.getHours();
+
+        console.log(lastDay);
+        console.log(currentDate);
       };
     };
     GroupFeed.data = GroupFeed.data.concat(tempArray);
@@ -374,7 +377,7 @@ angular.module('starter.controllers', [])
 		console.log($scope.form.class_subject );
 		console.log($scope.form.class_number);
 		data.class_subject = $scope.form.class_subject;
-		data.class_number = $scope.form.class_nubmber; 
+		data.class_number = $scope.form.class_number; 
 		$scope.form.class_subject = "ACCT";
 		$scope.form.class_number = "";
 		data.user_id = ProfileData.data.user_id;
