@@ -1,7 +1,6 @@
 <?php
 
 //To do
-//json web tokens
 //site map and er diagram
 //fix the stuff on the production server for utilities
 
@@ -192,6 +191,7 @@ $app->post('/joingroup', function ($request, $response, $args) {
         } catch(PDOException $e) {
             echo json_encode($e->getMessage());
         }
+
     } else {
         $query = 'UPDATE user_info SET level = level + 0.1 WHERE user_id = :user_id';
         $stmt = $dbc->prepare($query);
@@ -203,9 +203,6 @@ $app->post('/joingroup', function ($request, $response, $args) {
             echo json_encode($e->getMessage());
         }
     }
-
-
-
 });
 
 //{"user_id": "1", "group_name":"Teddy's study buddies", "time_of_meeting": "2016-04-15 19:00:00", "description": "stupid people trying to learn good", "class_subject": "CSE", "class_number": "1341", "professor": "Fontenot", "location_details": "Junkins 110"}
@@ -417,8 +414,6 @@ $app->post('/login', function ($request, $response, $args) {
             echo json_encode($e->getMessage());
         }
 
-        // array_push($stringToReturn, $profile);
-
         $classes = "";
         $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id AND is_active = TRUE';
         $stmt = $dbc->prepare($query);
@@ -430,6 +425,7 @@ $app->post('/login', function ($request, $response, $args) {
         } catch(PDOException $e) {
             echo json_encode($e->getMessage());
         }
+
         $login_info["classes"] = $classes;
         echo json_encode($login_info, JSON_PRETTY_PRINT);
 
@@ -442,6 +438,7 @@ $app->post('/login', function ($request, $response, $args) {
         } catch(PDOException $e) {
             echo json_encode($e->getMessage());
         }
+
     } else {
         echo "login failed";
     }
@@ -453,34 +450,31 @@ $app->post('/profile', function ($request, $response, $args) {
     $dbc = $this->dbc;
     $user_id = $decode->user_id;
 
+    $query = 'SELECT email, user_id, first_name, last_name, level FROM user_info WHERE user_id = :user_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $user_id);
 
+    try {
+        $stmt->execute();
+        $user_info = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
 
-        $query = 'SELECT email, user_id, first_name, last_name, level FROM user_info WHERE user_id = :user_id';
-        $stmt = $dbc->prepare($query);
-        $stmt->bindParam(':user_id', $user_id);
+    $classes = "";
+    $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id AND is_active = TRUE';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $user_id);
 
-        try {
-            $stmt->execute();
-            $user_info = $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch(PDOException $e) {
-            echo json_encode($e->getMessage());
-        }
+    try {
+        $stmt->execute();
+        $classes = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+    $user_info["classes"] = $classes;
 
-
-        $classes = "";
-        $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id AND is_active = TRUE';
-        $stmt = $dbc->prepare($query);
-        $stmt->bindParam(':user_id', $user_id);
-
-        try {
-            $stmt->execute();
-            $classes = $stmt->fetchAll(PDO::FETCH_OBJ);
-        } catch(PDOException $e) {
-            echo json_encode($e->getMessage());
-        }
-        $user_info["classes"] = $classes;
-
-        echo json_encode($user_info, JSON_PRETTY_PRINT);
+    echo json_encode($user_info, JSON_PRETTY_PRINT);
 
 });
 
@@ -516,8 +510,6 @@ $app->post('/resetpassword', function ($request, $response, $args) {
     } catch(PDOException $e) {
         echo json_encode($e->getMessage());
     }
-
-
 });
 
 $app->post('/logout', function ($request, $response, $args) {
@@ -586,8 +578,6 @@ $app->post('/getusergroups', function ($request, $response, $args) {
 
     $json = json_encode($groups, JSON_PRETTY_PRINT);
     echo $json;
-
-
 });
 
 $app->get('/grups', function ($request, $response, $args) {
@@ -605,9 +595,7 @@ $app->get('/grups', function ($request, $response, $args) {
 
     $all_groups = $stmt->fetchAll();
     foreach($all_groups as $row)
-    // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
     {
-        // $group_id = $group_info["group_id"];
         $group_id = $row["group_id"];
         $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
         $stmt = $dbc->prepare($query);
@@ -638,8 +626,6 @@ $app->get('/grups', function ($request, $response, $args) {
 
     $json = json_encode($groups, JSON_PRETTY_PRINT);
     echo $json;
-
-
 });
 
 // {"group_id": "6", "user_id": "1", "content": "I love sports"}
@@ -779,6 +765,7 @@ $app->post('/editclass', function($request, $response, $args) {
           echo json_encode($e->getMessage());
       }
   }
+
   elseif (empty($class_subject_change_to)) {
       $query = 'UPDATE classes SET class_number = :class_number_change_to WHERE class_subject = :class_subject_to_change AND class_number = :class_number_to_change';
       $stmt = $dbc->prepare($query);
@@ -791,6 +778,7 @@ $app->post('/editclass', function($request, $response, $args) {
           echo json_encode($e->getMessage());
       }
   }
+
   elseif (!empty($class_subject_change_to) && !empty($class_number_change_to)) {
       $query = 'UPDATE classes SET class_number = :class_number_change_to, class_subject = :class_subject_change_to WHERE class_subject = :class_subject_to_change AND class_number = :class_number_to_change';
       $stmt = $dbc->prepare($query);
@@ -804,8 +792,9 @@ $app->post('/editclass', function($request, $response, $args) {
           echo json_encode($e->getMessage());
       }
   }
+
   else {
-      echo "shit";
+      echo "you done goofed";
   }
 
 
@@ -1624,7 +1613,7 @@ $app->post('/filtergroups', function($request, $response, $args) {
 
         else
 		{
-			echo "you fucked up";
+			echo "you done goofed up";
 		}
 
         $json = json_encode($groups, JSON_PRETTY_PRINT);
