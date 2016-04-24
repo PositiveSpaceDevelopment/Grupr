@@ -1,7 +1,9 @@
 angular.module('starter.controllers', [])
 
 .controller('BrowseCtrl', function($scope, $state, $http, ProfileData, GroupFeed) {
-  
+  /*GroupFeed.getFeed().then(function(data) {
+    $scope.feed = data;
+  });*/
 
   $scope.newGroup = function() {
     $state.go('createGroup');
@@ -71,13 +73,74 @@ angular.module('starter.controllers', [])
     }).then(function successCallback(response){
       console.log("You Joined!");
     });
+
+
+    // Makes the GET http request to fill the GroupFeed Data
+    $http({
+      method: 'GET',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+      // url: 'http://www.grupr.me/grups',
+      url: 'http://54.213.15.90/grups',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response) {
+      $scope.feed = response.data;
+      GroupFeed.data = response.data;
+      console.log(GroupFeed.data);
+    }, function errorCallback(response) {
+      console.log("something went wrong");
+    });
+
+  }
+
+})
+
+.controller('ViewAllGrupsCtrl', function($scope) {
+
+  id = $stateParams.grupID;
+
+  var index = 0; 
+  while(true){
+    if (GroupFeed.data[index].group_id == id) {
+      break;
+    };
+    index++;
+  }
+
+  $scope.groupInfo = GroupFeed.data[index];
+  console.log($scope.groupInfo);
+
+  $scope.join = function() {
+
+    var data = {}
+
+    data.user_id = ProfileData.data.user_id;
+    data.group_id = id;
+
+    console.log(data);
+
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
+      // url: 'http://www.grupr.me/joingroup',
+      url: 'http://54.213.15.90/joingroup',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      console.log("You Joined!");
+    });
 	$state.go("tab.ViewAllGrup");
   }
 
 })
 
 .controller('MyGroupsCtrl', function($scope, $state, $http, ProfileData, GroupFeed, UserGroups) {
-	$scope.viewGroup = function(id) {
+	$scope.viewGroup = function(id){
     $state.go("tab.groupDetail",{grupID: id});
   }
 	var data = {};
@@ -85,7 +148,6 @@ angular.module('starter.controllers', [])
 	// Makes the POST http request
     $http({
       method: 'POST',
-	  
       // url: 'http://private-fa798-grupr.apiary-mock.com/login',
       // url: 'http://www.grupr.me/creategrup',
       url: 'http://54.213.15.90/getusergroups',
@@ -94,9 +156,10 @@ angular.module('starter.controllers', [])
         },
       data: data
     }).then(function successCallback(response){
+	  console.log("test");
       UserGroups.data = response.data;
-	  $scope.UserGroups = response.data;
-	  console.log($scope.UserGroups);
+  	  $scope.UserGroups = response.data;
+  	  console.log($scope.UserGroups);
       console.log(UserGroups.data);
     });
 	
@@ -108,15 +171,41 @@ angular.module('starter.controllers', [])
 	$state.go('filter')
   }
 
-  $scope.viewGroup = function(id) {
-    $state.go("tab.groupDetail",{grupID: id});
+  $scope.viewMyGroup = function(id) {
+    $state.go("tab.myGroupDetail",{grupID: id});
   }
 })
+
+.controller('MyGroupDetailCtrl', function($scope, $stateParams, $http, GroupFeed, ProfileData) {
+
+  id = $stateParams.grupID;
+
+  var index = 0; 
+  while(true){
+    if (GroupFeed.data[index].group_id == id) {
+      break;
+    };
+    index++;
+  }
+
+  $scope.myGroupInfo = GroupFeed.data[index];
+  console.log($scope.myGroupInfo);
+
+  $scope.leave = function() {
+
+  }
+
+})
+
+
+
 
 .controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
   $scope.form = {};
 
   var step = 1;
+  $scope.form.createFirstStep = true;
+
   $scope.form.general = true;
   $scope.form.descriptionShow = false;
   $scope.form.locationDate = false;
@@ -137,6 +226,7 @@ angular.module('starter.controllers', [])
         break;
     }
     step++;
+    $scope.form.createFirstStep = false;
   }
 
   $scope.createGrup = function() {
@@ -192,7 +282,9 @@ angular.module('starter.controllers', [])
     });
 
     // Resets the values for the Creat Group form
-    var step = 1;
+    step = 1;
+    $scope.form.createFirstStep = true;
+
     $scope.form.general = true;
     $scope.form.descriptionShow = false;
     $scope.form.locationDate = false;
@@ -202,7 +294,9 @@ angular.module('starter.controllers', [])
 
   $scope.cancel = function() {
     // Resets the values for the Creat Group form
-    var step = 1;
+    step = 1;
+    $scope.form.createFirstStep = true;
+
     $scope.form.general = true;
     $scope.form.descriptionShow = false;
     $scope.form.locationDate = false;
@@ -211,10 +305,32 @@ angular.module('starter.controllers', [])
     
     $state.go('tab.browse');
   }
+
+  $scope.createGroupBack = function() {
+    switch(step) {
+      case 2:
+        $scope.form.general = true;
+        $scope.form.locationDate = false;
+
+        $scope.form.createFirstStep = true;
+        break;
+      case 3:
+        $scope.form.locationDate = true;
+        $scope.form.descriptionShow = false;
+        $scope.form.nextItem = true;
+        $scope.form.lastItem = false;
+
+        $scope.form.createFirstStep = false;
+        break;
+    }
+    step--;
+  }
 })
 
 .controller('addClassCtrl', function($scope,$state, $http, ProfileData, classes) {
-	
+	$scope.cancel = function() { 
+    $state.go('tab.profile');
+  }
 	$scope.form = {};
 	$scope.classes = classes.data.classes;
 	$scope.form.class_subject = "ACCT";
@@ -284,9 +400,9 @@ angular.module('starter.controllers', [])
     // Makes the POST http request
     $http({
       method: 'POST',
-      url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
       // url: 'http://www.grupr.me/login',
-      //url: 'http://54.213.15.90/login',
+      url: 'http://54.213.15.90/login',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -294,8 +410,7 @@ angular.module('starter.controllers', [])
     }).then(function successCallback(response){
       ProfileData.data = response.data;
       console.log(ProfileData.data);
-      console.log(ProfileData.data.user_id);
-       $state.go('tab.browse');
+      $state.go('tab.browse');
     });
 
   }

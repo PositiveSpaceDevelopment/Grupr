@@ -99,6 +99,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       }
     })
 
+  .state('tab.myGroupDetail', {
+    url: '/MyGroups/:grupID',
+    views: {
+      'tab-MyGroups': {
+        templateUrl: 'templates/myGroupDetail.html',
+        controller: 'MyGroupDetailCtrl'
+      }
+    }
+  })
+
   .state('tab.profile', {
     url: '/profile',
     views: {

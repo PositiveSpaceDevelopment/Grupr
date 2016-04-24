@@ -1,8 +1,13 @@
 <ion-view view-title="Create a New Grüp">
   
-  <ion-nav-buttons side="primary">
+  <ion-nav-buttons side="right">
     <button class="button button-clear" ng-click="cancel()">
       Cancel
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="primary">
+    <button class="button button-clear" ng-hide="form.createFirstStep" ng-click="createGroupBack()">
+      < Back
     </button>
   </ion-nav-buttons>
 
@@ -64,10 +69,10 @@
 
       <!-- Buttons -->
       <label class="item" ng-show="form.nextItem">
-        <button class="button button-block button-outline button-positive" ng-click="next()">Next >></button>
+        <button class="button button-block button-outline button-calm" ng-click="next()">Next >></button>
       </label>
       <label class="item" ng-show="form.lastItem">
-        <button class="button button-block button-positive" ng-click="createGrup()">Create!</button>
+        <button class="button button-block button-calm" ng-click="createGrup()">Create!</button>
       </label>
     </div>
   </ion-content>

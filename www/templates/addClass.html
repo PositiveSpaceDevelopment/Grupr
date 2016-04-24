@@ -1,5 +1,9 @@
 <ion-view view-title="Add Class">
-  
+   <ion-nav-buttons side="left">
+    <button class="button button-clear" ng-click="cancel()">
+      Cancel
+    </button>
+  </ion-nav-buttons>
   <ion-content>
 	<div class="list">
 	  <form ng-submit="addClassSubmit()">
@@ -18,7 +22,7 @@
           <input type="text" pattern="[0-9]{4}" ng-required = "true" ng-model="form.class_number"> </input>
       </label>
 	  <label class="item">
-          <button class="button button-block button-positive" type="submit">Add Class</button>
+          <button class="button button-block button-calm button-balanced"" type="submit">Add Class</button>
 		 </label>
 	  </form> 
 	<div class="item item-divider">Your current classes</div>
@@ -29,8 +33,10 @@
 	       {{class.class_subject}} {{class.class_number}} 
 		</ion-item>
 		</ion-list>
-		<button class="button button-block button-assertive" type="submit" ng-click = "done()">Done</button>  
-	</div>
+			</div>
 
   </ion-content>
+  <ion-footer-bar align-title="center" class="bar-assertive" ng-click = "done()">
+  <h1 class="title">Done</h1>
+  </ion-footer-bar>
 </ion-view>

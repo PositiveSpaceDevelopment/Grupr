@@ -1,0 +1,47 @@
+<!--
+  This template loads for the 'tab.friend-detail' state (app.js)
+  'friend' is a $scope variable created in the FriendsCtrl controller (controllers.js)
+  The FriendsCtrl pulls data from the Friends service (service.js)
+  The Friends service returns an array of friend data
+-->
+<ion-view view-title="{{myGroupInfo.group_name}}">
+  <ion-content>
+    <div class="detailImg">
+      <!-- <img src="/img/Fondren.jpg" class="detailImg"> -->
+      <div class="row title">
+        <h1>{{myGroupInfo.class_subject}} {{myGroupInfo.class_number}}</h1>
+      </div>
+      <div class="row imgBody">
+        <div class="col">
+          <h4>{{myGroupInfo.time_of_meeting | date:"EEE MMM dd 'at' h:mm a"}}</h4> 
+        </div>
+        <div class="col">
+          <h4>{{myGroupInfo.location}}</h4>
+          <p>{{myGroupInfo.location_details}}</p>
+        </div>
+      </div> 
+    </div>
+    <ul class="list">
+      <button class="button button-block button-dark" ng-click="leave()">
+        Joined
+      </button>
+   
+      <label class="item">
+        <div class="input-label">Description: </div>
+        <p>{{myGroupInfo.description}}</p> 
+      </label>
+      <label class="item">
+        <div class="input-label">Members: </div>
+        <ul>
+          <li ng-repeat="member in myGroupInfo.members">
+            <p>{{member.first_name}} {{member.last_name}}</p> 
+          </li>
+        </ul>
+      </label>
+    </ul>
+  
+  </ion-content>
+    <ion-footer-bar align-title="center" class="bar-assertive">
+  <h1 class="title">Leave</h1>
+  </ion-footer-bar>
+</ion-view>

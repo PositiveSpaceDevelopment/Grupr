@@ -6,23 +6,41 @@
 -->
 <ion-view view-title="{{groupInfo.group_name}}">
   <ion-content>
+    <div class="detailImg">
+      <!-- <img src="/img/Fondren.jpg" class="detailImg"> -->
+      <div class="row title">
+        <h1>{{groupInfo.class_subject}} {{groupInfo.class_number}}</h1>
+      </div>
+      <div class="row imgBody">
+        <div class="col">
+          <h4>{{groupInfo.time_of_meeting | date:"EEE MMM dd 'at' h:mm a"}}</h4> 
+        </div>
+        <div class="col">
+          <h4>{{groupInfo.location}}</h4>
+          <p>{{groupInfo.location_details}}</p>
+        </div>
+      </div> 
+    </div>
     <ul class="list">
-      <label class="item">
+      <button class="button button-block button-calm" ng-click="join()">
+        Join this Grüp
+      </button>
+      <!-- <label class="item">
         <div class="input-label">Class: </div>
         <h4>{{groupInfo.class_subject}} {{groupInfo.class_number}}</h4>
       </label>
       <label class="item">
         <div class="input-label">Date: </div>
-        <h4>{{groupInfo.time_of_meeting | date:'EEE MMM dd HH:mm'}}</h4> 
+        <h4>{{groupInfo.time_of_meeting | date:"EEE MMM dd 'at' h:mm a"}}</h4> 
       </label>
       <label class="item">
         <div class="input-label">Location: </div>
         <h4>{{groupInfo.location}}</h4>
         <p>{{groupInfo.location_details}}</p> 
-      </label>
+      </label> -->
       <label class="item">
         <div class="input-label">Description: </div>
-        <h4>{{groupInfo.description}}</h4> 
+        <p>{{groupInfo.description}}</p> 
       </label>
       <label class="item">
         <div class="input-label">Members: </div>
@@ -33,8 +51,6 @@
         </ul>
       </label>
     </ul>
-    <button class="button button-block button-positive" ng-click="join()">
-          Join this Grüp
-        </button>
+  
   </ion-content>
 </ion-view>

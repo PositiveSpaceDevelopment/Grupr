@@ -18,11 +18,76 @@ $dark:                            #444 !default;
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
-// Put all of our custom SASS in here
+// ****************************************
+// Put all of our custom SASS below here  *
+// ****************************************
 
-$positive: #387ef5 !default;
+// -------------------
+// Font Stuff
+// -------------------
+@import url(https://fonts.googleapis.com/css?family=Nixie+One);
+$NixieOne: 'Nixie One', cursive;
+@import url(https://fonts.googleapis.com/css?family=Muli);
+$Muli: 'Muli', sans-serif;
+
+$header: #19bbd5;
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: $NixieOne;
+}
+
+p {
+	font-family: $Muli;
+}
 
 
+// --------------------
+// Group Detail Page
+// --------------------
+
+.detailImg {
+	height: 15rem;
+	background-image: url("/img/Fondren.jpg");
+	// opacity: 0.5;
+
+	h1 {
+		margin: auto;
+		padding-top: 2rem;
+	}
+	.row.imgBody {
+		padding-top: 1rem;
+	}
+}
+
+// --------------------
+// Browse - item colors
+// --------------------
+.colorCol {
+	width: 0.75rem;
+	background-color: #444;
+}
+.CSE, .ASPT, .WO, .KNW {
+	background-color: #ffc900;
+}
+
+.UGRD, .MATH, .MAST, .MUAS, .MKTG {
+	background-color: #11c1f3;
+}
+.ACCT, .BL, .WXC, .HIST {
+	background-color: #886aea;
+}
+
+.EE, .TUBA, .WGM, .CW {
+	background-color: #ef473a;
+}
+
+.MUED, .TOW, .MREP, .BLI {
+	background-color: #00cc99;
+}
+
+.divider {
+	background-color: #11c1f3;
+}
 
 
 

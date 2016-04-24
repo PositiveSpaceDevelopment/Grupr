@@ -6,8 +6,11 @@
 		   <ion-toggle class="item" ng-repeat = "class in user_classes">
 		   {{class.class_subject}} {{class.class_number}}
 		   </ion-toggle>
-		<button class="button button-block button-assertive" type="submit" ng-click = "done()">Done</button>  
 	</div>
 
   </ion-content>
+  
+  <ion-footer-bar align-title="center" class="bar-assertive" ng-click = "done()">
+  <h1 class="title">Done</h1>
+  </ion-footer-bar>
 </ion-view>
