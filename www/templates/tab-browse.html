@@ -16,7 +16,7 @@
       <div class="item-divider divider padding">6:00 PM</div>
 
       <!-- List Item for each Study Session -->
-      <li class="item row" ng-repeat="group in feed" ng-click="viewGroup(group.group_id)">
+      <li class="item row" ng-repeat="group in feed | orderBy: '-time_of_meeting'" ng-click="viewGroup(group.group_id)" ng-class="group.divider? 'item-divider':''">
         <div class="colorCol" ng-class="group.class_subject">
         </div>
         <div class="col">
@@ -36,7 +36,7 @@
               <p>{{group.location_details}}</p>
             </div>
             <div class="col browseRightAlgin">
-              <p>{{group.time_of_meeting | date:'h:mm a'}}</p>
+              <p>{{group.time_of_meeting | date:'MMM d, h:mm a'}}</p>
             </div>
           </div>
         </div>

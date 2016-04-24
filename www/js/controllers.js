@@ -28,9 +28,32 @@ angular.module('starter.controllers', [])
       },
     data: data
   }).then(function successCallback(response) {
-    $scope.feed = response.data;
     GroupFeed.data = response.data;
+
+    
+    for (var i = 0; i < GroupFeed.data.length; i++) {
+      //converts the date time string provided by the database 
+      // into a unix code datetime number that AngularJS can filter
+      var dateString = GroupFeed.data[i].time_of_meeting;
+      GroupFeed.data[i].time_of_meeting = new Date(dateString).getTime();
+
+      // Determines when the day or hour of the meeting time changes and them
+      // adds a list divider to mark the change in time
+      var lastDay = 0;
+      var lastHour = 0;
+
+      if (Date('d',GroupFeed.data[i].time_of_meeting) != lastDay || Date('h',GroupFeed.data[i].time_of_meeting) != lastHour){
+        // GroupFeed.data.push(
+        //   {
+        //     // location_details:Date('N h:mm a',GroupFeed.data[i].time_of_meeting),
+        //     divider:true
+        //   })
+      };
+
+    };
+    $scope.feed = GroupFeed.data;
     console.log(GroupFeed.data);
+
   }, function errorCallback(response) {
     console.log("something went wrong");
   });
@@ -158,7 +181,14 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
       UserGroups.data = response.data;
-  	  $scope.UserGroups = response.data;
+
+      //converts the date time string provided by the database 
+      // into a unix code datetime number that AngularJS can filter
+      for (var i = 0; i < UserGroups.data.length; i++) {
+        var dateString = UserGroups.data[i].time_of_meeting;
+        UserGroups.data[i].time_of_meeting = new Date(dateString).getTime();
+      };
+      $scope.UserGroups = UserGroups.data;
   	  console.log($scope.UserGroups);
       console.log(UserGroups.data);
     });
@@ -196,9 +226,6 @@ angular.module('starter.controllers', [])
   }
 
 })
-
-
-
 
 .controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
   $scope.form = {};
@@ -406,9 +433,17 @@ angular.module('starter.controllers', [])
         },
       data: data
     }).then(function successCallback(response){
-      ProfileData.data = response.data;
-      console.log(ProfileData.data);
-      $state.go('tab.browse');
+      if (response.data == 1) {
+        console.log("something went wrong");
+        alert("Incorrect Username or Password");
+      }
+      else {
+        ProfileData.data = response.data;
+        console.log(ProfileData.data);
+        $state.go('tab.browse');
+      }
+    }, function errorCallback(response) {
+      console.log("something went wrong");
     });
 
   }

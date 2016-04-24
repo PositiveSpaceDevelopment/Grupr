@@ -28,9 +28,32 @@ angular.module('starter.controllers', [])
       },
     data: data
   }).then(function successCallback(response) {
-    $scope.feed = response.data;
     GroupFeed.data = response.data;
+
+    
+    for (var i = 0; i < GroupFeed.data.length; i++) {
+      //converts the date time string provided by the database 
+      // into a unix code datetime number that AngularJS can filter
+      var dateString = GroupFeed.data[i].time_of_meeting;
+      GroupFeed.data[i].time_of_meeting = new Date(dateString).getTime();
+
+      // Determines when the day or hour of the meeting time changes and them
+      // adds a list divider to mark the change in time
+      var lastDay = 0;
+      var lastHour = 0;
+
+      if (Date('d',GroupFeed.data[i].time_of_meeting) != lastDay || Date('h',GroupFeed.data[i].time_of_meeting) != lastHour){
+        // GroupFeed.data.push(
+        //   {
+        //     // location_details:Date('N h:mm a',GroupFeed.data[i].time_of_meeting),
+        //     divider:true
+        //   })
+      };
+
+    };
+    $scope.feed = GroupFeed.data;
     console.log(GroupFeed.data);
+
   }, function errorCallback(response) {
     console.log("something went wrong");
   });
@@ -72,6 +95,25 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
       console.log("You Joined!");
+    });
+
+
+    // Makes the GET http request to fill the GroupFeed Data
+    $http({
+      method: 'GET',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+      // url: 'http://www.grupr.me/grups',
+      url: 'http://54.213.15.90/grups',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response) {
+      $scope.feed = response.data;
+      GroupFeed.data = response.data;
+      console.log(GroupFeed.data);
+    }, function errorCallback(response) {
+      console.log("something went wrong");
     });
 
   }
@@ -130,8 +172,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
 	  
-      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      // url: 'http://www.grupr.me/creategrup',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/getusergroups',
+      // url: 'http://www.grupr.me/getusergroups',
       url: 'http://54.213.15.90/getusergroups',
       headers: {
         'Content-Type': 'application/json'
@@ -139,7 +181,14 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
       UserGroups.data = response.data;
-  	  $scope.UserGroups = response.data;
+
+      //converts the date time string provided by the database 
+      // into a unix code datetime number that AngularJS can filter
+      for (var i = 0; i < UserGroups.data.length; i++) {
+        var dateString = UserGroups.data[i].time_of_meeting;
+        UserGroups.data[i].time_of_meeting = new Date(dateString).getTime();
+      };
+      $scope.UserGroups = UserGroups.data;
   	  console.log($scope.UserGroups);
       console.log(UserGroups.data);
     });
@@ -152,15 +201,38 @@ angular.module('starter.controllers', [])
 	$state.go('filter')
   }
 
-  $scope.viewGroup = function(id) {
-    $state.go("tab.groupDetail",{grupID: id});
+  $scope.viewMyGroup = function(id) {
+    $state.go("tab.myGroupDetail",{grupID: id});
   }
+})
+
+.controller('MyGroupDetailCtrl', function($scope, $stateParams, $http, GroupFeed, ProfileData) {
+
+  id = $stateParams.grupID;
+
+  var index = 0; 
+  while(true){
+    if (GroupFeed.data[index].group_id == id) {
+      break;
+    };
+    index++;
+  }
+
+  $scope.myGroupInfo = GroupFeed.data[index];
+  console.log($scope.myGroupInfo);
+
+  $scope.leave = function() {
+
+  }
+
 })
 
 .controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
   $scope.form = {};
 
   var step = 1;
+  $scope.form.createFirstStep = true;
+
   $scope.form.general = true;
   $scope.form.descriptionShow = false;
   $scope.form.locationDate = false;
@@ -181,6 +253,7 @@ angular.module('starter.controllers', [])
         break;
     }
     step++;
+    $scope.form.createFirstStep = false;
   }
 
   $scope.createGrup = function() {
@@ -191,9 +264,9 @@ angular.module('starter.controllers', [])
     if ($scope.form.group_name) {
       data.group_name = $scope.form.group_name;
     };
-    if ($scope.form.location) {
-      data.location = $scope.form.location;
-    };
+    // if ($scope.form.professor) {
+    //   data.professor = $scope.form.professor;
+    // };
     if ($scope.form.location_details) {
       data.location_details = $scope.form.location_details;
     };
@@ -236,7 +309,9 @@ angular.module('starter.controllers', [])
     });
 
     // Resets the values for the Creat Group form
-    var step = 1;
+    step = 1;
+    $scope.form.createFirstStep = true;
+
     $scope.form.general = true;
     $scope.form.descriptionShow = false;
     $scope.form.locationDate = false;
@@ -246,7 +321,9 @@ angular.module('starter.controllers', [])
 
   $scope.cancel = function() {
     // Resets the values for the Creat Group form
-    var step = 1;
+    step = 1;
+    $scope.form.createFirstStep = true;
+
     $scope.form.general = true;
     $scope.form.descriptionShow = false;
     $scope.form.locationDate = false;
@@ -254,6 +331,26 @@ angular.module('starter.controllers', [])
     $scope.form.lastItem = false;
     
     $state.go('tab.browse');
+  }
+
+  $scope.createGroupBack = function() {
+    switch(step) {
+      case 2:
+        $scope.form.general = true;
+        $scope.form.locationDate = false;
+
+        $scope.form.createFirstStep = true;
+        break;
+      case 3:
+        $scope.form.locationDate = true;
+        $scope.form.descriptionShow = false;
+        $scope.form.nextItem = true;
+        $scope.form.lastItem = false;
+
+        $scope.form.createFirstStep = false;
+        break;
+    }
+    step--;
   }
 })
 
@@ -336,9 +433,17 @@ angular.module('starter.controllers', [])
         },
       data: data
     }).then(function successCallback(response){
-      ProfileData.data = response.data;
-      console.log(ProfileData.data);
-      $state.go('tab.browse');
+      if (response.data == 1) {
+        console.log("something went wrong");
+        alert("Incorrect Username or Password");
+      }
+      else {
+        ProfileData.data = response.data;
+        console.log(ProfileData.data);
+        $state.go('tab.browse');
+      }
+    }, function errorCallback(response) {
+      console.log("something went wrong");
     });
 
   }
@@ -404,7 +509,7 @@ angular.module('starter.controllers', [])
   $scope.email = ProfileData.data.email;
   $scope.user_id = ProfileData.data.user_id;
   $scope.classes = ProfileData.data.classes;
-  $scope.level = ProfileData.data.level;
+  $scope.level = (ProfileData.data.level | 2);
   $scope.icon = ProfileData.data.icon;
   
   $scope.addClass = function() 

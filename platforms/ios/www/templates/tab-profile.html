@@ -14,7 +14,7 @@
     
 		<ion-list>
 		<div class = "item item-thumbnail-left">
-		<img src="/img/{{icon}}">
+		<img src="/img/{{level}}.png">
 		</div>
 		<ion-item>
 		email: {{email}}
@@ -24,16 +24,17 @@
 		level: {{level}}
 		</ion-item>
 		<ion-item>
-		<button class="button" ng-click="filter()">
+		<button class="button button-clear button-calm" ng-click="filter()">
 			<i></i> Filter classes 
 		</button>
 		</ion-item>
 		
 		<div class="item item-divider">Your Classes</div>
-		<ion-item ng-repeat = "class in classes">
-		<ion-option-button class="button-positive">Edit</ion-option-button>
-		<ion-option-button class="button-assertive">Delete</ion-option-button>
-	       {{class.class_subject}} {{class.class_number}} 
+		<ion-item ng-repeat = "class in classes" class="item item-icon-right">
+			<ion-option-button class="button-positive">Edit</ion-option-button>
+			<ion-option-button class="button-assertive">Delete</ion-option-button>
+	       	{{class.class_subject}} {{class.class_number}} 
+	       	<i class="icon ion-more"></i>
 		</ion-item>
 		</ion-list>
   </ion-content>
