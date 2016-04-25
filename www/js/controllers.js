@@ -16,9 +16,6 @@ angular.module('starter.controllers', [])
   $scope.viewGroup = function(id) {
     $state.go("tab.groupDetail",{grupID: id});
   }
-
-
-
   // data = {user_id: 1};
   // $http({
   //     method: 'POST',
@@ -30,52 +27,57 @@ angular.module('starter.controllers', [])
   //       },
   //     data: data
 
-  // Makes the GET http request to fill the GroupFeed Data
-  $http({
-    method: 'GET',
-    // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
-    // url: 'http://www.grupr.me/grups',
-    url: 'http://54.213.15.90/grups',
-    headers: {
-      'Content-Type': 'application/json'
-      },
-    data: data
-  }).then(function successCallback(response) {
-    GroupFeed.data = response.data;
-    var tempArray = [];
-    var lastDay = 0;
-    var lastHour = 0;
-    var lastMonth = 0;
+  // Determines how the feed should be re-loaded
+  if (GroupFeed.filter) {
 
-    for (var i = 0; i < GroupFeed.data.length; i++) {
-      //converts the date time string provided by the database 
-      // into a unix code datetime number that AngularJS can filter
-      var dateString = GroupFeed.data[i].time_of_meeting;
-      GroupFeed.data[i].time_of_meeting = new Date(dateString).getTime();
+  }
+  else {
+    // Makes the GET http request to fill the GroupFeed Data
+    $http({
+      method: 'GET',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+      // url: 'http://www.grupr.me/grups',
+      url: 'http://54.213.15.90/grups',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response) {
+      GroupFeed.data = response.data;
+      var tempArray = [];
+      var lastDay = 0;
+      var lastHour = 0;
+      var lastMonth = 0;
 
-      // Determines when the day or hour of the meeting time changes and them
-      // adds a list divider to mark the change in time
-      var currentDate = new Date(dateString);
-      if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour || currentDate.getMonth() != lastMonth){
-        newItem = {
-          dividerText: GroupFeed.data[i].time_of_meeting,
-          time_of_meeting: (GroupFeed.data[i].time_of_meeting - 100),
-          divider: true
+      for (var i = 0; i < GroupFeed.data.length; i++) {
+        //converts the date time string provided by the database 
+        // into a unix code datetime number that AngularJS can filter
+        var dateString = GroupFeed.data[i].time_of_meeting;
+        GroupFeed.data[i].time_of_meeting = new Date(dateString).getTime();
+
+        // Determines when the day or hour of the meeting time changes and them
+        // adds a list divider to mark the change in time
+        var currentDate = new Date(dateString);
+        if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour || currentDate.getMonth() != lastMonth){
+          newItem = {
+            dividerText: GroupFeed.data[i].time_of_meeting,
+            time_of_meeting: (GroupFeed.data[i].time_of_meeting - 100),
+            divider: true
+          };
+          tempArray.push(newItem);
+          lastDay = currentDate.getDate();
+          lastHour = currentDate.getHours();
+          lastMonth = currentDate.getMonth();
         };
-        tempArray.push(newItem);
-        lastDay = currentDate.getDate();
-        lastHour = currentDate.getHours();
-        lastMonth = currentDate.getMonth();
       };
-    };
-    GroupFeed.data = GroupFeed.data.concat(tempArray);
+      GroupFeed.data = GroupFeed.data.concat(tempArray);
+      $scope.feed = GroupFeed.data;
+      console.log(GroupFeed.data);
 
-    $scope.feed = GroupFeed.data;
-    console.log(GroupFeed.data);
-
-  }, function errorCallback(response) {
-    console.log("something went wrong");
-  });
+    }, function errorCallback(response) {
+      console.log("something went wrong");
+    });
+  }
 })
 
 .controller('GroupDetailCtrl', function($scope, $stateParams, $http, GroupFeed, ProfileData) {
