@@ -47,11 +47,11 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       controller: 'LoginCtrl'
     })
 	
-   .state('addClass', {
-      url: '/addClass',
-      templateUrl: 'templates/addClass.html',
-      controller: 'addClassCtrl'
-    })
+ .state('addClass', {
+    url: '/addClass',
+    templateUrl: 'templates/addClass.html',
+    controller: 'addClassCtrl'
+  })
 	.state('filter', {
       url: '/filter',
       templateUrl: 'templates/filter.html',
@@ -63,6 +63,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       templateUrl: 'templates/register.html',
       controller: 'RegisterCtrl'
     })
+
+  .state('registerClasses', {
+    url: '/registerClasses',
+    templateUrl: 'templates/registerClasses.html',
+    controller: 'RegisterClassesCtrl'
+  })
+
+
   .state('createGroup', {
       url: '/createGroup',
       templateUrl: 'templates/createGroup.html',

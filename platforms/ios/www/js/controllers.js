@@ -16,47 +16,68 @@ angular.module('starter.controllers', [])
   $scope.viewGroup = function(id) {
     $state.go("tab.groupDetail",{grupID: id});
   }
+  // data = {user_id: 1};
+  // $http({
+  //     method: 'POST',
+  //     // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
+  //     // url: 'http://www.grupr.me/joingroup',
+  //     url: 'http://54.213.15.90/getuserclassesgroups',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //       },
+  //     data: data
 
-  // Makes the GET http request to fill the GroupFeed Data
-  $http({
-    method: 'GET',
-    // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
-    // url: 'http://www.grupr.me/grups',
-    url: 'http://54.213.15.90/grups',
-    headers: {
-      'Content-Type': 'application/json'
-      },
-    data: data
-  }).then(function successCallback(response) {
-    GroupFeed.data = response.data;
+  // Determines how the feed should be re-loaded
+  if (GroupFeed.filter) {
 
-    
-    for (var i = 0; i < GroupFeed.data.length; i++) {
-      //converts the date time string provided by the database 
-      // into a unix code datetime number that AngularJS can filter
-      var dateString = GroupFeed.data[i].time_of_meeting;
-      GroupFeed.data[i].time_of_meeting = new Date(dateString).getTime();
-
-      // Determines when the day or hour of the meeting time changes and them
-      // adds a list divider to mark the change in time
+  }
+  else {
+    // Makes the GET http request to fill the GroupFeed Data
+    $http({
+      method: 'GET',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+      // url: 'http://www.grupr.me/grups',
+      url: 'http://54.213.15.90/grups',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response) {
+      GroupFeed.data = response.data;
+      var tempArray = [];
       var lastDay = 0;
       var lastHour = 0;
+      var lastMonth = 0;
 
-      if (Date('d',GroupFeed.data[i].time_of_meeting) != lastDay || Date('h',GroupFeed.data[i].time_of_meeting) != lastHour){
-        // GroupFeed.data.push(
-        //   {
-        //     // location_details:Date('N h:mm a',GroupFeed.data[i].time_of_meeting),
-        //     divider:true
-        //   })
+      for (var i = 0; i < GroupFeed.data.length; i++) {
+        //converts the date time string provided by the database 
+        // into a unix code datetime number that AngularJS can filter
+        var dateString = GroupFeed.data[i].time_of_meeting;
+        GroupFeed.data[i].time_of_meeting = new Date(dateString).getTime();
+
+        // Determines when the day or hour of the meeting time changes and them
+        // adds a list divider to mark the change in time
+        var currentDate = new Date(dateString);
+        if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour || currentDate.getMonth() != lastMonth){
+          newItem = {
+            dividerText: GroupFeed.data[i].time_of_meeting,
+            time_of_meeting: (GroupFeed.data[i].time_of_meeting - 100),
+            divider: true
+          };
+          tempArray.push(newItem);
+          lastDay = currentDate.getDate();
+          lastHour = currentDate.getHours();
+          lastMonth = currentDate.getMonth();
+        };
       };
+      GroupFeed.data = GroupFeed.data.concat(tempArray);
+      $scope.feed = GroupFeed.data;
+      console.log(GroupFeed.data);
 
-    };
-    $scope.feed = GroupFeed.data;
-    console.log(GroupFeed.data);
-
-  }, function errorCallback(response) {
-    console.log("something went wrong");
-  });
+    }, function errorCallback(response) {
+      console.log("something went wrong");
+    });
+  }
 })
 
 .controller('GroupDetailCtrl', function($scope, $stateParams, $http, GroupFeed, ProfileData) {
@@ -163,7 +184,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('MyGroupsCtrl', function($scope, $state, $http, ProfileData, GroupFeed, UserGroups) {
-	$scope.viewGroup = function(id) {
+	$scope.viewGroup = function(id){
     $state.go("tab.groupDetail",{grupID: id});
   }
 	var data = {};
@@ -181,13 +202,32 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
       UserGroups.data = response.data;
+      var tempArray = [];
+      var lastDay = 0;
+      var lastHour = 0;
 
-      //converts the date time string provided by the database 
-      // into a unix code datetime number that AngularJS can filter
       for (var i = 0; i < UserGroups.data.length; i++) {
+        //converts the date time string provided by the database 
+        // into a unix code datetime number that AngularJS can filter
         var dateString = UserGroups.data[i].time_of_meeting;
         UserGroups.data[i].time_of_meeting = new Date(dateString).getTime();
+
+        // Determines when the day or hour of the meeting time changes and them
+        // adds a list divider to mark the change in time
+        var currentDate = new Date(dateString);
+        if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour){
+          newItem = {
+            dividerText: UserGroups.data[i].time_of_meeting,
+            time_of_meeting: (UserGroups.data[i].time_of_meeting - 100),
+            divider: true
+          };
+          tempArray.push(newItem);
+          lastDay = currentDate.getDate();
+          lastHour = currentDate.getHours();
+        };
       };
+      UserGroups.data = UserGroups.data.concat(tempArray);
+
       $scope.UserGroups = UserGroups.data;
   	  console.log($scope.UserGroups);
       console.log(UserGroups.data);
@@ -229,6 +269,7 @@ angular.module('starter.controllers', [])
 
 .controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
   $scope.form = {};
+  $scope.form.date = new Date();
 
   var step = 1;
   $scope.form.createFirstStep = true;
@@ -264,15 +305,27 @@ angular.module('starter.controllers', [])
     if ($scope.form.group_name) {
       data.group_name = $scope.form.group_name;
     };
-    // if ($scope.form.professor) {
-    //   data.professor = $scope.form.professor;
-    // };
+    if ($scope.form.professor) {
+      data.professor = $scope.form.professor;
+    };
     if ($scope.form.location_details) {
       data.location_details = $scope.form.location_details;
     };
 
     if ($scope.form.date) {
-      data.time_of_meeting = $scope.form.date;
+      var tempDate = new Date($scope.form.date);
+      // var newTime = tempDate.getTime() - 18000000;
+      // tempDate.setTime(newTime);
+
+      var yearStr = tempDate.getUTCFullYear();
+      var monthStr = tempDate.getUTCMonth()+1;
+      var dayStr = tempDate.getUTCDate();
+      var hourStr = tempDate.getUTCHours()-5;
+      var minStr = tempDate.getUTCMinutes();
+      var secStr = tempDate.getUTCSeconds();
+      var dateStr = yearStr+'-'+monthStr+'-'+dayStr+' '+hourStr+':'+minStr+':'+secStr;
+
+      data.time_of_meeting = dateStr;
     };
     if ($scope.form.description) {
       data.description = $scope.form.description;
@@ -317,6 +370,14 @@ angular.module('starter.controllers', [])
     $scope.form.locationDate = false;
     $scope.form.nextItem = true;
     $scope.form.lastItem = false;
+
+    // Re-sets the input fields
+    $scope.form.group_name = "";
+    $scope.form.professor = "";
+    $scope.form.location_details = "";
+    $scope.form.date = new Date();
+    $scope.form.description = "";
+    $scope.form.class_name = "";
   }
 
   $scope.cancel = function() {
@@ -329,6 +390,14 @@ angular.module('starter.controllers', [])
     $scope.form.locationDate = false;
     $scope.form.nextItem = true;
     $scope.form.lastItem = false;
+
+    // Re-sets the input fields
+    $scope.form.group_name = "";
+    $scope.form.professor = "";
+    $scope.form.location_details = "";
+    $scope.form.date = new Date();
+    $scope.form.description = "";
+    $scope.form.class_name = "";
     
     $state.go('tab.browse');
   }
@@ -355,7 +424,9 @@ angular.module('starter.controllers', [])
 })
 
 .controller('addClassCtrl', function($scope,$state, $http, ProfileData, classes) {
-	
+	$scope.cancel = function() { 
+    $state.go('tab.profile');
+  }
 	$scope.form = {};
 	$scope.classes = classes.data.classes;
 	$scope.form.class_subject = "ACCT";
@@ -365,8 +436,8 @@ angular.module('starter.controllers', [])
 		var data = {};
 		console.log($scope.form.class_subject );
 		console.log($scope.form.class_number);
-		data.class_subject = $scope.form.class_subject;
-		data.class_number = $scope.form.class_nubmber; 
+		data.class_subject = $scope.form.class_subject.trim();
+		data.class_number = $scope.form.class_number; 
 		$scope.form.class_subject = "ACCT";
 		$scope.form.class_number = "";
 		data.user_id = ProfileData.data.user_id;
@@ -383,6 +454,7 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
      ProfileData.data.classes  = response.data;
+     $scope.classes = ProfileData.data.classes;
       console.log(ProfileData.data.classes);
     });
 	};
@@ -392,15 +464,15 @@ angular.module('starter.controllers', [])
   }
 })
 .controller('filterCtrl', function($scope,$state, $http, ProfileData, classes) {
-	  $scope.user_classes = ProfileData.data.classes;
-	  
+  $scope.user_classes = ProfileData.data.classes;
+    
   $scope.done = function() {
     $state.go('tab.browse');
   }
 })
 
 .controller('LoginCtrl', function($scope, $state, $http, ProfileData) {
-    $scope.form = {};
+  $scope.form = {};
 
   //calls the login function, which puts the data entered in the login 
   //page and stores it into the 'data' object
@@ -487,7 +559,7 @@ angular.module('starter.controllers', [])
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/register',
       // url: 'http://www.grupr.me/registeruser',
-      url: 'http://54.213.15.90/creategroup',
+      url: 'http://54.213.15.90/registeruser',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -496,10 +568,54 @@ angular.module('starter.controllers', [])
       ProfileData.data = response.data;
       console.log(ProfileData.data.email);
 
-      $state.go('tab.profile');
+      $state.go('registerClasses');
     });
 
 	}
+})
+.controller('RegisterClassesCtrl', function($scope, $state, $http, ProfileData, classes) {
+  $scope.registerClassesSkip = function() { 
+    $scope.form.class_subject = "ACCT";
+    $scope.form.class_number = "";
+
+    $state.go('tab.browse');
+  }
+
+  $scope.form = {};
+  $scope.classes = classes.data.classes;
+  $scope.form.class_subject = "ACCT";
+  $scope.classes = ProfileData.data.classes;
+  $scope.classesToTake = classes.data.classes;
+  $scope.addClassSubmit = function() {
+    var data = {};
+    console.log($scope.form.class_subject );
+    console.log($scope.form.class_number);
+    data.class_subject = $scope.form.class_subject.trim();
+    data.class_number = $scope.form.class_number; 
+    $scope.form.class_subject = "ACCT";
+    $scope.form.class_number = "";
+    data.user_id = ProfileData.data.user_id;
+    console.log(data.user_id)
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      // url: 'http://www.grupr.me/creategrup',
+      url: 'http://54.213.15.90/addclass',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      ProfileData.data.classes  = response.data;
+      $scope.classes = ProfileData.data.classes;
+      console.log(ProfileData.data.classes);
+    });
+  };
+  
+  $scope.registerFinish = function() {
+    $state.go('tab.browse');
+  }
 })
 
 .controller('ProfileCtrl', function($scope,$state, $http,ProfileData, GroupFeed) {
@@ -509,7 +625,12 @@ angular.module('starter.controllers', [])
   $scope.email = ProfileData.data.email;
   $scope.user_id = ProfileData.data.user_id;
   $scope.classes = ProfileData.data.classes;
-  $scope.level = (ProfileData.data.level | 2);
+  if (ProfileData.data.level < 10) {
+    $scope.level = (ProfileData.data.level | 0);
+  }
+  else {
+    $scope.level = 10;
+  }
   $scope.icon = ProfileData.data.icon;
   
   $scope.addClass = function() 

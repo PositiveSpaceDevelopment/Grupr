@@ -269,7 +269,7 @@ angular.module('starter.controllers', [])
 
 .controller('createGroupCtrl', function($scope, $state, $http, ProfileData) {
   $scope.form = {};
-  $scope.form.description = new Date();
+  $scope.form.date = new Date();
 
   var step = 1;
   $scope.form.createFirstStep = true;
@@ -375,8 +375,8 @@ angular.module('starter.controllers', [])
     $scope.form.group_name = "";
     $scope.form.professor = "";
     $scope.form.location_details = "";
-    $scope.form.date = "";
-    $scope.form.description = new Date();
+    $scope.form.date = new Date();
+    $scope.form.description = "";
     $scope.form.class_name = "";
   }
 
@@ -395,8 +395,8 @@ angular.module('starter.controllers', [])
     $scope.form.group_name = "";
     $scope.form.professor = "";
     $scope.form.location_details = "";
-    $scope.form.date = "";
-    $scope.form.description = new Date();
+    $scope.form.date = new Date();
+    $scope.form.description = "";
     $scope.form.class_name = "";
     
     $state.go('tab.browse');
@@ -436,7 +436,7 @@ angular.module('starter.controllers', [])
 		var data = {};
 		console.log($scope.form.class_subject );
 		console.log($scope.form.class_number);
-		data.class_subject = $scope.form.class_subject;
+		data.class_subject = $scope.form.class_subject.trim();
 		data.class_number = $scope.form.class_number; 
 		$scope.form.class_subject = "ACCT";
 		$scope.form.class_number = "";
@@ -454,6 +454,7 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
      ProfileData.data.classes  = response.data;
+     $scope.classes = ProfileData.data.classes;
       console.log(ProfileData.data.classes);
     });
 	};
@@ -463,15 +464,15 @@ angular.module('starter.controllers', [])
   }
 })
 .controller('filterCtrl', function($scope,$state, $http, ProfileData, classes) {
-	  $scope.user_classes = ProfileData.data.classes;
-	  
+  $scope.user_classes = ProfileData.data.classes;
+    
   $scope.done = function() {
     $state.go('tab.browse');
   }
 })
 
 .controller('LoginCtrl', function($scope, $state, $http, ProfileData) {
-    $scope.form = {};
+  $scope.form = {};
 
   //calls the login function, which puts the data entered in the login 
   //page and stores it into the 'data' object
@@ -558,7 +559,7 @@ angular.module('starter.controllers', [])
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/register',
       // url: 'http://www.grupr.me/registeruser',
-      url: 'http://54.213.15.90/creategroup',
+      url: 'http://54.213.15.90/registeruser',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -567,10 +568,54 @@ angular.module('starter.controllers', [])
       ProfileData.data = response.data;
       console.log(ProfileData.data.email);
 
-      $state.go('tab.profile');
+      $state.go('registerClasses');
     });
 
 	}
+})
+.controller('RegisterClassesCtrl', function($scope, $state, $http, ProfileData, classes) {
+  $scope.registerClassesSkip = function() { 
+    $scope.form.class_subject = "ACCT";
+    $scope.form.class_number = "";
+
+    $state.go('tab.browse');
+  }
+
+  $scope.form = {};
+  $scope.classes = classes.data.classes;
+  $scope.form.class_subject = "ACCT";
+  $scope.classes = ProfileData.data.classes;
+  $scope.classesToTake = classes.data.classes;
+  $scope.addClassSubmit = function() {
+    var data = {};
+    console.log($scope.form.class_subject );
+    console.log($scope.form.class_number);
+    data.class_subject = $scope.form.class_subject.trim();
+    data.class_number = $scope.form.class_number; 
+    $scope.form.class_subject = "ACCT";
+    $scope.form.class_number = "";
+    data.user_id = ProfileData.data.user_id;
+    console.log(data.user_id)
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      // url: 'http://www.grupr.me/creategrup',
+      url: 'http://54.213.15.90/addclass',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      ProfileData.data.classes  = response.data;
+      $scope.classes = ProfileData.data.classes;
+      console.log(ProfileData.data.classes);
+    });
+  };
+  
+  $scope.registerFinish = function() {
+    $state.go('tab.browse');
+  }
 })
 
 .controller('ProfileCtrl', function($scope,$state, $http,ProfileData, GroupFeed) {
@@ -580,7 +625,12 @@ angular.module('starter.controllers', [])
   $scope.email = ProfileData.data.email;
   $scope.user_id = ProfileData.data.user_id;
   $scope.classes = ProfileData.data.classes;
-  $scope.level = (ProfileData.data.level | 2);
+  if (ProfileData.data.level < 10) {
+    $scope.level = (ProfileData.data.level | 0);
+  }
+  else {
+    $scope.level = 10;
+  }
   $scope.icon = ProfileData.data.icon;
   
   $scope.addClass = function() 

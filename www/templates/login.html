@@ -13,7 +13,7 @@
           <span class="input-label">Email</span>          
           <input type="text" ng-required = "true" ng-model="form.email" name="loginEmail">
         </label>
-        <div ng-show="loginForm.$submitted || loginForm.loginEmail.$touched" class="item assertive">
+        <div ng-show="loginForm.loginEmail.$touched" class="item assertive">
           <div ng-show="loginForm.loginEmail.$error.required">Please enter your email</div>
         </div>
         
@@ -22,7 +22,7 @@
           <span class="input-label">Password</span>
           <input type="password" ng-required = "true" ng-model="form.password" name="loginPassword">
         </label>
-        <div ng-show="loginForm.$submitted || loginForm.loginPassword.$touched" class="item assertive">
+        <div ng-show="loginForm.loginPassword.$touched" class="item assertive">
           <div ng-show="loginForm.loginPassword.$error.required">Please enter your password</div>
         </div>
 
@@ -33,7 +33,7 @@
       </div>
     </form>
     <form>
-      <div class="padding" id="login_register">
+      <div class="padding text-center" id="login_register">
         <h4>Not a member? Sign up and start Grüping!</h4>
         <button class="button button-block button-outline button-calm" ng-click="register()">
           Register!
