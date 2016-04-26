@@ -68,7 +68,10 @@ angular.module('starter.services', [])
 .factory("UserGroups",function() {
   return {data:null};
 })
-
+.factory("editData",function() {
+	data = {}
+	return {data};
+})
 
 
 

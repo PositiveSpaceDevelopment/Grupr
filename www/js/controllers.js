@@ -16,16 +16,6 @@ angular.module('starter.controllers', [])
   $scope.viewGroup = function(id) {
     $state.go("tab.groupDetail",{grupID: id});
   }
-  // data = {user_id: 1};
-  // $http({
-  //     method: 'POST',
-  //     // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
-  //     // url: 'http://www.grupr.me/joingroup',
-  //     url: 'http://54.213.15.90/getuserclassesgroups',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //       },
-  //     data: data
 
   // Determines how the feed should be re-loaded
   if (GroupFeed.filter) {
@@ -434,14 +424,14 @@ angular.module('starter.controllers', [])
 	$scope.classesToTake = classes.data.classes;
 	$scope.addClassSubmit = function() {
 		var data = {};
-		console.log($scope.form.class_subject );
+		console.log($scope.form.class_subject.trim());
 		console.log($scope.form.class_number);
 		data.class_subject = $scope.form.class_subject.trim();
 		data.class_number = $scope.form.class_number; 
 		$scope.form.class_subject = "ACCT";
 		$scope.form.class_number = "";
 		data.user_id = ProfileData.data.user_id;
-		console.log(data.user_id)
+		console.log(data)
 		// Makes the POST http request
     $http({
       method: 'POST',
@@ -453,6 +443,7 @@ angular.module('starter.controllers', [])
         },
       data: data
     }).then(function successCallback(response){
+		console.log(response.data);
      ProfileData.data.classes  = response.data;
      $scope.classes = ProfileData.data.classes;
       console.log(ProfileData.data.classes);
@@ -463,9 +454,92 @@ angular.module('starter.controllers', [])
     $state.go('tab.profile');
   }
 })
-.controller('filterCtrl', function($scope,$state, $http, ProfileData, classes) {
-  $scope.user_classes = ProfileData.data.classes;
-    
+
+.controller('editClassCtrl', function($scope,$state, $http, ProfileData, classes, editData) {
+	console.log(editData.data.class_number); 
+	$scope.class_subject_passed = editData.class_subject;
+	$scope.class_number_passed = editData.class_number;
+	$scope.cancel = function() { 
+    $state.go('tab.profile');
+  }
+	$scope.form = {};
+	$scope.classes = classes.data.classes;
+	$scope.form.class_subject = "ACCT";
+	$scope.classes = ProfileData.data.classes;
+	$scope.classesToTake = classes.data.classes;
+	$scope.editClassSubmit = function(){
+		var data = {};
+		console.log($scope.form.class_subject.trim());
+		console.log($scope.form.class_number);
+		data.class_subject_change_to = $scope.form.class_subject.trim();
+		data.class_number_change_to = $scope.form.class_number; 
+		data.class_subject_to_change = editData.data.class_subject;
+		data.class_number_to_change = editData.data.class_number;
+		$scope.form.class_subject = "ACCT";
+		$scope.form.class_number = "";
+		data.user_id = ProfileData.data.user_id;
+		console.log(data)
+		// Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      // url: 'http://www.grupr.me/creategrup',
+      url: 'http://54.213.15.90/editclass',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+		console.log(response.data);
+     ProfileData.data.classes  = response.data;
+      console.log(ProfileData.data.classes);
+	  $state.go('tab.profile',{}, {reload:true});
+    });
+	};
+})
+
+.controller('filterCtrl', function($scope,$state, $http, ProfileData, classes, GroupFeed) {
+	  $scope.user_classes = ProfileData.data.classes;
+	$scope.filter = function(choice) {
+	var data = {};
+	data.class_subject = choice.class_subject; 
+	data.class_number = choice.class_number;
+	data.user_id = ProfileData.data.user_id;
+	data.group_name = '';
+	data.location = ''; 
+	$http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
+      // url: 'http://www.grupr.me/logout',
+      url: 'http://54.213.15.90/filtergroups',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+     	 console.log("success");
+		 console.log(response);
+		GroupFeed.data = response.data;
+    });
+  }
+  $scope.filterAll = function() {
+	var data = {};
+	data.user_id = ProfileData.data.user_id;
+	$http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
+      // url: 'http://www.grupr.me/logout',
+      url: 'http://54.213.15.90/getuserclassesgroups',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+		console.log(response);
+		GroupFeed.data = response.data;
+	  console.log("success");
+    });
+  }
   $scope.done = function() {
     $state.go('tab.browse');
   }
@@ -632,7 +706,35 @@ angular.module('starter.controllers', [])
     $scope.level = 10;
   }
   $scope.icon = ProfileData.data.icon;
-  
+  $scope.editClass = function(classToEdit)
+  {
+	  editData.data = classToEdit;
+	  console.log(editData);
+	  $state.go('editClass');
+  }
+  $scope.deleteClass = function(classToDelete)
+  {
+	 var data = {};
+	 data.user_id = ProfileData.data.user_id;
+	 data.class_subject = classToDelete.class_subject;
+	 data.class_number = classToDelete.class_number;
+	// Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
+      // url: 'http://www.grupr.me/logout',
+      url: 'http://54.213.15.90/removeclass',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+	ProfileData.data.classes = response.data;
+	$scope.classes = ProfileData.data.classes;
+	console.log($scope.classes);
+    }); 
+	
+  }
   $scope.addClass = function() 
   {
 	$state.go('addClass');
