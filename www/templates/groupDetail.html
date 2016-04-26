@@ -26,8 +26,11 @@
       </div>
     </div>
     <ul class="list">
-      <button class="button button-block button-calm" ng-click="join()">
+      <button class="button button-block button-calm" ng-click="join()" ng-hide="isJoined">
         Join this Grüp
+      </button>
+      <button class="button button-block button-dark" ng-show="isJoined">
+        Joined
       </button>
    
       <label class="item">
@@ -43,6 +46,8 @@
         </ul>
       </label>
     </ul>
-  
   </ion-content>
+  <ion-footer-bar align-title="center" class="bar-assertive" ng-show="isJoined">
+    <h1 class="title">Leave</h1>
+  </ion-footer-bar>
 </ion-view>

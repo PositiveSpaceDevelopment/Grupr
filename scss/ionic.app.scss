@@ -120,8 +120,22 @@ p {
 	background-color: #11c1f3;
 }
 
+// --------------------
+// MyGroups - content
+// --------------------
 
+.fillerContent {
+	text-align: center;
+	margin-top: 12rem;
 
+	h1 {
+		color: $primary;
+	}
+
+	p {
+		font-size: 1.25rem;
+	}
+}
 
 
 

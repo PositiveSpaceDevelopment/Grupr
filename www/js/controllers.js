@@ -18,7 +18,7 @@ angular.module('starter.controllers', [])
   }
 
   // Determines how the feed should be re-loaded
-  // write the code to determine what the data array looks like
+  // TODO: write the code to determine what the data array looks like
   var data = {
     user_id: "",
     class_subject: "",
@@ -29,8 +29,8 @@ angular.module('starter.controllers', [])
   $http({
     method: 'POST',
     // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
-    // url: 'http://www.grupr.me/grups',
-    url: 'http://54.213.15.90/grups',
+    url: 'http://www.grupr.me/grups',
+    // url: 'http://54.213.15.90/grups',
     headers: {
       'Content-Type': 'application/json'
       },
@@ -84,7 +84,21 @@ angular.module('starter.controllers', [])
     index++;
   }
 
+  $scope.isJoined = false;
+  // Checks to see if the user is a member of this group
+  for (var i = 0; i < GroupFeed.data[index].members.length; i++) {
+    if (ProfileData.first_name == GroupFeed.data[index].members[i].first_name 
+      && ProfileData.last_name == GroupFeed.data[index].members[i].last_name) {
+      $scope.isJoined = true;
+
+      console.log(ProfileData.first_name);
+      console.log(GroupFeed.data[index].members[i].first_name);
+
+      break;
+    };
+  };
   $scope.groupInfo = GroupFeed.data[index];
+
   console.log($scope.groupInfo);
 
   $scope.join = function() {
@@ -100,8 +114,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
-      // url: 'http://www.grupr.me/joingroup',
-      url: 'http://54.213.15.90/joingroup',
+      url: 'http://www.grupr.me/joingroup',
+      // url: 'http://54.213.15.90/joingroup',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -161,8 +175,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
-      // url: 'http://www.grupr.me/joingroup',
-      url: 'http://54.213.15.90/joingroup',
+      url: 'http://www.grupr.me/joingroup',
+      // url: 'http://54.213.15.90/joingroup',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -180,20 +194,31 @@ angular.module('starter.controllers', [])
     $state.go("tab.groupDetail",{grupID: id});
   }
 	var data = {};
+  $scope.contentExists = true;
+
 	data.user_id = ProfileData.data.user_id;
 	// Makes the POST http request
     $http({
       method: 'POST',
-	  
       // url: 'http://private-fa798-grupr.apiary-mock.com/getusergroups',
-      // url: 'http://www.grupr.me/getusergroups',
-      url: 'http://54.213.15.90/getusergroups',
+      url: 'http://www.grupr.me/getusergroups',
+      // url: 'http://54.213.15.90/getusergroups',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
     }).then(function successCallback(response){
       UserGroups.data = response.data;
+
+      // Monitors whether or not groups will be displayed on the screen
+      // used to toggle the filler text on the page
+      if (response.data.length != 0) {
+        $scope.contentExists = true;
+      }
+      else {
+        $scope.contentExists = false;
+      }
+
       var tempArray = [];
       var lastDay = 0;
       var lastHour = 0;
@@ -238,19 +263,19 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('MyGroupDetailCtrl', function($scope, $stateParams, $http, GroupFeed, ProfileData) {
+.controller('MyGroupDetailCtrl', function($scope, $stateParams, $http, UserGroups, ProfileData) {
 
   id = $stateParams.grupID;
 
   var index = 0; 
   while(true){
-    if (GroupFeed.data[index].group_id == id) {
+    if (UserGroups.data[index].group_id == id) {
       break;
     };
     index++;
   }
 
-  $scope.myGroupInfo = GroupFeed.data[index];
+  $scope.myGroupInfo = UserGroups.data[index];
   console.log($scope.myGroupInfo);
 
   $scope.leave = function() {
@@ -341,8 +366,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/creategrup',
-      // url: 'http://www.grupr.me/creategroup',
-      url: 'http://54.213.15.90/creategroup',
+      url: 'http://www.grupr.me/creategroup',
+      // url: 'http://54.213.15.90/creategroup',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -438,8 +463,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      // url: 'http://www.grupr.me/creategrup',
-      url: 'http://54.213.15.90/addclass',
+      url: 'http://www.grupr.me/addclass',
+      // url: 'http://54.213.15.90/addclass',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -485,8 +510,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      // url: 'http://www.grupr.me/creategrup',
-      url: 'http://54.213.15.90/editclass',
+      url: 'http://www.grupr.me/editclass',
+      // url: 'http://54.213.15.90/editclass',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -530,7 +555,7 @@ angular.module('starter.controllers', [])
 	$http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
-      // url: 'http://www.grupr.me/logout',
+      // url: 'http://www.grupr.me/getuserclassesgroups',
       url: 'http://54.213.15.90/getuserclassesgroups',
       headers: {
         'Content-Type': 'application/json'
@@ -574,8 +599,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      // url: 'http://www.grupr.me/login',
-      url: 'http://54.213.15.90/login',
+      url: 'http://www.grupr.me/login',
+      // url: 'http://54.213.15.90/login',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -634,8 +659,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/register',
-      // url: 'http://www.grupr.me/registeruser',
-      url: 'http://54.213.15.90/registeruser',
+      url: 'http://www.grupr.me/registeruser',
+      // url: 'http://54.213.15.90/registeruser',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -676,8 +701,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      // url: 'http://www.grupr.me/creategrup',
-      url: 'http://54.213.15.90/addclass',
+      url: 'http://www.grupr.me/addclass',
+      // url: 'http://54.213.15.90/addclass',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -724,8 +749,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
-      // url: 'http://www.grupr.me/logout',
-      url: 'http://54.213.15.90/removeclass',
+      url: 'http://www.grupr.me/removeclass',
+      // url: 'http://54.213.15.90/removeclass',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -756,8 +781,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
-      // url: 'http://www.grupr.me/logout',
-      url: 'http://54.213.15.90/logout',
+      url: 'http://www.grupr.me/logout',
+      // url: 'http://54.213.15.90/logout',
       headers: {
         'Content-Type': 'application/json'
         },
