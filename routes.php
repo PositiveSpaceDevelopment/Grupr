@@ -9,6 +9,175 @@
 //Questions:
 
 // Routes
+// {"user_id": "1", "class_subject": "CSE","class_number":"2301"}
+    // user_id only for all classes,
+    //class_subject/class_number for specific classes
+    // nothing for all groups
+$app->post('/grups', function ($request, $response, $args) {
+    $body = $request->getBody();
+    $decode = json_decode($body);
+    $dbc = $this->dbc;
+    $user_id = $decode->user_id;
+    $class_subject = $decode->class_subject;
+    $class_number = $decode->class_number;
+    $groups = array();
+
+    if(empty($class_subject) && empty($class_number) && empty($user_id)) //for all groups
+    {
+        // $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location, location_details FROM groups NATURAL JOIN classes NATURAL JOIN locations WHERE time_of_meeting > now() ORDER BY time_of_meeting ASC';
+        $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN classes NATURAL JOIN locations ORDER BY time_of_meeting ASC';
+        $stmt = $dbc->prepare($query);
+
+        try {
+            $stmt->execute();
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+
+        $all_groups = $stmt->fetchAll();
+        foreach($all_groups as $row)
+        {
+            $group_id = $row["group_id"];
+            $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+            $stmt = $dbc->prepare($query);
+            $stmt->bindParam(':group_id', $group_id);
+
+            try {
+                $stmt->execute();
+                $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+            } catch(PDOException $e) {
+                echo json_encode($e->getMessage());
+            }
+
+            $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+            $stmt = $dbc->prepare($query);
+            $stmt->bindParam(':group_id', $group_id);
+
+            try {
+                $stmt->execute();
+                $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+            } catch(PDOException $e) {
+                echo json_encode($e->getMessage());
+            }
+
+            $group_info["members"] = $member;
+            array_push($groups, $group_info);
+
+        }
+
+        $json = json_encode($groups, JSON_PRETTY_PRINT);
+        echo $json;
+    }
+    else if(!empty($class_subject) && !empty($class_number) && empty($user_id)) //specific class
+    {
+        $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number ORDER BY time_of_meeting ASC';
+        $stmt = $dbc->prepare($query);
+		$stmt->bindParam(':class_subject', $class_subject);
+        $stmt->bindParam(':class_number', $class_number);
+        try {
+            $stmt->execute();
+        } catch(PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+
+    	$groups1 = $stmt->fetchAll();
+
+        foreach($groups1 as $row)
+        // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
+        {
+            // $group_id = $group_info["group_id"];
+            $group_id = $row["group_id"];
+            $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+            $stmt = $dbc->prepare($query);
+            $stmt->bindParam(':group_id', $group_id);
+
+            try {
+                $stmt->execute();
+                $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+            } catch(PDOException $e) {
+                echo json_encode($e->getMessage());
+            }
+
+            $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+            $stmt = $dbc->prepare($query);
+            $stmt->bindParam(':group_id', $group_id);
+            try {
+                $stmt->execute();
+                $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+            } catch(PDOException $e) {
+                echo json_encode($e->getMessage());
+            }
+
+            $group_info["members"] = $member;
+            array_push($groups, $group_info);
+
+        }
+
+        $json = json_encode($groups, JSON_PRETTY_PRINT);
+        echo $json;
+    }
+    else if(empty($class_subject) && empty($class_number) && !empty($user_id))
+    {
+        $allClassesQuery = 'SELECT class_subject,class_number from classes INNER JOIN students on classes.class_id = students.class_id WHERE user_id =? AND is_active = TRUE;';
+        $fetchAllClasses = $dbc->prepare($allClassesQuery);
+        $fetchAllClasses ->execute([$user_id]);
+
+        $classList = $fetchAllClasses->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach($classList as $row)
+        {
+          $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number ORDER BY time_of_meeting ASC';
+          $stmt = $dbc->prepare($query);
+          $stmt->bindParam(':class_subject', $row["class_subject"]);
+          $stmt->bindParam(':class_number', $row["class_number"]);
+          try {
+              $stmt->execute();
+          } catch(PDOException $e) {
+              echo json_encode($e->getMessage());
+          }
+
+          $groups1 = $stmt->fetchAll();
+
+          foreach($groups1 as $row)
+          // while ($group_info = $stmt->fetchAll(PDO::FETCH_ASSOC))
+          {
+              // $group_id = $group_info["group_id"];
+              $group_id = $row["group_id"];
+              $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+              $stmt = $dbc->prepare($query);
+              $stmt->bindParam(':group_id', $group_id);
+
+              try {
+                  $stmt->execute();
+                  $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+              } catch(PDOException $e) {
+                  echo json_encode($e->getMessage());
+              }
+
+              $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+              $stmt = $dbc->prepare($query);
+              $stmt->bindParam(':group_id', $group_id);
+              try {
+                  $stmt->execute();
+                  $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+              } catch(PDOException $e) {
+                  echo json_encode($e->getMessage());
+              }
+
+              $group_info["members"] = $member;
+              array_push($groups, $group_info);
+
+          }
+        //   echo $row["class_subject"] . $row["class_number"] . "<br>";
+        }
+
+        // echo json_encode($classList, JSON_PRETTY_PRINT);
+        echo json_encode($groups, JSON_PRETTY_PRINT);
+    }
+    else {
+        echo "oops";
+    }
+});
 
 // {"first_name":"Ross", "last_name":"Miller"}
 $app->post('/searchuser', function ($request, $response, $args) {
@@ -50,6 +219,46 @@ $app->post('/registeruser', function ($request, $response, $args) {
     } catch(PDOException $e) {
         echo json_encode($e->getMessage());
     }
+
+    $query = 'SELECT user_id FROM user_info WHERE email = :email';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':email', $decode->email);
+
+    try {
+        $stmt->execute();
+        $user_id1 = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user_id = $user_id1["user_id"];
+        // $user_info = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $query = 'SELECT email, user_id, first_name, last_name, level FROM user_info WHERE user_id = :user_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $user_id);
+
+    try {
+        $stmt->execute();
+        $user_info = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $classes = "";
+    $query = 'SELECT class_subject, class_number FROM classes NATURAL JOIN students WHERE user_id = :user_id AND is_active = TRUE';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':user_id', $user_id);
+
+    try {
+        $stmt->execute();
+        $classes = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+    $user_info["classes"] = $classes;
+
+    echo json_encode($user_info, JSON_PRETTY_PRINT);
+
 });
 
 // {"user_id": "3", "group_id": "1"}
@@ -116,7 +325,7 @@ $app->post('/leavegroup', function ($request, $response, $args) {
         }
     }
 
-    $query = 'UPDATE user_info SET level = level - 0.1 WHERE user_id = :user_id';
+    $query = 'UPDATE user_info SET level = level - 0.05 WHERE user_id = :user_id';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $user_id);
 
@@ -183,7 +392,7 @@ $app->post('/joingroup', function ($request, $response, $args) {
             echo json_encode($e->getMessage());
         }
 
-        $query = 'UPDATE user_info SET level = level + 0.3 WHERE user_id = :user_id';
+        $query = 'UPDATE user_info SET level = level + 0.1 WHERE user_id = :user_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
 
@@ -194,7 +403,7 @@ $app->post('/joingroup', function ($request, $response, $args) {
         }
 
     } else {
-        $query = 'UPDATE user_info SET level = level + 0.1 WHERE user_id = :user_id';
+        $query = 'UPDATE user_info SET level = level + 0.05 WHERE user_id = :user_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
 
@@ -359,7 +568,7 @@ $app->post('/creategroup', function ($request, $response, $args) {
         echo json_encode($e->getMessage());
     }
 
-    $query = 'UPDATE user_info SET level = level + 0.5 WHERE user_id = :user_id';
+    $query = 'UPDATE user_info SET level = level + 0.2 WHERE user_id = :user_id';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $user_id);
 
@@ -429,10 +638,6 @@ $app->post('/login', function ($request, $response, $args) {
 
         $login_info["classes"] = $classes;
         echo json_encode($login_info, JSON_PRETTY_PRINT);
-
-        $query = 'UPDATE user_info SET level = level + 0.1 WHERE user_id = :user_id';
-        $stmt = $dbc->prepare($query);
-        $stmt->bindParam(':user_id', $user_id);
 
         try {
             $stmt->execute();
@@ -730,7 +935,7 @@ $app->post('/addclass', function($request, $response, $args) {
     $fetchAllClasses ->execute([$userId]);
     $classList = $fetchAllClasses->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($classList);
-    $query = 'UPDATE user_info SET level = level + 0.1 WHERE user_id = :user_id';
+    $query = 'UPDATE user_info SET level = level + 0.05 WHERE user_id = :user_id';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $userId);
 
@@ -844,7 +1049,7 @@ $app->post('/removeclass', function($request, $response, $args) {
     $classList = $fetchAllClasses->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($classList);
 
-    $query = 'UPDATE user_info SET level = level - 0.1 WHERE user_id = :user_id';
+    $query = 'UPDATE user_info SET level = level - 0.05 WHERE user_id = :user_id';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $userId);
 
