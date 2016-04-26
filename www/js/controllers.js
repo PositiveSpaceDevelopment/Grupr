@@ -85,10 +85,10 @@ angular.module('starter.controllers', [])
   }
 
   $scope.isJoined = false;
+
   // Checks to see if the user is a member of this group
   for (var i = 0; i < GroupFeed.data[index].members.length; i++) {
-    if (ProfileData.first_name == GroupFeed.data[index].members[i].first_name 
-      && ProfileData.last_name == GroupFeed.data[index].members[i].last_name) {
+    if (ProfileData.data.first_name == GroupFeed.data[index].members[i].first_name && ProfileData.data.last_name == GroupFeed.data[index].members[i].last_name) {
       $scope.isJoined = true;
 
       console.log(ProfileData.first_name);
