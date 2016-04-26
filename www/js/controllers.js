@@ -459,8 +459,8 @@ angular.module('starter.controllers', [])
 
 .controller('editClassCtrl', function($scope,$state, $http, ProfileData, classes, editData) {
 	console.log(editData.data.class_number); 
-	$scope.class_subject_passed = editData.class_subject;
-	$scope.class_number_passed = editData.class_number;
+	$scope.class_subject_passed = editData.data.class_subject;
+	$scope.class_number_passed = editData.data.class_number;
 	$scope.cancel = function() { 
     $state.go('tab.profile');
   }
@@ -493,9 +493,9 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
 		console.log(response.data);
-     ProfileData.data.classes  = response.data;
+      ProfileData.data.classes  = response.data;
       console.log(ProfileData.data.classes);
-	  $state.go('tab.profile',{}, {reload:true});
+      $state.go('tab.profile',{}, {reload:true});
     });
 	};
 })
@@ -694,7 +694,7 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('ProfileCtrl', function($scope,$state, $http,ProfileData, GroupFeed) {
+.controller('ProfileCtrl', function($scope,$state, $http,ProfileData, GroupFeed, editData) {
   $scope.form = {};
   $scope.first_name = ProfileData.data.first_name;
   $scope.last_name = ProfileData.data.last_name;
