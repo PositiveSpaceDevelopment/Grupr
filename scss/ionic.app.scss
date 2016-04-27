@@ -64,11 +64,15 @@ p {
 		width: 100%;
 		background-color: black;
 		color: white;
+		padding-left: 1rem;
 
 		h1 {
 			color: white;
 			margin: auto;
 			padding-top: 2rem;
+		}
+		p {
+			font-size: 1.1rem;
 		}
 		.row.imgBody {
 			padding-top: 1rem;

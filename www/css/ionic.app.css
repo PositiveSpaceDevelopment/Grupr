@@ -34,11 +34,14 @@ p {
   height: 15rem;
   width: 100%;
   background-color: black;
-  color: white; }
+  color: white;
+  padding-left: 1rem; }
   .detailContainer .detailContainerContent h1 {
     color: white;
     margin: auto;
     padding-top: 2rem; }
+  .detailContainer .detailContainerContent p {
+    font-size: 1.1rem; }
   .detailContainer .detailContainerContent .row.imgBody {
     padding-top: 1rem; }
     .detailContainer .detailContainerContent .row.imgBody h4 {
