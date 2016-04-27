@@ -107,7 +107,6 @@ angular.module('starter.controllers', [])
   console.log($scope.groupInfo);
 
   $scope.join = function() {
-
     var data = {}
 
     data.user_id = ProfileData.data.user_id;
@@ -126,42 +125,41 @@ angular.module('starter.controllers', [])
         },
       data: data
     }).then(function successCallback(response){
+      // Reloads the info on the page
+      $scope.groupInfo.members = response.data.members;
       console.log("You Joined!");
+      console.log(response.data);
     });
 
-    id = $stateParams.grupID;
-    while(true){
-      if (GroupFeed.data[index].group_id == id) {
-        break;
-      };
-      index++;
-    }
-    // Makes the GET http request to fill the GroupFeed Data
-    data = {
-      user_id: GroupFeed.filterID,
-      class_subject: GroupFeed.filterSubject,
-      class_number: GroupFeed.filterNumber
-    };
+    // Reloads the after its been joined
+    $scope.isJoined = true;
+  }
+
+  $scope.leaveGroup = function() {
+    var data = {}
+
+    data.user_id = ProfileData.data.user_id;
+    data.group_id = id;
+
+    // Makes the POST http request
     $http({
       method: 'POST',
-      // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
-      url: 'http://www.grupr.me/grups',
-      // url: 'http://54.213.15.90/grups',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
+      url: 'http://www.grupr.me/leavegroup',
+      // url: 'http://54.213.15.90/leavegroup',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
-    }).then(function successCallback(response) {
-      $scope.feed = response.data;
-      GroupFeed.data = response.data;
-    }, function errorCallback(response) {
-      console.log("something went wrong");
+    }).then(function successCallback(response){
+      // Reloads the info on the page
+      $scope.groupInfo.members = response.data.members;
+      console.log("You Left!");
+      console.log(response.data);
     });
 
     // Reloads the after its been joined
-    console.log(GroupFeed.data[index]);
-    $scope.groupInfo = GroupFeed.data[index];
-    $scope.isJoined = true;
+    $scope.isJoined = false;
   }
 
 })
