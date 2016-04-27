@@ -26,9 +26,8 @@ p {
 .detailContainer .detailImg {
   height: 15rem;
   width: 100%;
-  background-image: url("./img/ocean.jpg");
   background-size: cover;
-  opacity: 0.5;
+  opacity: 0.6;
   position: absolute; }
 
 .detailContainer .detailContainerContent {
