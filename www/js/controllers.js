@@ -490,8 +490,12 @@ angular.module('starter.controllers', [])
 		var data = {};
 		console.log($scope.form.class_subject.trim());
 		console.log($scope.form.class_number);
-		data.class_subject = $scope.form.class_subject.trim();
-		data.class_number = $scope.form.class_number; 
+    if ($scope.form.class_subject.trim()) {
+      data.class_subject = $scope.form.class_subject.trim();
+    };
+		if ($scope.form.class_number) {
+      data.class_number = $scope.form.class_number; 
+    };
 		$scope.form.class_subject = "ACCT";
 		$scope.form.class_number = "";
 		data.user_id = ProfileData.data.user_id;
@@ -713,8 +717,12 @@ angular.module('starter.controllers', [])
     var data = {};
     console.log($scope.form.class_subject );
     console.log($scope.form.class_number);
-    data.class_subject = $scope.form.class_subject.trim();
-    data.class_number = $scope.form.class_number; 
+    if ($scope.form.class_subject.trim()) {
+      data.class_subject = $scope.form.class_subject.trim();
+    };
+    if ($scope.form.class_number) {
+      data.class_number = $scope.form.class_number; 
+    };
     $scope.form.class_subject = "ACCT";
     $scope.form.class_number = "";
     data.user_id = ProfileData.data.user_id;
