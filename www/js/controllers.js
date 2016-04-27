@@ -1,10 +1,6 @@
 angular.module('starter.controllers', [])
 
 .controller('BrowseCtrl', function($scope, $state, $http, ProfileData, GroupFeed) {
-  /*GroupFeed.getFeed().then(function(data) {
-    $scope.feed = data;
-  });*/
-
   $scope.newGroup = function() {
     $state.go('createGroup');
   }
@@ -17,12 +13,13 @@ angular.module('starter.controllers', [])
     $state.go("tab.groupDetail",{grupID: id});
   }
 
+  $scope.contentExists = true;
+  console.log(GroupFeed);
   // Determines how the feed should be re-loaded
-  // TODO: write the code to determine what the data array looks like
   var data = {
-    user_id: "",
-    class_subject: "",
-    class_number: ""
+    user_id: GroupFeed.filterID,
+    class_subject: GroupFeed.filterSubject,
+    class_number: GroupFeed.filterNumber
   };
 
   // Makes the GET http request to fill the GroupFeed Data
@@ -37,6 +34,14 @@ angular.module('starter.controllers', [])
     data: data
   }).then(function successCallback(response) {
     GroupFeed.data = response.data;
+
+    if (response.data.length != 0) {
+      $scope.contentExists = true;
+    }
+    else {
+      $scope.contentExists = false;
+    }
+
     var tempArray = [];
     var lastDay = 0;
     var lastHour = 0;
@@ -124,13 +129,24 @@ angular.module('starter.controllers', [])
       console.log("You Joined!");
     });
 
-
+    id = $stateParams.grupID;
+    while(true){
+      if (GroupFeed.data[index].group_id == id) {
+        break;
+      };
+      index++;
+    }
     // Makes the GET http request to fill the GroupFeed Data
+    data = {
+      user_id: GroupFeed.filterID,
+      class_subject: GroupFeed.filterSubject,
+      class_number: GroupFeed.filterNumber
+    };
     $http({
-      method: 'GET',
+      method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
-      // url: 'http://www.grupr.me/grups',
-      url: 'http://54.213.15.90/grups',
+      url: 'http://www.grupr.me/grups',
+      // url: 'http://54.213.15.90/grups',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -138,11 +154,14 @@ angular.module('starter.controllers', [])
     }).then(function successCallback(response) {
       $scope.feed = response.data;
       GroupFeed.data = response.data;
-      console.log(GroupFeed.data);
     }, function errorCallback(response) {
       console.log("something went wrong");
     });
 
+    // Reloads the after its been joined
+    console.log(GroupFeed.data[index]);
+    $scope.groupInfo = GroupFeed.data[index];
+    $scope.isJoined = true;
   }
 
 })
@@ -525,48 +544,33 @@ angular.module('starter.controllers', [])
 	};
 })
 
-.controller('filterCtrl', function($scope,$state, $http, ProfileData, classes, GroupFeed) {
+.controller('filterCtrl', function($scope, $state, $http, ProfileData, classes, GroupFeed) {
 	$scope.user_classes = ProfileData.data.classes;
+  // $scope.choice = defaultChoice;
 	$scope.filter = function(choice) {
-	var data = {};
-	data.class_subject = choice.class_subject; 
-	data.class_number = choice.class_number;
-	data.user_id = ProfileData.data.user_id;
-	data.group_name = '';
-	data.location = ''; 
-	$http({
-      method: 'POST',
-      // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
-      // url: 'http://www.grupr.me/logout',
-      url: 'http://54.213.15.90/filtergroups',
-      headers: {
-        'Content-Type': 'application/json'
-        },
-      data: data
-    }).then(function successCallback(response){
-     	 console.log("success");
-		 console.log(response);
-		GroupFeed.data = response.data;
-    });
+  	GroupFeed.filterSubject = choice.class_subject; 
+  	GroupFeed.filterNumber = choice.class_number;
+  	GroupFeed.filterID = "";
   }
   $scope.filterAll = function() {
-	var data = {};
-	data.user_id = ProfileData.data.user_id;
-	$http({
-      method: 'POST',
-      // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
-      // url: 'http://www.grupr.me/getuserclassesgroups',
-      url: 'http://54.213.15.90/getuserclassesgroups',
-      headers: {
-        'Content-Type': 'application/json'
-        },
-      data: data
-    }).then(function successCallback(response){
-		console.log(response);
-		GroupFeed.data = response.data;
-	  console.log("success");
-    });
+    GroupFeed.filterSubject = ""; 
+    GroupFeed.filterNumber = "";
+    GroupFeed.filterID = ProfileData.data.user_id;
   }
+  $scope.test = function(FilterClasses) {
+    console.log(FilterClasses);
+    if (!FilterClasses) {
+      GroupFeed.filterSubject = ""; 
+      GroupFeed.filterNumber = "";
+      GroupFeed.filterID = "";
+    }
+    else {
+      GroupFeed.filterSubject = ""; 
+      GroupFeed.filterNumber = "";
+      GroupFeed.filterID = ProfileData.data.user_id;
+    }
+  }
+
   $scope.done = function() {
     $state.go('tab.browse');
   }
