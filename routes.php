@@ -25,7 +25,7 @@ $app->post('/grups', function ($request, $response, $args) {
     if(empty($class_subject) && empty($class_number) && empty($user_id)) //for all groups
     {
         // $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location, location_details FROM groups NATURAL JOIN classes NATURAL JOIN locations WHERE time_of_meeting > now() ORDER BY time_of_meeting ASC';
-        $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN classes NATURAL JOIN locations ORDER BY time_of_meeting ASC';
+        $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN classes WHERE time_of_meeting > (now() - INTERVAL 2 HOUR) ORDER BY time_of_meeting ASC';
         $stmt = $dbc->prepare($query);
 
         try {
@@ -38,7 +38,7 @@ $app->post('/grups', function ($request, $response, $args) {
         foreach($all_groups as $row)
         {
             $group_id = $row["group_id"];
-            $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+            $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE group_id = :group_id';
             $stmt = $dbc->prepare($query);
             $stmt->bindParam(':group_id', $group_id);
 
@@ -70,7 +70,7 @@ $app->post('/grups', function ($request, $response, $args) {
     }
     else if(!empty($class_subject) && !empty($class_number) && empty($user_id)) //specific class
     {
-        $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number ORDER BY time_of_meeting ASC';
+        $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number AND time_of_meeting > (now() - INTERVAL 2 HOUR) ORDER BY time_of_meeting ASC';
         $stmt = $dbc->prepare($query);
 		$stmt->bindParam(':class_subject', $class_subject);
         $stmt->bindParam(':class_number', $class_number);
@@ -87,7 +87,7 @@ $app->post('/grups', function ($request, $response, $args) {
         {
             // $group_id = $group_info["group_id"];
             $group_id = $row["group_id"];
-            $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+            $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE group_id = :group_id';
             $stmt = $dbc->prepare($query);
             $stmt->bindParam(':group_id', $group_id);
 
@@ -126,7 +126,7 @@ $app->post('/grups', function ($request, $response, $args) {
 
         foreach($classList as $row)
         {
-          $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number ORDER BY time_of_meeting ASC';
+          $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number AND time_of_meeting > (now() - INTERVAL 2 HOUR) ORDER BY time_of_meeting ASC';
           $stmt = $dbc->prepare($query);
           $stmt->bindParam(':class_subject', $row["class_subject"]);
           $stmt->bindParam(':class_number', $row["class_number"]);
@@ -143,7 +143,7 @@ $app->post('/grups', function ($request, $response, $args) {
           {
               // $group_id = $group_info["group_id"];
               $group_id = $row["group_id"];
-              $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+              $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE group_id = :group_id';
               $stmt = $dbc->prepare($query);
               $stmt->bindParam(':group_id', $group_id);
 
@@ -334,6 +334,32 @@ $app->post('/leavegroup', function ($request, $response, $args) {
     } catch(PDOException $e) {
         echo json_encode($e->getMessage());
     }
+
+
+    $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE group_id = :group_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':group_id', $group_id);
+
+    try {
+        $stmt->execute();
+        $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':group_id', $group_id);
+    try {
+        $stmt->execute();
+        $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $group_info["members"] = $member;
+    echo json_encode($group_info, JSON_PRETTY_PRINT);
+
 });
 
 // {"user_id": "3", "group_id": "1"}
@@ -413,6 +439,32 @@ $app->post('/joingroup', function ($request, $response, $args) {
             echo json_encode($e->getMessage());
         }
     }
+
+    $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE group_id = :group_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':group_id', $group_id);
+
+    try {
+        $stmt->execute();
+        $group_info = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $query = 'SELECT first_name, last_name FROM members NATURAL JOIN groups NATURAL JOIN user_info WHERE group_id = :group_id';
+    $stmt = $dbc->prepare($query);
+    $stmt->bindParam(':group_id', $group_id);
+    try {
+        $stmt->execute();
+        $member = $stmt->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+
+    $group_info["members"] = $member;
+    echo json_encode($group_info, JSON_PRETTY_PRINT);
+
+
 });
 
 //{"user_id": "1", "group_name":"Teddy's study buddies", "time_of_meeting": "2016-04-15 19:00:00", "description": "stupid people trying to learn good", "class_subject": "CSE", "class_number": "1341", "professor": "Fontenot", "location_details": "Junkins 110"}
@@ -739,7 +791,7 @@ $app->post('/getusergroups', function ($request, $response, $args) {
     $user_id = $decode->user_id;
     $groups = array();
     //and time_of_meeting > now()
-    $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE user_id = :user_id ORDER BY time_of_meeting ASC';
+    $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE user_id = :user_id  AND time_of_meeting > (now() - INTERVAL 2 HOUR) ORDER BY time_of_meeting ASC';
     $stmt = $dbc->prepare($query);
     $stmt->bindParam(':user_id', $user_id);
 
@@ -755,7 +807,7 @@ $app->post('/getusergroups', function ($request, $response, $args) {
     {
         // $group_id = $group_info["group_id"];
         $group_id = $row["group_id"];
-        $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id AND user_id = :user_id';
+        $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE group_id = :group_id AND user_id = :user_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':group_id', $group_id);
         $stmt->bindParam(':user_id', $user_id);
@@ -790,7 +842,7 @@ $app->get('/grups', function ($request, $response, $args) {
     $dbc = $this->dbc;
     $groups = array();
     // $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location, location_details FROM groups NATURAL JOIN classes NATURAL JOIN locations WHERE time_of_meeting > now() ORDER BY time_of_meeting ASC';
-    $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN classes NATURAL JOIN locations ORDER BY time_of_meeting ASC';
+    $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN classes ORDER BY time_of_meeting ASC';
     $stmt = $dbc->prepare($query);
 
     try {
@@ -803,7 +855,7 @@ $app->get('/grups', function ($request, $response, $args) {
     foreach($all_groups as $row)
     {
         $group_id = $row["group_id"];
-        $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+        $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE group_id = :group_id';
         $stmt = $dbc->prepare($query);
         $stmt->bindParam(':group_id', $group_id);
 
@@ -1096,7 +1148,7 @@ $app->post('/getuserclassesgroups', function($request, $response, $args) {
 
     foreach($classList as $row)
     {
-      $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number ORDER BY time_of_meeting ASC';
+      $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number ORDER BY time_of_meeting ASC';
       $stmt = $dbc->prepare($query);
       $stmt->bindParam(':class_subject', $row["class_subject"]);
       $stmt->bindParam(':class_number', $row["class_number"]);
@@ -1113,7 +1165,7 @@ $app->post('/getuserclassesgroups', function($request, $response, $args) {
       {
           // $group_id = $group_info["group_id"];
           $group_id = $row["group_id"];
-          $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+          $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE group_id = :group_id';
           $stmt = $dbc->prepare($query);
           $stmt->bindParam(':group_id', $group_id);
 
@@ -1158,7 +1210,7 @@ $app->post('/filtergroups', function($request, $response, $args) {
     $class_number = $decode->class_number;
     try {
     	   //just class subject and class number
-        $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number ORDER BY time_of_meeting ASC';
+        $query = 'SELECT DISTINCT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE class_subject = :class_subject AND class_number = :class_number ORDER BY time_of_meeting ASC';
         $stmt = $dbc->prepare($query);
 		$stmt->bindParam(':class_subject', $class_subject);
         $stmt->bindParam(':class_number', $class_number);
@@ -1175,7 +1227,7 @@ $app->post('/filtergroups', function($request, $response, $args) {
         {
             // $group_id = $group_info["group_id"];
             $group_id = $row["group_id"];
-            $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN locations NATURAL JOIN classes WHERE group_id = :group_id';
+            $query = 'SELECT group_id, group_name, time_of_meeting, description, class_subject, class_number, location_details, professor FROM groups NATURAL JOIN members NATURAL JOIN classes WHERE group_id = :group_id';
             $stmt = $dbc->prepare($query);
             $stmt->bindParam(':group_id', $group_id);
 
