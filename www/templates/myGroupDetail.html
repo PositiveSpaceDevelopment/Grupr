@@ -16,11 +16,16 @@
         </div>
         <div class="row imgBody">
           <div class="col">
-            <h4>{{myGroupInfo.time_of_meeting | date:"EEE MMM dd 'at' h:mm a"}}</h4> 
+			<h4>Time</p>
+            <p>{{myGroupInfo.time_of_meeting | date:"EEE MMM dd 'at' h:mm a"}}</p> 
           </div>
           <div class="col">
-            <h4>{{myGroupInfo.location}}</h4>
+            <h4>Location</h4>
             <p>{{myGroupInfo.location_details}}</p>
+          </div>
+		   <div class="col">
+            <h4>Professor</h4>
+            <p>{{myGroupInfo.professor}}</p>
           </div>
         </div> 
       </div>
