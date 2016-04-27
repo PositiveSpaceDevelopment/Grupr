@@ -325,6 +325,14 @@ angular.module('starter.controllers', [])
   $scope.form = {};
   $scope.form.date = new Date();
 
+  console.log(ProfileData.data.classes);
+  $scope.listSelect = false;
+  if (ProfileData.data.classes.length != 0) {
+    $scope.listSelect = true;
+    $scope.classList = ProfileData.data.classes;
+    console.log($scope.classList);
+  };
+
   var step = 1;
   $scope.form.createFirstStep = true;
 
@@ -388,7 +396,13 @@ angular.module('starter.controllers', [])
     // TODO: Use a regex function thing for this
     // Grabs the class subject and number from the input
     // and splits it up and stores it as class subject and number
-    var tempName = $scope.form.class_name;
+    var tempName;
+    if ($scope.listSelect) {
+      tempName = $scope.form.classChosen;
+    }
+    else {
+      tempName = $scope.form.class_name;
+    }
     if (tempName) {
       var nameNum = tempName.split(" ");
 
@@ -411,7 +425,6 @@ angular.module('starter.controllers', [])
       data: data
     }).then(function successCallback(response){
       console.log(response.data);
-
       $state.go('tab.browse');
     });
 

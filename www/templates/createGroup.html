@@ -23,10 +23,21 @@
           <div class="input-label">Grüp Name</div>
           <input type="text" placeholder="What's Your Grüp Name?" ng-model="form.group_name">
         </label>
-        <label class="item item-input item-stacked-label">
+        <!-- Class Input -->
+        <label class="item item-input item-stacked-label" ng-hide="listSelect">
           <div class="input-label">Class (subject and number)</div>
           <input type="text" placeholder="e.g. CSE 1341" ng-model="form.class_name">
         </label>
+        <!-- Select Input Style -->
+        <label class="item item-input item-select">
+          <div class="input-label">
+            Class
+          </div>
+          <select ng-model="form.classChosen">
+            <option ng-repeat="class in classList" ng-value="{{class.class_subject}} {{class.class_number}}">"{{class.class_subject}} {{class.class_number}}"</option>
+          </select>
+        </label>
+
         <label class="item item-input item-stacked-label">
           <div class="input-label">Professor (for your class section)</div>
           <input type="text" placeholder="e.g. Mark Fontenot" ng-model="form.professor">
