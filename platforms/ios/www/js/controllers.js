@@ -272,7 +272,7 @@ angular.module('starter.controllers', [])
   }
 
   $scope.filter = function() {
-	$state.go('filter')
+    $state.go('filter')
   }
 
   $scope.viewMyGroup = function(id) {
@@ -280,7 +280,7 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('MyGroupDetailCtrl', function($scope, $stateParams, $http, UserGroups, ProfileData) {
+.controller('MyGroupDetailCtrl', function($scope, $state, $stateParams, $http, UserGroups, ProfileData) {
 
   id = $stateParams.grupID;
 
@@ -295,8 +295,28 @@ angular.module('starter.controllers', [])
   $scope.myGroupInfo = UserGroups.data[index];
   console.log($scope.myGroupInfo);
 
-  $scope.leave = function() {
+  $scope.leaveGroup = function() {
+    var data = {}
 
+    data.user_id = ProfileData.data.user_id;
+    data.group_id = id;
+
+    // Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
+      url: 'http://www.grupr.me/leavegroup',
+      // url: 'http://54.213.15.90/leavegroup',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+      console.log("You Left!");
+    });
+
+    // Returns user to my groups page
+    $state.go('tab.MyGroups');
   }
 
 })
