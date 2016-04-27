@@ -70,6 +70,14 @@ p {
 .divider {
   background-color: #11c1f3; }
 
+.fillerContent {
+  text-align: center;
+  margin-top: 12rem; }
+  .fillerContent h1 {
+    color: #4BCAEA; }
+  .fillerContent p {
+    font-size: 1.25rem; }
+
 /*!
   Ionicons, v2.0.1
   Created by Ben Sperry for the Ionic Framework, http://ionicons.com/

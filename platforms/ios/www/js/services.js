@@ -10,56 +10,15 @@ angular.module('starter.services', [])
 
 //factory to carry around user data
 .factory("GroupFeed",function($http) {
-  var data = {}
-  var feed = false;
+  var data = {};
+  var filterID = "";
+  var filterSubject = "";
+  var filterNumber = "";
   return {
     data,
-    // reloadFeed: function() {
-    //   // Makes the GET http request to fill the GroupFeed Data
-    //     $http({
-    //       method: 'GET',
-    //       // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
-    //       // url: 'http://www.grupr.me/grups',
-    //       url: 'http://54.213.15.90/grups',
-    //       headers: {
-    //         'Content-Type': 'application/json'
-    //         }
-    //     }).then(function successCallback(response) {
-    //       data = response.data;
-    //       var tempArray = [];
-    //       var lastDay = 0;
-    //       var lastHour = 0;
-    //       var lastMonth = 0;
-
-    //       for (var i = 0; i < data.length; i++) {
-    //         //converts the date time string provided by the database 
-    //         // into a unix code datetime number that AngularJS can filter
-    //         var dateString = data[i].time_of_meeting;
-    //         data[i].time_of_meeting = new Date(dateString).getTime();
-
-    //         // Determines when the day or hour of the meeting time changes and them
-    //         // adds a list divider to mark the change in time
-    //         var currentDate = new Date(dateString);
-    //         if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour || currentDate.getMonth() != lastMonth){
-    //           newItem = {
-    //             dividerText: data[i].time_of_meeting,
-    //             time_of_meeting: (data[i].time_of_meeting - 100),
-    //             divider: true
-    //           };
-    //           tempArray.push(newItem);
-    //           lastDay = currentDate.getDate();
-    //           lastHour = currentDate.getHours();
-    //           lastMonth = currentDate.getMonth();
-    //         };
-    //       };
-    //       data = data.concat(tempArray);
-    //       // $scope.feed = data;
-    //       console.log(data);
-
-    //     }, function errorCallback(response) {
-    //       console.log("something went wrong");
-    //     });
-    // }
+    filterID,
+    filterSubject,
+    filterNumber
   };
 })
 
@@ -68,7 +27,10 @@ angular.module('starter.services', [])
 .factory("UserGroups",function() {
   return {data:null};
 })
-
+.factory("editData",function() {
+	data = {}
+	return {data};
+})
 
 
 

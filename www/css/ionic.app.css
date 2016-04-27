@@ -26,7 +26,7 @@ p {
 .detailContainer .detailImg {
   height: 15rem;
   width: 100%;
-  background-image: url("/img/ocean.jpg");
+  background-image: url("img/ocean.jpg");
   background-size: cover;
   opacity: 0.5;
   position: absolute; }
@@ -46,7 +46,8 @@ p {
       color: white; }
 
 .browseRightAlgin {
-  text-align: right; }
+  text-align: right;
+  padding-left: 1rem; }
 
 .colorCol {
   width: 0.75rem;
@@ -74,7 +75,7 @@ p {
   text-align: center;
   margin-top: 12rem; }
   .fillerContent h1 {
-    color: #4BCAEA; }
+    color: #50AFDD; }
   .fillerContent p {
     font-size: 1.25rem; }
 

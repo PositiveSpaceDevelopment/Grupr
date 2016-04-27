@@ -1,10 +1,6 @@
 angular.module('starter.controllers', [])
 
 .controller('BrowseCtrl', function($scope, $state, $http, ProfileData, GroupFeed) {
-  /*GroupFeed.getFeed().then(function(data) {
-    $scope.feed = data;
-  });*/
-
   $scope.newGroup = function() {
     $state.go('createGroup');
   }
@@ -16,68 +12,69 @@ angular.module('starter.controllers', [])
   $scope.viewGroup = function(id) {
     $state.go("tab.groupDetail",{grupID: id});
   }
-  // data = {user_id: 1};
-  // $http({
-  //     method: 'POST',
-  //     // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
-  //     // url: 'http://www.grupr.me/joingroup',
-  //     url: 'http://54.213.15.90/getuserclassesgroups',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //       },
-  //     data: data
 
+  $scope.contentExists = true;
+  console.log(GroupFeed);
   // Determines how the feed should be re-loaded
-  if (GroupFeed.filter) {
+  var data = {
+    user_id: GroupFeed.filterID,
+    class_subject: GroupFeed.filterSubject,
+    class_number: GroupFeed.filterNumber
+  };
 
-  }
-  else {
-    // Makes the GET http request to fill the GroupFeed Data
-    $http({
-      method: 'GET',
-      // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
-      // url: 'http://www.grupr.me/grups',
-      url: 'http://54.213.15.90/grups',
-      headers: {
-        'Content-Type': 'application/json'
-        },
-      data: data
-    }).then(function successCallback(response) {
-      GroupFeed.data = response.data;
-      var tempArray = [];
-      var lastDay = 0;
-      var lastHour = 0;
-      var lastMonth = 0;
+  // Makes the GET http request to fill the GroupFeed Data
+  $http({
+    method: 'POST',
+    // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
+    url: 'http://www.grupr.me/grups',
+    // url: 'http://54.213.15.90/grups',
+    headers: {
+      'Content-Type': 'application/json'
+      },
+    data: data
+  }).then(function successCallback(response) {
+    GroupFeed.data = response.data;
 
-      for (var i = 0; i < GroupFeed.data.length; i++) {
-        //converts the date time string provided by the database 
-        // into a unix code datetime number that AngularJS can filter
-        var dateString = GroupFeed.data[i].time_of_meeting;
-        GroupFeed.data[i].time_of_meeting = new Date(dateString).getTime();
+    if (response.data.length != 0) {
+      $scope.contentExists = true;
+    }
+    else {
+      $scope.contentExists = false;
+    }
 
-        // Determines when the day or hour of the meeting time changes and them
-        // adds a list divider to mark the change in time
-        var currentDate = new Date(dateString);
-        if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour || currentDate.getMonth() != lastMonth){
-          newItem = {
-            dividerText: GroupFeed.data[i].time_of_meeting,
-            time_of_meeting: (GroupFeed.data[i].time_of_meeting - 100),
-            divider: true
-          };
-          tempArray.push(newItem);
-          lastDay = currentDate.getDate();
-          lastHour = currentDate.getHours();
-          lastMonth = currentDate.getMonth();
+    var tempArray = [];
+    var lastDay = 0;
+    var lastHour = 0;
+    var lastMonth = 0;
+
+    for (var i = 0; i < GroupFeed.data.length; i++) {
+      //converts the date time string provided by the database 
+      // into a unix code datetime number that AngularJS can filter
+      var dateString = GroupFeed.data[i].time_of_meeting;
+      GroupFeed.data[i].time_of_meeting = new Date(dateString).getTime();
+
+      // Determines when the day or hour of the meeting time changes and them
+      // adds a list divider to mark the change in time
+      var currentDate = new Date(dateString);
+      if (currentDate.getDate() != lastDay || currentDate.getHours() != lastHour || currentDate.getMonth() != lastMonth){
+        newItem = {
+          dividerText: GroupFeed.data[i].time_of_meeting,
+          time_of_meeting: (GroupFeed.data[i].time_of_meeting - 100),
+          divider: true
         };
+        tempArray.push(newItem);
+        lastDay = currentDate.getDate();
+        lastHour = currentDate.getHours();
+        lastMonth = currentDate.getMonth();
       };
-      GroupFeed.data = GroupFeed.data.concat(tempArray);
-      $scope.feed = GroupFeed.data;
-      console.log(GroupFeed.data);
+    };
+    GroupFeed.data = GroupFeed.data.concat(tempArray);
+    $scope.feed = GroupFeed.data;
+    console.log(GroupFeed.data);
 
-    }, function errorCallback(response) {
-      console.log("something went wrong");
-    });
-  }
+  }, function errorCallback(response) {
+    console.log("something went wrong");
+  });
 })
 
 .controller('GroupDetailCtrl', function($scope, $stateParams, $http, GroupFeed, ProfileData) {
@@ -92,11 +89,24 @@ angular.module('starter.controllers', [])
     index++;
   }
 
+  $scope.isJoined = false;
+
+  // Checks to see if the user is a member of this group
+  for (var i = 0; i < GroupFeed.data[index].members.length; i++) {
+    if (ProfileData.data.first_name == GroupFeed.data[index].members[i].first_name && ProfileData.data.last_name == GroupFeed.data[index].members[i].last_name) {
+      $scope.isJoined = true;
+
+      console.log(ProfileData.first_name);
+      console.log(GroupFeed.data[index].members[i].first_name);
+
+      break;
+    };
+  };
   $scope.groupInfo = GroupFeed.data[index];
+
   console.log($scope.groupInfo);
 
   $scope.join = function() {
-
     var data = {}
 
     data.user_id = ProfileData.data.user_id;
@@ -108,35 +118,48 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
-      // url: 'http://www.grupr.me/joingroup',
-      url: 'http://54.213.15.90/joingroup',
+      url: 'http://www.grupr.me/joingroup',
+      // url: 'http://54.213.15.90/joingroup',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
     }).then(function successCallback(response){
+      // Reloads the info on the page
+      $scope.groupInfo.members = response.data.members;
       console.log("You Joined!");
+      console.log(response.data);
     });
 
+    // Reloads the after its been joined
+    $scope.isJoined = true;
+  }
 
-    // Makes the GET http request to fill the GroupFeed Data
+  $scope.leaveGroup = function() {
+    var data = {}
+
+    data.user_id = ProfileData.data.user_id;
+    data.group_id = id;
+
+    // Makes the POST http request
     $http({
-      method: 'GET',
-      // url: 'http://private-fa798-grupr.apiary-mock.com/grups',
-      // url: 'http://www.grupr.me/grups',
-      url: 'http://54.213.15.90/grups',
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
+      url: 'http://www.grupr.me/leavegroup',
+      // url: 'http://54.213.15.90/leavegroup',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
-    }).then(function successCallback(response) {
-      $scope.feed = response.data;
-      GroupFeed.data = response.data;
-      console.log(GroupFeed.data);
-    }, function errorCallback(response) {
-      console.log("something went wrong");
+    }).then(function successCallback(response){
+      // Reloads the info on the page
+      $scope.groupInfo.members = response.data.members;
+      console.log("You Left!");
+      console.log(response.data);
     });
 
+    // Reloads the after its been joined
+    $scope.isJoined = false;
   }
 
 })
@@ -169,8 +192,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/joingroup',
-      // url: 'http://www.grupr.me/joingroup',
-      url: 'http://54.213.15.90/joingroup',
+      url: 'http://www.grupr.me/joingroup',
+      // url: 'http://54.213.15.90/joingroup',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -188,20 +211,31 @@ angular.module('starter.controllers', [])
     $state.go("tab.groupDetail",{grupID: id});
   }
 	var data = {};
+  $scope.contentExists = true;
+
 	data.user_id = ProfileData.data.user_id;
 	// Makes the POST http request
     $http({
       method: 'POST',
-	  
       // url: 'http://private-fa798-grupr.apiary-mock.com/getusergroups',
-      // url: 'http://www.grupr.me/getusergroups',
-      url: 'http://54.213.15.90/getusergroups',
+      url: 'http://www.grupr.me/getusergroups',
+      // url: 'http://54.213.15.90/getusergroups',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
     }).then(function successCallback(response){
       UserGroups.data = response.data;
+
+      // Monitors whether or not groups will be displayed on the screen
+      // used to toggle the filler text on the page
+      if (response.data.length != 0) {
+        $scope.contentExists = true;
+      }
+      else {
+        $scope.contentExists = false;
+      }
+
       var tempArray = [];
       var lastDay = 0;
       var lastHour = 0;
@@ -246,19 +280,19 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('MyGroupDetailCtrl', function($scope, $stateParams, $http, GroupFeed, ProfileData) {
+.controller('MyGroupDetailCtrl', function($scope, $stateParams, $http, UserGroups, ProfileData) {
 
   id = $stateParams.grupID;
 
   var index = 0; 
   while(true){
-    if (GroupFeed.data[index].group_id == id) {
+    if (UserGroups.data[index].group_id == id) {
       break;
     };
     index++;
   }
 
-  $scope.myGroupInfo = GroupFeed.data[index];
+  $scope.myGroupInfo = UserGroups.data[index];
   console.log($scope.myGroupInfo);
 
   $scope.leave = function() {
@@ -349,8 +383,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/creategrup',
-      // url: 'http://www.grupr.me/creategroup',
-      url: 'http://54.213.15.90/creategroup',
+      url: 'http://www.grupr.me/creategroup',
+      // url: 'http://54.213.15.90/creategroup',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -434,25 +468,26 @@ angular.module('starter.controllers', [])
 	$scope.classesToTake = classes.data.classes;
 	$scope.addClassSubmit = function() {
 		var data = {};
-		console.log($scope.form.class_subject );
+		console.log($scope.form.class_subject.trim());
 		console.log($scope.form.class_number);
 		data.class_subject = $scope.form.class_subject.trim();
 		data.class_number = $scope.form.class_number; 
 		$scope.form.class_subject = "ACCT";
 		$scope.form.class_number = "";
 		data.user_id = ProfileData.data.user_id;
-		console.log(data.user_id)
+		console.log(data)
 		// Makes the POST http request
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      // url: 'http://www.grupr.me/creategrup',
-      url: 'http://54.213.15.90/addclass',
+      url: 'http://www.grupr.me/addclass',
+      // url: 'http://54.213.15.90/addclass',
       headers: {
         'Content-Type': 'application/json'
         },
       data: data
     }).then(function successCallback(response){
+		console.log(response.data);
      ProfileData.data.classes  = response.data;
      $scope.classes = ProfileData.data.classes;
       console.log(ProfileData.data.classes);
@@ -463,9 +498,77 @@ angular.module('starter.controllers', [])
     $state.go('tab.profile');
   }
 })
-.controller('filterCtrl', function($scope,$state, $http, ProfileData, classes) {
-  $scope.user_classes = ProfileData.data.classes;
-    
+
+.controller('editClassCtrl', function($scope,$state, $http, ProfileData, classes, editData) {
+	console.log(editData.data.class_number); 
+	$scope.class_subject_passed = editData.data.class_subject;
+	$scope.class_number_passed = editData.data.class_number;
+	$scope.cancel = function() { 
+    $state.go('tab.profile');
+  }
+	$scope.form = {};
+	$scope.classes = classes.data.classes;
+	$scope.form.class_subject = "ACCT";
+	$scope.classes = ProfileData.data.classes;
+	$scope.classesToTake = classes.data.classes;
+	$scope.editClassSubmit = function(){
+		var data = {};
+		console.log($scope.form.class_subject.trim());
+		console.log($scope.form.class_number);
+		data.class_subject_change_to = $scope.form.class_subject.trim();
+		data.class_number_change_to = $scope.form.class_number; 
+		data.class_subject_to_change = editData.data.class_subject;
+		data.class_number_to_change = editData.data.class_number;
+		$scope.form.class_subject = "ACCT";
+		$scope.form.class_number = "";
+		data.user_id = ProfileData.data.user_id;
+		console.log(data)
+		// Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/login',
+      url: 'http://www.grupr.me/editclass',
+      // url: 'http://54.213.15.90/editclass',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+		console.log(response.data);
+      ProfileData.data.classes  = response.data;
+      console.log(ProfileData.data.classes);
+      $state.go('tab.profile',{}, {reload:true});
+    });
+	};
+})
+
+.controller('filterCtrl', function($scope, $state, $http, ProfileData, classes, GroupFeed) {
+	$scope.user_classes = ProfileData.data.classes;
+  // $scope.choice = defaultChoice;
+	$scope.filter = function(choice) {
+  	GroupFeed.filterSubject = choice.class_subject; 
+  	GroupFeed.filterNumber = choice.class_number;
+  	GroupFeed.filterID = "";
+  }
+  $scope.filterAll = function() {
+    GroupFeed.filterSubject = ""; 
+    GroupFeed.filterNumber = "";
+    GroupFeed.filterID = ProfileData.data.user_id;
+  }
+  $scope.test = function(FilterClasses) {
+    console.log(FilterClasses);
+    if (!FilterClasses) {
+      GroupFeed.filterSubject = ""; 
+      GroupFeed.filterNumber = "";
+      GroupFeed.filterID = "";
+    }
+    else {
+      GroupFeed.filterSubject = ""; 
+      GroupFeed.filterNumber = "";
+      GroupFeed.filterID = ProfileData.data.user_id;
+    }
+  }
+
   $scope.done = function() {
     $state.go('tab.browse');
   }
@@ -498,8 +601,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      // url: 'http://www.grupr.me/login',
-      url: 'http://54.213.15.90/login',
+      url: 'http://www.grupr.me/login',
+      // url: 'http://54.213.15.90/login',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -558,8 +661,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/register',
-      // url: 'http://www.grupr.me/registeruser',
-      url: 'http://54.213.15.90/registeruser',
+      url: 'http://www.grupr.me/registeruser',
+      // url: 'http://54.213.15.90/registeruser',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -600,8 +703,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/login',
-      // url: 'http://www.grupr.me/creategrup',
-      url: 'http://54.213.15.90/addclass',
+      url: 'http://www.grupr.me/addclass',
+      // url: 'http://54.213.15.90/addclass',
       headers: {
         'Content-Type': 'application/json'
         },
@@ -618,7 +721,7 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('ProfileCtrl', function($scope,$state, $http,ProfileData, GroupFeed) {
+.controller('ProfileCtrl', function($scope,$state, $http,ProfileData, GroupFeed, editData) {
   $scope.form = {};
   $scope.first_name = ProfileData.data.first_name;
   $scope.last_name = ProfileData.data.last_name;
@@ -632,7 +735,35 @@ angular.module('starter.controllers', [])
     $scope.level = 10;
   }
   $scope.icon = ProfileData.data.icon;
-  
+  $scope.editClass = function(classToEdit)
+  {
+	  editData.data = classToEdit;
+	  console.log(editData);
+	  $state.go('editClass');
+  }
+  $scope.deleteClass = function(classToDelete)
+  {
+	 var data = {};
+	 data.user_id = ProfileData.data.user_id;
+	 data.class_subject = classToDelete.class_subject;
+	 data.class_number = classToDelete.class_number;
+	// Makes the POST http request
+    $http({
+      method: 'POST',
+      // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
+      url: 'http://www.grupr.me/removeclass',
+      // url: 'http://54.213.15.90/removeclass',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      data: data
+    }).then(function successCallback(response){
+	ProfileData.data.classes = response.data;
+	$scope.classes = ProfileData.data.classes;
+	console.log($scope.classes);
+    }); 
+	
+  }
   $scope.addClass = function() 
   {
 	$state.go('addClass');
@@ -652,8 +783,8 @@ angular.module('starter.controllers', [])
     $http({
       method: 'POST',
       // url: 'http://private-fa798-grupr.apiary-mock.com/logout',
-      // url: 'http://www.grupr.me/logout',
-      url: 'http://54.213.15.90/logout',
+      url: 'http://www.grupr.me/logout',
+      // url: 'http://54.213.15.90/logout',
       headers: {
         'Content-Type': 'application/json'
         },
