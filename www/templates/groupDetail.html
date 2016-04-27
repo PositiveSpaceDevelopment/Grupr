@@ -8,7 +8,7 @@
   <ion-content>
     <div class="detailContainer">
       <div class="detailImg">
-        <!-- <img src="/img/Fondren.jpg" class="detailImg"> -->
+        <img src="./img/ocean.jpg" class="detailImg">
       </div>
       <div class="detailContainerContent">
         <div class="row title">
@@ -16,18 +16,26 @@
         </div>
         <div class="row imgBody">
           <div class="col">
-            <h4>{{groupInfo.time_of_meeting | date:"EEE MMM dd 'at' h:mm a"}}</h4> 
+			<h4>Time</p>
+            <p>{{groupInfo.time_of_meeting | date:"EEE MMM dd 'at' h:mm a"}}</p> 
           </div>
           <div class="col">
-            <h4>{{groupInfo.location}}</h4>
+            <h4>Location </h4>
             <p>{{groupInfo.location_details}}</p>
           </div>
+		  <div class="col">
+		  <h4>Professor </h4>
+          <p>{{groupInfo.professor}}</p>
+		  </div>
         </div> 
       </div>
     </div>
     <ul class="list">
-      <button class="button button-block button-calm" ng-click="join()">
-        Join this Grüp
+      <button class="button button-block button-calm" ng-click="join()" ng-hide="isJoined">
+        Join this Study Session
+      </button>
+      <button class="button button-block button-dark" ng-show="isJoined">
+        Joined
       </button>
    
       <label class="item">
@@ -43,6 +51,8 @@
         </ul>
       </label>
     </ul>
-  
   </ion-content>
+  <ion-footer-bar align-title="center" class="bar-assertive" ng-show="isJoined" ng-click="leaveGroup()">
+    <h1 class="title">Leave</h1>
+  </ion-footer-bar>
 </ion-view>

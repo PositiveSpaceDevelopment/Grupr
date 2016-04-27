@@ -68,6 +68,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       templateUrl: 'templates/register.html',
       controller: 'RegisterCtrl'
     })
+
+  .state('registerClasses', {
+    url: '/registerClasses',
+    templateUrl: 'templates/registerClasses.html',
+    controller: 'RegisterClassesCtrl'
+  })
+
+
   .state('createGroup', {
       url: '/createGroup',
       templateUrl: 'templates/createGroup.html',

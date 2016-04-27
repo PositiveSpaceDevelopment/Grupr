@@ -1,8 +1,20 @@
-<ion-view view-title="Add Class">
-   <ion-nav-buttons side="left">
-  </ion-nav-buttons>
+<ion-view view-title="Add Classes">
+		<ion-nav-buttons side="right">
+	    <button class="button button-clear" ng-click="registerClassSkip()">
+	    	Skip
+	      <i class="icon ion-ios-arrow-forward"></i> 
+	    </button>
+		</ion-nav-buttons>
   <ion-content>
 	<div class="list">
+		<!-- Notice -->
+		<div class="item item-text-wrap">
+			<p>Let us know what classes you are enrolled in so we can make it easier for you to find study sessions.</p>
+			<br>
+			<p>If you decide to skip this step, you can sign up for classes on your profile tab.</p>
+		</div>
+
+		<!-- Form -->
 	  <form ng-submit="addClassSubmit()">
 	  <label class="item item-input item-select">
 		<div class="input-label">
@@ -25,13 +37,15 @@
 	<div class="item item-divider">Your current classes</div>
 		<ion-list>
 		<ion-item ng-repeat = "class in classes">
-		    {{class.class_subject}} {{class.class_number}} 
+		<ion-option-button class="button-positive">Edit</ion-option-button>
+		<ion-option-button class="button-assertive">Delete</ion-option-button>
+	       {{class.class_subject}} {{class.class_number}} 
 		</ion-item>
 		</ion-list>
 			</div>
 
   </ion-content>
-  <ion-footer-bar align-title="center" class="bar-assertive" ng-click = "done()">
-  <h1 class="title">Done</h1>
+  <ion-footer-bar align-title="center" class="bar-calm" ng-click = "registerFinish()">
+  <h1 class="title">Finish Registration</h1>
   </ion-footer-bar>
 </ion-view>

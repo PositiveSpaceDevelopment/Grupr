@@ -53,9 +53,9 @@ p {
 	.detailImg {
 		height: 15rem;
 		width: 100%;
-		background-image: url("/img/Fondren.jpg");
+		// background-image: url("./img/ocean.jpg");
 		background-size: cover;
-		opacity: 0.5;
+		opacity: 0.6;
 		position: absolute;
 	}
 
@@ -86,6 +86,7 @@ p {
 
 .browseRightAlgin {
 	text-align: right;
+	padding-left: 1rem;
 }
 
 
@@ -120,8 +121,22 @@ p {
 	background-color: #11c1f3;
 }
 
+// --------------------
+// MyGroups - content
+// --------------------
 
+.fillerContent {
+	text-align: center;
+	margin-top: 12rem;
 
+	h1 {
+		color: $positive;
+	}
+
+	p {
+		font-size: 1.25rem;
+	}
+}
 
 
 

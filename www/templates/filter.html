@@ -3,12 +3,12 @@
   <ion-content>
 	
 	<div class="list">
-	<ion-toggle ng-model = "FilterClasses">
-	Use Filters? 
+	<ion-toggle ng-model = "FilterClasses" ng-click="test(FilterClasses)">
+		Use Filters? 
 	</ion-toggle>	
 	<div ng-show= "FilterClasses">
 			<ion-radio ng-model ="choice" ng-click = "filterAll()">
-			All of them
+				All of them
 			</ion-radio>
 		   <ion-radio ng-model ="$parent.choice" ng-repeat = "class in user_classes" ng-value = "class" ng-click = "filter(choice)">
 			

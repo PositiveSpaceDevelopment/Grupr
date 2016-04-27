@@ -9,9 +9,20 @@ angular.module('starter.services', [])
 })
 
 //factory to carry around user data
-.factory("GroupFeed",function() {
-  return {data:null};
+.factory("GroupFeed",function($http) {
+  var data = {};
+  var filterID = "";
+  var filterSubject = "";
+  var filterNumber = "";
+  return {
+    data,
+    filterID,
+    filterSubject,
+    filterNumber
+  };
 })
+
+
 //factory to carry around groups the user is in
 .factory("UserGroups",function() {
   return {data:null};
