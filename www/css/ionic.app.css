@@ -64,10 +64,10 @@ p {
 .ACCT, .BL, .WXC, .HIST {
   background-color: #886aea; }
 
-.EE, .TUBA, .WGM, .CW {
+.EE, .TUBA, .WGM, .CW, .ME {
   background-color: #ef473a; }
 
-.MUED, .TOW, .MREP, .BLI {
+.MUED, .TOW, .MREP, .BLI, .EMIS {
   background-color: #00cc99; }
 
 .divider {

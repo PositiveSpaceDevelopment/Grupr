@@ -13,7 +13,7 @@
   <ion-content>
     <div class="fillerContent ionic-wrap-text padding" ng-hide="contentExists">
       <h1>No Study Sessions to Show</h1>
-      <p>Jump over to the Browse Page to join or create a study session!</p>
+      <p>Swim over to the Browse Page to join or create a study session!</p>
     </div>
     <ul class="list" ng-show="contentExists">
       <!-- List Item for each Study Session -->
@@ -27,7 +27,7 @@
             <h2>{{group.class_subject}} {{group.class_number}}</h2>
           </div>
           <div class="col">
-            <p>{{group.professor}}</p>
+            
           </div>
           <div class="col browseRightAlgin">
             <i class="icon ion-android-person" ng-repeat="member in group.members"></i>
@@ -35,7 +35,7 @@
           </div>
           <div class="row">
           <div class="col">
-            <p>{{group.location_details}}</p>
+            <p>{{group.professor}}</p>
           </div>
           <div class="col browseRightAlgin">
             <p>{{group.time_of_meeting | date:'h:mm a'}}</p>
