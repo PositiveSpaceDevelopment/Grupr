@@ -1,10 +1,6 @@
 <?php
 
 //To do
-//site map and er diagram
-//fix the stuff on the production server for utilities
-//only output groups for the next week
-//active groups from now() + 2
 
 //Questions:
 
@@ -1299,7 +1295,7 @@ $app->get('/d3', function ($request, $response, $args) {
                                 .style('opacity', '0');
 
                 var yScale = d3.scale.linear()
-                                .domain([0, 8])
+                                .domain([0, 10])
                                 .range([0, height]);
                 var xScale = d3.scale.ordinal()
                                 .domain(d3.range(0, data.length))
@@ -1329,7 +1325,7 @@ $app->get('/d3', function ($request, $response, $args) {
                             .on('mouseover', function(d) {
                                 tooltip.transition()
                                     .style('opacity', 1)
-                                tooltip.html(d.class_subject+d.class_number)
+                                tooltip.html(d.class_subject+d.class_number + " has "+ d.cnt +" students")
                                     .style('left', (d3.event.pageX)+'px')
                                     .style('top', (d3.event.pageY)+'px')
                                 d3.select(this).style('opacity', 0.5)
@@ -1355,7 +1351,7 @@ $app->get('/d3', function ($request, $response, $args) {
                         .ease('elastic')
 
                 var vScale = d3.scale.linear()
-                            .domain([0, 8])
+                            .domain([0, 10])
                             .range([height, 0]);
                 var hScale = d3.scale.ordinal()
                             .domain(d3.range(0, data.length))
@@ -1364,7 +1360,7 @@ $app->get('/d3', function ($request, $response, $args) {
                 var vAxis = d3.svg.axis()
                             .scale(vScale)
                             .orient('left')
-                            .ticks(9)
+                            .ticks(10)
                             .tickPadding(1)
                 var vGuide = d3.select('svg')
                             .append('g')
@@ -1435,7 +1431,7 @@ $app->get('/d3', function ($request, $response, $args) {
             });
 
         </script>
-        <body style="background: #000000">
+        <body style="background: #000000"> -->
     </body>
 
     </html>
@@ -1631,5 +1627,106 @@ $app->get('/morecircles', function ($request, $response, $args) {
     <div class="bubbleChart"/>
     </body>
     </html>
+    <?php
+});
+
+$app->get('/users', function ($request, $response, $args) {
+    ?>
+    <html>
+    <meta charset="utf-8">
+    <style>
+
+    .arc text {
+      font: 15px sans-serif;
+      text-anchor: middle;
+    }
+
+    .arc path {
+      stroke: #fff;
+    }
+
+    </style>
+    <body>
+        <body style="background: #000000">
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script>
+
+    var width = 1350,
+        height = 700,
+        radius = Math.min(width, height) / 2;
+
+    var tooltip = d3.select('body').append('div')
+                    .style('position', 'absolute')
+                    .style('background', '#f4f4f4')
+                    .style('padding', '5 15px')
+                    .style('border', '1px #333 solid')
+                    .style('border-radius', '5px')
+                    .style('opacity', '0');
+
+    var color = d3.scale.ordinal()
+        .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+    var arc = d3.svg.arc()
+        .outerRadius(radius - 10)
+        .innerRadius(radius - 70);
+
+    var pie = d3.layout.pie()
+        .sort(null)
+        .value(function(d) { return d.count; });
+
+    var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+      .append("g")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    d3.csv("data.csv", type, function(error, data) {
+      if (error) throw error;
+
+      var g = svg.selectAll(".arc")
+          .data(pie(data))
+        .enter().append("g")
+          .attr("class", "arc")
+          .on('mouseover', function(d) {
+              tooltip.transition()
+                  .style('opacity', 1)
+              tooltip.html(d.data.name+" is in "+d.value+ " groups")
+                  .style('left', (d3.event.pageX)+'px')
+                  .style('top', (d3.event.pageY)+'px')
+              d3.select(this).style('opacity', 0.5)
+          })
+          .on('mouseout', function(d) {
+              tooltip.transition()
+                  .style('opacity', 0)
+              d3.select(this).style('opacity', 1)
+          })
+
+      g.append("path")
+          .attr("d", arc)
+          .transition()
+          .duration(2000)
+          .delay(function (d,i) {
+              return i * 500;
+          })
+          .style("fill", function(d) { return color(d.data.name); });
+
+
+
+      g.append("text")
+          .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+          .attr("dy", ".35em")
+          .text(function(d) { return d.data.name; });
+
+    });
+
+    function type(d) {
+      d.count = +d.count;
+      return d;
+    }
+
+
+
+
+    </script>
     <?php
 });
