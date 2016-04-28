@@ -1,0 +1,44 @@
+<ion-view view-title="Grüpr">
+  <ion-header-bar>
+    <h1 class="title">Grüpr</h1>
+  </ion-header-bar>
+  <ion-content>
+    <div class="item item-image padding">
+      <img src="./img/GruprLogo.png">
+    </div>
+    <form ng-submit="login()" name="loginForm">
+      <div class="list">
+        <!-- Email -->
+        <label class="item item-input">
+          <span class="input-label">Email</span>          
+          <input type="text" ng-required = "true" ng-model="form.email" name="loginEmail">
+        </label>
+        <div ng-show="loginForm.loginEmail.$touched" class="item assertive">
+          <div ng-show="loginForm.loginEmail.$error.required">Please enter your email</div>
+        </div>
+        
+        <!-- Password -->
+        <label class="item item-input">
+          <span class="input-label">Password</span>
+          <input type="password" ng-required = "true" ng-model="form.password" name="loginPassword">
+        </label>
+        <div ng-show="loginForm.loginPassword.$touched" class="item assertive">
+          <div ng-show="loginForm.loginPassword.$error.required">Please enter your password</div>
+        </div>
+
+        <!-- Button -->
+        <label class="item">
+          <button class="button button-block button-calm" type="submit">Log in</button>
+        </label>
+      </div>
+    </form>
+    <form>
+      <div class="padding text-center" id="login_register">
+        <h4>Not a member? Sign up and start Grüping!</h4>
+        <button class="button button-block button-outline button-calm" ng-click="register()">
+          Register!
+        </button>
+      </div>
+    </form>
+  </ion-content>
+</ion-view>

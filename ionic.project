@@ -1,0 +1,5 @@
+{
+  "name": "Grupr_ionic",
+  "app_id": "",
+  "gulpStartupTasks": ["sass", "watch"]
+}

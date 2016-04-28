@@ -1,0 +1,25 @@
+<ion-view view-title="Filter">
+  
+  <ion-content>
+	
+	<div class="list">
+	<ion-toggle ng-model = "FilterClasses" ng-click="test(FilterClasses)">
+		Use Filters? 
+	</ion-toggle>	
+	<div ng-show= "FilterClasses">
+			<ion-radio ng-model ="choice" ng-click = "filterAll()">
+				All of them
+			</ion-radio>
+		   <ion-radio ng-model ="$parent.choice" ng-repeat = "class in user_classes" ng-value = "class" ng-click = "filter(choice)">
+			
+		   {{class.class_subject}} {{class.class_number}}
+		   </ion-radio>
+	</div>
+	</div>
+
+  </ion-content>
+  
+  <ion-footer-bar align-title="center" class="bar-assertive" ng-click = "done()">
+  <h1 class="title">Done</h1>
+  </ion-footer-bar>
+</ion-view>

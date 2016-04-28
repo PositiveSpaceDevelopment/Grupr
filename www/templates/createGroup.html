@@ -1,0 +1,86 @@
+<ion-view view-title="Create a New Study Session">
+  
+  <ion-nav-buttons side="right">
+    <button class="button button-clear" ng-click="cancel()">
+      Cancel
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="primary">
+    <button class="button button-clear" ng-hide="form.createFirstStep" ng-click="createGroupBack()">
+      <i class="icon ion-ios-arrow-back"></i> 
+      Back
+    </button>
+  </ion-nav-buttons>
+
+   <ion-content>
+    
+    <div class="list">
+
+      <!-- General Info Area -->
+      <div ng-show="form.general">
+        <div class="item item-divider">General</div>
+        <label class="item item-input item-stacked-label">
+          <div class="input-label">Study Session Name</div>
+          <input type="text" placeholder="What's Your Grüp Name?" ng-model="form.group_name">
+        </label>
+        <!-- Class Input -->
+        <label class="item item-input item-stacked-label" ng-hide="listSelect">
+          <div class="input-label">Class (subject and number)</div>
+          <input type="text" placeholder="e.g. CSE 1341" ng-model="form.class_name">
+        </label>
+        <!-- Select Input Style -->
+        <label class="item item-input item-select">
+          <div class="input-label">
+            Class
+          </div>
+          <select ng-model="form.classChosen">
+            <option ng-repeat="class in classList" value="{{class.class_subject}} {{class.class_number}}">{{class.class_subject}} {{class.class_number}}</option>
+          </select>
+        </label>
+
+        <label class="item item-input item-stacked-label">
+          <div class="input-label">Professor (for your class section)</div>
+          <input type="text" placeholder="e.g. Mark Fontenot" ng-model="form.professor">
+        </label>
+      </div>
+
+      <!-- Location and Date -->
+      <div ng-show="form.locationDate">
+        <div class="item item-divider">Location</div>
+        </label>
+        <label class="item item-input">
+          <textarea placeholder="Tell everyone where you are studying. i.e. building and room number" ng-model="form.location_details"></textarea>
+        </label>
+
+        <div class="item item-divider">Date and Time</div>
+        <label class="item item-input">
+          <div class="input-label">Date: </div>
+          <input type="date" ng-model="form.date"></input>
+        </label>
+        <label class="item item-input">
+          <div class="input-label">Time: </div>
+          <input type="time" ng-model="form.date"></input>
+        </label>
+      </div>
+
+      <!-- Overall Description -->
+      <div ng-show="form.descriptionShow">
+        <div class="item item-divider">Description</div>
+        <label class="item item-input item-stacked-label">
+          <div class="input-label">Description: </div>
+          <textarea placeholder="What will you be studying? Topics, chapters, etc" ng-model="form.description"></textarea>
+        </label>
+      </div>
+
+      <!-- Buttons -->
+      <label class="item" ng-show="form.nextItem">
+        <button class="button button-block button-outline button-calm" ng-click="next()">
+          Next <i class="icon ion-ios-arrow-forward"></i><i class="icon ion-ios-arrow-forward"></i>
+        </button>
+      </label>
+      <label class="item" ng-show="form.lastItem">
+        <button class="button button-block button-calm" ng-click="createGrup()">Create!</button>
+      </label>
+    </div>
+  </ion-content>
+</ion-view>

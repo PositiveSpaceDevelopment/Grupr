@@ -1,0 +1,48 @@
+<ion-view view-title="My Study Sessions" cache-view="false">
+  <ion-nav-buttons side="primary">
+    <button class="button button-clear" ng-click="filter()">
+      <i class="icon ion-android-funnel"></i> Filter
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <button class="button button-clear" ng-click="newGroup()">
+      <i class="icon ion-plus-round"></i> New 
+    </button>
+  </ion-nav-buttons>
+  
+  <ion-content>
+    <div class="fillerContent ionic-wrap-text padding" ng-hide="contentExists">
+      <h1>No Study Sessions to Show</h1>
+      <p>Swim over to the Browse Page to join or create a study session!</p>
+    </div>
+    <ul class="list" ng-show="contentExists">
+      <!-- List Item for each Study Session -->
+      <li class="item row" ng-repeat="group in UserGroups | orderBy: 'time_of_meeting'" ng-click="viewMyGroup(group.group_id)" ng-class="group.divider? 'item-divider':''">
+        <p ng-show="group.divider" class="padding">{{group.dividerText | date:'MMM dd h:00 a'}}</p>
+        <div class="colorCol" ng-class="group.class_subject" ng-hide="group.divider">
+        </div>
+        <div class="col" ng-hide="group.divider">
+          <div class="row">
+          <div class="col">
+            <h2>{{group.class_subject}} {{group.class_number}}</h2>
+          </div>
+          <div class="col">
+            
+          </div>
+          <div class="col browseRightAlgin">
+            <i class="icon ion-android-person" ng-repeat="member in group.members"></i>
+          </div>
+          </div>
+          <div class="row">
+          <div class="col">
+            <p>{{group.professor}}</p>
+          </div>
+          <div class="col browseRightAlgin">
+            <p>{{group.time_of_meeting | date:'h:mm a'}}</p>
+          </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </ion-content>
+</ion-view>

@@ -1,0 +1,33 @@
+<ion-view view-title="Edit Class">
+   <ion-nav-buttons side="left">
+    <button class="button button-clear" ng-click="cancel()">
+      Cancel
+    </button>
+  </ion-nav-buttons>
+  <ion-content>
+  <div class="padding">
+  	<h4>Current class is: {{class_subject_passed}} {{class_number_passed}}</h4>
+  </div>
+	<div class="list">
+	  <form ng-submit="editClassSubmit()">
+	  <label class="item item-input item-select">
+		<div class="input-label">
+		Class Subject 
+		</div>
+		<select ng-model="form.class_subject">
+		  <option ng-repeat = "class in classesToTake">
+		  {{class.class_subject}} 
+		  </option>
+		</select>
+	  </label>
+      <label class="item item-input">
+          <span class="input-label">Class Number</span>
+          <input type="text" pattern="[0-9]{4}" ng-required = "true" ng-model="form.class_number"> </input>
+      </label>
+	  <label class="item">
+          <button class="button button-block button-calm button-balanced"" type="submit">Submit</button>
+		 </label>
+	  </form> 
+
+  </ion-content>
+</ion-view>

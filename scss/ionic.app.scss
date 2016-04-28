@@ -1,0 +1,162 @@
+/*
+To customize the look and feel of Ionic, you can override the variables
+in ionic's _variables.scss file.
+
+For example, you might change some of the default colors:
+
+$light:                           #fff !default;
+$stable:                          #f8f8f8 !default;
+$positive:                        #387ef5 !default;
+$calm:                            #11c1f3 !default;
+$balanced:                        #33cd5f !default;
+$energized:                       #ffc900 !default;
+$assertive:                       #ef473a !default;
+$royal:                           #886aea !default;
+$dark:                            #444 !default;
+*/
+
+// The path for our ionicons font files, relative to the built CSS in www/css
+$ionicons-font-path: "../lib/ionic/fonts" !default;
+
+// ****************************************
+// Put all of our custom SASS below here  *
+// ****************************************
+$positive: #50AFDD;
+$calm: #4BCAEA;
+$assertive: #E15554;
+
+
+// -------------------
+// Font Stuff
+// -------------------
+@import url(https://fonts.googleapis.com/css?family=Nixie+One);
+$NixieOne: 'Nixie One', cursive;
+@import url(https://fonts.googleapis.com/css?family=Muli);
+$Muli: 'Muli', sans-serif;
+
+$header: #19bbd5;
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: $NixieOne;
+}
+
+p {
+	font-family: $Muli;
+}
+
+
+// --------------------
+// Group Detail Page
+// --------------------
+
+.detailContainer {
+	.detailImg {
+		height: 15rem;
+		width: 100%;
+		// background-image: url("./img/ocean.jpg");
+		background-size: cover;
+		opacity: 0.6;
+		position: absolute;
+	}
+
+	.detailContainerContent{
+		height: 15rem;
+		width: 100%;
+		background-color: black;
+		color: white;
+		padding-left: 1rem;
+
+		h1 {
+			color: white;
+			margin: auto;
+			padding-top: 2rem;
+		}
+		p {
+			font-size: 1.1rem;
+		}
+		.row.imgBody {
+			padding-top: 1rem;
+			h4 {
+				color: white;
+			}
+		}
+	}
+}
+
+
+// --------------------
+// Browse - List Items
+// --------------------
+
+.browseRightAlgin {
+	text-align: right;
+	padding-left: 1rem;
+}
+
+
+
+// --------------------
+// Browse - item colors
+// --------------------
+.colorCol {
+	width: 0.75rem;
+	background-color: #444;
+}
+.CSE, .ADPR, .ADRE, .ADV, .AERO, .AMAE, .ANTH, .APSM, .ARBC, .ARHS, ASAG, .ASCE, .ASDR, .ASIM, .ASPH, .ASPR, .ASPT, .ASSC, .WO, .WX, .XS, .XX, .ZCET, .ZCIEE, .ZSCOP, .ZIAM, .ZIES {
+	background-color: #ffc900;
+}
+
+.MATH, .BA, .BAEX, .BB, .BHSC, .BIOL, .BL, .BLI, .BSSN, .BUSE, .CA, .CEE, .CELL, .CF, .CFA, .CFB, .CHEM, .CHIN, .PIAN, .PLSC, .PPIA, .PR, .PRW, .PS, .PSYC, .RE, .RELI, .RMI, .ROTC, .RUSS {
+	background-color: #11c1f3;
+}
+.ACCT, .CLAS, .CM, .COMM, .CRCP, .CW, .DANC, .DBBS, .DISC, .DM, .DNSH, .DSIN, .ECO, .EDU, .EE, .EETS, .ENGL, .ENGR, .ZIFE, .ZIFSA, .ZSPAN, .ZSWIT {
+	background-color: #886aea;
+}
+
+.ME, .CISB, .CLAR, .ENSC, .ENST, .EPL, .ESL, .ETST, .EUPH, .EV, .FILM, .FINA, .FLUT, .FNAR, .FREN, .FRHN, .GEOL, .GERM {
+	background-color: #ef473a;
+}
+.JOUR, .JWST, .KNW, .LATN, .LAW, .MAST, .MDVL, .MKTG, .MN, .MNGT, .MNO, .MPED, .MREP, .MSA, .MSDS, .MT, .TC, .THEA, .SAX, .SCCL, .SOCI, .SOSC, .SPAN, .SPRT, .ST, .STAT, .STRA {
+	background-color: #FA7921;
+}
+
+.GUIT, .HARP, .HARS, .HB, .HDCN, .HDDR, .HDEV, .HGAM, .HIST, .HR, .HRTS, .HUMN, .HS, .IAM, .INTL, .ITAL, .ITOM, .JAPN {
+	background-color: #F45A8D;
+}
+
+.EMIS, .MUAC, .MUAS, .MUCO, .MUED, .MUHI, .MUPD, .MURE, .MUTH, .NT, .OBOE, .ORG, .OT, .PC, .PERB, .PERC, .PERE, .PHIL, .PHYS, .TROM, .TRPT, .TUBA, .UGRD, .UHP, .VIOL, .VLA, .VOIC, .WGST, .WL, .WLAN {
+	background-color: #00cc99;
+}
+
+.divider {
+	background-color: #11c1f3;
+}
+
+// --------------------
+// MyGroups - content
+// --------------------
+
+.fillerContent {
+	text-align: center;
+	margin-top: 12rem;
+
+	h1 {
+		color: $positive;
+	}
+
+	p {
+		font-size: 1.25rem;
+	}
+}
+
+
+
+
+
+
+
+
+
+// Include all of Ionic
+@import "www/lib/ionic/scss/ionic";
+
