@@ -652,7 +652,7 @@ angular.module('starter.controllers', [])
       else {
         ProfileData.data = response.data;
         console.log(ProfileData.data);
-        $state.go('tab.browse');
+        $state.go('tab.MyGroups');
       }
     }, function errorCallback(response) {
       console.log("something went wrong");
@@ -718,7 +718,7 @@ angular.module('starter.controllers', [])
     $scope.form.class_subject = "ACCT";
     $scope.form.class_number = "";
 
-    $state.go('tab.browse');
+    $state.go('tab.MyGroups');
   }
 
   $scope.form = {};
@@ -758,7 +758,7 @@ angular.module('starter.controllers', [])
   };
   
   $scope.registerFinish = function() {
-    $state.go('tab.browse');
+    $state.go('tab.MyGroups');
   }
 })
 
