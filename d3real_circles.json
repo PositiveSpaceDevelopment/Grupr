@@ -1,0 +1,298 @@
+{
+    "name": "parent",
+    "value": 200,
+    "children": [
+        {
+            "name": "ACCT",
+            "value": "6"
+        },
+        {
+            "name": "ADPR",
+            "value": "9"
+        },
+        {
+            "name": "ADV",
+            "value": "4"
+        },
+        {
+            "name": "ASPT",
+            "value": "9"
+        },
+        {
+            "name": "BA",
+            "value": "4"
+        },
+        {
+            "name": "BB",
+            "value": "4"
+        },
+        {
+            "name": "BL",
+            "value": "3"
+        },
+        {
+            "name": "BLI",
+            "value": "8"
+        },
+        {
+            "name": "BSSN",
+            "value": "3"
+        },
+        {
+            "name": "CF",
+            "value": "2"
+        },
+        {
+            "name": "CFA",
+            "value": "4"
+        },
+        {
+            "name": "COMM",
+            "value": "7"
+        },
+        {
+            "name": "CRCP",
+            "value": "6"
+        },
+        {
+            "name": "CSE",
+            "value": "9"
+        },
+        {
+            "name": "CW",
+            "value": "8"
+        },
+        {
+            "name": "DBBS",
+            "value": "2"
+        },
+        {
+            "name": "EE",
+            "value": "1"
+        },
+        {
+            "name": "ENGL",
+            "value": "10"
+        },
+        {
+            "name": "ENGR",
+            "value": "5"
+        },
+        {
+            "name": "EPL",
+            "value": "2"
+        },
+        {
+            "name": "ESL",
+            "value": "2"
+        },
+        {
+            "name": "ETST",
+            "value": "5"
+        },
+        {
+            "name": "EUPH",
+            "value": "4"
+        },
+        {
+            "name": "FINA",
+            "value": "3"
+        },
+        {
+            "name": "FLUT",
+            "value": "3"
+        },
+        {
+            "name": "FNAR",
+            "value": "1"
+        },
+        {
+            "name": "FREN",
+            "value": "6"
+        },
+        {
+            "name": "FRHN",
+            "value": "4"
+        },
+        {
+            "name": "GEOL",
+            "value": "1"
+        },
+        {
+            "name": "GERM",
+            "value": "1"
+        },
+        {
+            "name": "HARS",
+            "value": "5"
+        },
+        {
+            "name": "HDCN",
+            "value": "2"
+        },
+        {
+            "name": "HDDR",
+            "value": "3"
+        },
+        {
+            "name": "HIST",
+            "value": "3"
+        },
+        {
+            "name": "HS",
+            "value": "2"
+        },
+        {
+            "name": "INTL",
+            "value": "11"
+        },
+        {
+            "name": "JOUR",
+            "value": "2"
+        },
+        {
+            "name": "JWST",
+            "value": "2"
+        },
+        {
+            "name": "KNW",
+            "value": "8"
+        },
+        {
+            "name": "MAST",
+            "value": "4"
+        },
+        {
+            "name": "MATH",
+            "value": "6"
+        },
+        {
+            "name": "MKTG",
+            "value": "1"
+        },
+        {
+            "name": "MN",
+            "value": "3"
+        },
+        {
+            "name": "MNGT",
+            "value": "6"
+        },
+        {
+            "name": "MREP",
+            "value": "4"
+        },
+        {
+            "name": "MT",
+            "value": "2"
+        },
+        {
+            "name": "MUAS",
+            "value": "1"
+        },
+        {
+            "name": "MUED",
+            "value": "4"
+        },
+        {
+            "name": "MUHI",
+            "value": "3"
+        },
+        {
+            "name": "OBOE",
+            "value": "1"
+        },
+        {
+            "name": "ORG",
+            "value": "3"
+        },
+        {
+            "name": "OT",
+            "value": "9"
+        },
+        {
+            "name": "PERB",
+            "value": "5"
+        },
+        {
+            "name": "PHIL",
+            "value": "3"
+        },
+        {
+            "name": "PHYS",
+            "value": "4"
+        },
+        {
+            "name": "PIAN",
+            "value": "5"
+        },
+        {
+            "name": "PLSC",
+            "value": "6"
+        },
+        {
+            "name": "PS",
+            "value": "4"
+        },
+        {
+            "name": "ROTC",
+            "value": "8"
+        },
+        {
+            "name": "RUSS",
+            "value": "3"
+        },
+        {
+            "name": "SOSC",
+            "value": "5"
+        },
+        {
+            "name": "ST",
+            "value": "3"
+        },
+        {
+            "name": "STRA",
+            "value": "4"
+        },
+        {
+            "name": "THEA",
+            "value": "4"
+        },
+        {
+            "name": "TRPT",
+            "value": "1"
+        },
+        {
+            "name": "TUBA",
+            "value": "9"
+        },
+        {
+            "name": "UGRD",
+            "value": "2"
+        },
+        {
+            "name": "VLA",
+            "value": "3"
+        },
+        {
+            "name": "WO",
+            "value": "1"
+        },
+        {
+            "name": "WX",
+            "value": "4"
+        },
+        {
+            "name": "ZCET",
+            "value": "4"
+        },
+        {
+            "name": "ZIES",
+            "value": "12"
+        },
+        {
+            "name": "ZSCO",
+            "value": "4"
+        }
+    ]
+}

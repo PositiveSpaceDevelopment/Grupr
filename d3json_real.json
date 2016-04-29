@@ -1,0 +1,477 @@
+[
+    {
+        "class_subject": "ASPT",
+        "class_number": "1701",
+        "cnt": "7"
+    },
+    {
+        "class_subject": "UGRD",
+        "class_number": "2188",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "BL",
+        "class_number": "1988",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "BA",
+        "class_number": "3055",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "CRCP",
+        "class_number": "4234",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "VLA",
+        "class_number": "4086",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "EE",
+        "class_number": "3428",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "PIAN",
+        "class_number": "1524",
+        "cnt": "5"
+    },
+    {
+        "class_subject": "ASPT",
+        "class_number": "1134",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "ROTC",
+        "class_number": "1176",
+        "cnt": "6"
+    },
+    {
+        "class_subject": "CW",
+        "class_number": "3395",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "CW",
+        "class_number": "4342",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "ENGL",
+        "class_number": "3279",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "MT",
+        "class_number": "1151",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "TUBA",
+        "class_number": "3057",
+        "cnt": "5"
+    },
+    {
+        "class_subject": "PLSC",
+        "class_number": "3421",
+        "cnt": "6"
+    },
+    {
+        "class_subject": "ADPR",
+        "class_number": "3756",
+        "cnt": "5"
+    },
+    {
+        "class_subject": "ADV",
+        "class_number": "1645",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "WX",
+        "class_number": "2508",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "HARS",
+        "class_number": "1870",
+        "cnt": "5"
+    },
+    {
+        "class_subject": "MAST",
+        "class_number": "4061",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "ACCT",
+        "class_number": "1696",
+        "cnt": "6"
+    },
+    {
+        "class_subject": "JOUR",
+        "class_number": "1541",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "BSSN",
+        "class_number": "4102",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "OBOE",
+        "class_number": "1580",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "TRPT",
+        "class_number": "3852",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "KNW",
+        "class_number": "3983",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "MNGT",
+        "class_number": "1934",
+        "cnt": "6"
+    },
+    {
+        "class_subject": "MREP",
+        "class_number": "3607",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "PS",
+        "class_number": "3334",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "BLI",
+        "class_number": "1869",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "KNW",
+        "class_number": "3104",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "ESL",
+        "class_number": "1193",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "CFA",
+        "class_number": "2055",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "STRA",
+        "class_number": "1932",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "SOSC",
+        "class_number": "1224",
+        "cnt": "5"
+    },
+    {
+        "class_subject": "INTL",
+        "class_number": "3798",
+        "cnt": "6"
+    },
+    {
+        "class_subject": "BLI",
+        "class_number": "2866",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "DBBS",
+        "class_number": "2126",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "MUED",
+        "class_number": "2522",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "BA",
+        "class_number": "3236",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "HIST",
+        "class_number": "4251",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "MKTG",
+        "class_number": "2206",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "BB",
+        "class_number": "3456",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "TUBA",
+        "class_number": "3323",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "COMM",
+        "class_number": "4091",
+        "cnt": "7"
+    },
+    {
+        "class_subject": "STRA",
+        "class_number": "1833",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "ADPR",
+        "class_number": "1249",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "MUHI",
+        "class_number": "3803",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "ROTC",
+        "class_number": "1550",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "OT",
+        "class_number": "2539",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "WO",
+        "class_number": "2791",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "EPL",
+        "class_number": "1472",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "OT",
+        "class_number": "4276",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "EUPH",
+        "class_number": "3360",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "CF",
+        "class_number": "1245",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "CSE",
+        "class_number": "3037",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "TUBA",
+        "class_number": "1460",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "GEOL",
+        "class_number": "3358",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "THEA",
+        "class_number": "2238",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "ZCET",
+        "class_number": "1634",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "OT",
+        "class_number": "3438",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "PERB",
+        "class_number": "1018",
+        "cnt": "5"
+    },
+    {
+        "class_subject": "FINA",
+        "class_number": "1852",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "MATH",
+        "class_number": "1677",
+        "cnt": "6"
+    },
+    {
+        "class_subject": "HDCN",
+        "class_number": "4240",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "JWST",
+        "class_number": "1765",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "INTL",
+        "class_number": "2962",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "FLUT",
+        "class_number": "1316",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "WX",
+        "class_number": "1512",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "ENGR",
+        "class_number": "3293",
+        "cnt": "5"
+    },
+    {
+        "class_subject": "HS",
+        "class_number": "2531",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "ENGL",
+        "class_number": "2103",
+        "cnt": "6"
+    },
+    {
+        "class_subject": "MUAS",
+        "class_number": "2796",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "ST",
+        "class_number": "1017",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "ZIES",
+        "class_number": "3684",
+        "cnt": "5"
+    },
+    {
+        "class_subject": "BLI",
+        "class_number": "2271",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "FREN",
+        "class_number": "1790",
+        "cnt": "6"
+    },
+    {
+        "class_subject": "ETST",
+        "class_number": "2324",
+        "cnt": "5"
+    },
+    {
+        "class_subject": "ORG",
+        "class_number": "1915",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "PHIL",
+        "class_number": "4020",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "CRCP",
+        "class_number": "2480",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "CSE",
+        "class_number": "3306",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "ZSCO",
+        "class_number": "1034",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "GERM",
+        "class_number": "1836",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "HDDR",
+        "class_number": "3813",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "MUED",
+        "class_number": "3547",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "ZIES",
+        "class_number": "1840",
+        "cnt": "7"
+    },
+    {
+        "class_subject": "FRHN",
+        "class_number": "1210",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "RUSS",
+        "class_number": "1809",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "PHYS",
+        "class_number": "2983",
+        "cnt": "4"
+    },
+    {
+        "class_subject": "FNAR",
+        "class_number": "3294",
+        "cnt": "1"
+    },
+    {
+        "class_subject": "MN",
+        "class_number": "2323",
+        "cnt": "3"
+    },
+    {
+        "class_subject": "CSE",
+        "class_number": "3330",
+        "cnt": "2"
+    },
+    {
+        "class_subject": "CSE",
+        "class_number": "1341",
+        "cnt": "1"
+    }
+]
