@@ -37,37 +37,18 @@ function login($login_email, $login_password, $login_dbc) {
     $stmt->execute();
     $salt = $stmt->fetch(PDO::FETCH_ASSOC);
     $salt = $salt["salt"];
-    // $salt = $stmt->fetchColumn();
-    // $stmt = mysqli_prepare($login_dbc, "SELECT salt FROM user_info WHERE email = ? LIMIT 1");
-    // mysqli_stmt_bind_param($stmt, 's', $login_email);
-    // mysqli_stmt_execute($stmt);
-    // mysqli_stmt_bind_result($stmt, $salt);
-    // mysqli_stmt_fetch($stmt);
-    // mysqli_stmt_close($stmt);
+
     $query = 'SELECT password FROM user_info WHERE email = :email LIMIT 1';
-    $stmt2 = $login_dbc->prepare($query);
-    $stmt2->bindParam(':email', $login_email);
-    $stmt2->execute();
-    $db_password = $stmt2->fetch(PDO::FETCH_ASSOC);
+    $stmt = $login_dbc->prepare($query);
+    $stmt->bindParam(':email', $login_email);
+    $stmt->execute();
+    $db_password = $stmt->fetch(PDO::FETCH_ASSOC);
     $db_password = $db_password["password"];
 
     $hashed_login_password = crypt($login_password, $salt);
-    // $stmt = mysqli_prepare($login_dbc, "SELECT password
-    //                                     FROM user_info
-    //                                     WHERE email = ?
-    //                                     LIMIT 1");
-    // mysqli_stmt_bind_param($stmt, 's', $login_email);  // Bind "$username" to parameter.
-    // mysqli_stmt_execute($stmt);
-    // mysqli_stmt_bind_result($stmt, $db_password);
-    // mysqli_stmt_fetch($stmt);
-    // $hashed_login_password = crypt($login_password, $salt);
     if (hash_equals($db_password, $hashed_login_password)) {
-    //    mysqli_stmt_close($stmt);
-       echo "Password verified!<br>";
        return true;
     } else {
-        // mysqli_stmt_close($stmt);
-        echo "Password incorrect <br>";
         return false;
     }
 
